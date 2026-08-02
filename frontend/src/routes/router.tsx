@@ -12,6 +12,7 @@ import { FlightResults } from '@/pages/flight-results';
 import { ReviewTrip } from '@/pages/review-trip';
 import { Checkout } from '@/pages/checkout';
 import { Profile } from '@/pages/profile';
+import { ProfileEdit } from '@/pages/profile/edit';
 import { SavedFlights } from '@/pages/saved-flights';
 import { MyBookings } from '@/pages/my-bookings';
 import { BookingDetail } from '@/pages/booking-detail';
@@ -71,6 +72,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'profile/edit',
+        element: (
+          <ProtectedRoute>
+            <ProfileEdit />
           </ProtectedRoute>
         ),
       },

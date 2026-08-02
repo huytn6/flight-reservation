@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { User, LogOut, Ticket, Heart, Bell, Shield, LifeBuoy } from 'lucide-react';
+import { User, LogOut, Ticket, Heart, Bell, Shield, LifeBuoy, ChevronRight } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
 import { NotificationDropdown } from './NotificationDropdown';
 import { toast } from 'sonner';
@@ -32,8 +32,10 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const firstName = user?.full_name?.split(' ')[0] || user?.full_name || 'User';
+
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
+    <header className="bg-white border-b border-slate-200 sticky top-0 z-40 font-sans">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
         
         {/* Expedia Brand Logo -> Navigate Home / */}
@@ -62,65 +64,94 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Realtime Notification Dropdown */}
               <NotificationDropdown />
 
-              {/* User Avatar Menu Popover */}
+              {/* Expedia Style User Trigger */}
               <Popover open={userMenuOpen} onOpenChange={setUserMenuOpen}>
                 <PopoverTrigger asChild>
-                  <button className="flex items-center gap-2 p-1.5 rounded-full hover:bg-slate-100 transition-colors border border-slate-200 focus:outline-none cursor-pointer">
-                    <div className="w-8 h-8 rounded-full bg-blue-600 text-white font-semibold text-xs flex items-center justify-center">
-                      {user?.full_name?.charAt(0).toUpperCase() || 'U'}
+                  <button className="flex items-center gap-2 p-1 px-2.5 rounded-full hover:bg-slate-100 transition-colors border border-slate-200 focus:outline-none cursor-pointer">
+                    <div className="w-7 h-7 rounded-full bg-[#0065eb] text-white font-bold text-xs flex items-center justify-center">
+                      {firstName.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-xs font-semibold text-slate-800 hidden sm:inline">{user?.full_name}</span>
+                    <div className="flex flex-col text-left leading-tight hidden sm:flex">
+                      <span className="text-xs font-semibold text-slate-900">{firstName}</span>
+                      <span className="text-[10px] font-medium text-slate-500 uppercase">{user?.role}</span>
+                    </div>
                   </button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-56 p-2 rounded-xl border border-slate-200 bg-white text-xs shadow-none" align="end">
-                  <div className="p-2.5 border-b border-slate-100 bg-slate-50/70 rounded-lg mb-1">
-                    <p className="font-medium text-slate-800 truncate">{user?.full_name}</p>
-                    <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
-                    <span className="inline-block mt-1 text-[9px] uppercase font-medium px-2 py-0.5 bg-slate-200/70 text-slate-600 rounded-md">
-                      {user?.role}
-                    </span>
+                <PopoverContent className="w-72 p-0 rounded-2xl border border-slate-200 bg-white text-xs shadow-none overflow-hidden" align="end">
+                  {/* Top User Info Header Box */}
+                  <div className="p-4 bg-slate-50/60 border-b border-slate-100 flex flex-col gap-2">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-sm font-semibold text-slate-900">Hi, {firstName}</h4>
+                        <p className="text-xs text-slate-500 truncate max-w-[170px]">{user?.email}</p>
+                      </div>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 bg-blue-100 text-blue-800 rounded-md uppercase">
+                        {user?.role}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex flex-col gap-0.5">
+                  {/* Real App Navigation Links List */}
+                  <div className="p-2 flex flex-col gap-0.5">
                     <Link
                       to="/profile"
                       onClick={() => setUserMenuOpen(false)}
-                      className="p-2 rounded-lg hover:bg-slate-100 flex items-center gap-2 text-slate-700 font-normal transition-colors"
+                      className="p-2.5 rounded-lg hover:bg-slate-100 flex items-center justify-between text-slate-700 font-normal transition-colors"
                     >
-                      <User className="w-4 h-4 text-slate-500" /> My Profile
-                    </Link>
-
-                    <Link
-                      to="/my-bookings"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="p-2 rounded-lg hover:bg-slate-100 flex items-center gap-2 text-slate-700 font-normal transition-colors"
-                    >
-                      <Ticket className="w-4 h-4 text-slate-500" /> My Trips
+                      <div className="flex items-center gap-2.5">
+                        <User className="w-4 h-4 text-slate-500" />
+                        <span>Account</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                     </Link>
 
                     <Link
                       to="/saved-flights"
                       onClick={() => setUserMenuOpen(false)}
-                      className="p-2 rounded-lg hover:bg-slate-100 flex items-center gap-2 text-slate-700 font-normal transition-colors"
+                      className="p-2.5 rounded-lg hover:bg-slate-100 flex items-center justify-between text-slate-700 font-normal transition-colors"
                     >
-                      <Heart className="w-4 h-4 text-slate-500" /> Saved Flights
+                      <div className="flex items-center gap-2.5">
+                        <Heart className="w-4 h-4 text-slate-500" />
+                        <span>Saved Flights</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                    </Link>
+
+                    <Link
+                      to="/my-bookings"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="p-2.5 rounded-lg hover:bg-slate-100 flex items-center justify-between text-slate-700 font-normal transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Ticket className="w-4 h-4 text-slate-500" />
+                        <span>My Trips</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                     </Link>
 
                     <Link
                       to="/price-alerts"
                       onClick={() => setUserMenuOpen(false)}
-                      className="p-2 rounded-lg hover:bg-slate-100 flex items-center gap-2 text-slate-700 font-normal transition-colors"
+                      className="p-2.5 rounded-lg hover:bg-slate-100 flex items-center justify-between text-slate-700 font-normal transition-colors"
                     >
-                      <Bell className="w-4 h-4 text-slate-500" /> Price Alerts
+                      <div className="flex items-center gap-2.5">
+                        <Bell className="w-4 h-4 text-slate-500" />
+                        <span>Price Alerts</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                     </Link>
 
                     <Link
                       to="/support"
                       onClick={() => setUserMenuOpen(false)}
-                      className="p-2 rounded-lg hover:bg-slate-100 flex items-center gap-2 text-slate-700 font-normal transition-colors"
+                      className="p-2.5 rounded-lg hover:bg-slate-100 flex items-center justify-between text-slate-700 font-normal transition-colors"
                     >
-                      <LifeBuoy className="w-4 h-4 text-slate-500" /> Support Desk
+                      <div className="flex items-center gap-2.5">
+                        <LifeBuoy className="w-4 h-4 text-slate-500" />
+                        <span>Support Desk</span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                     </Link>
 
                     {/* Role Specific Portals */}
@@ -128,9 +159,13 @@ export const Header: React.FC<HeaderProps> = ({
                       <Link
                         to="/staff"
                         onClick={() => setUserMenuOpen(false)}
-                        className="p-2 rounded-lg hover:bg-purple-50 text-purple-700 flex items-center gap-2 font-medium border border-purple-100 mt-0.5"
+                        className="p-2.5 rounded-lg hover:bg-purple-50 text-purple-700 flex items-center justify-between font-medium border border-purple-100 mt-0.5"
                       >
-                        <Shield className="w-4 h-4 text-purple-600" /> Staff Portal
+                        <div className="flex items-center gap-2.5">
+                          <Shield className="w-4 h-4 text-purple-600" />
+                          <span>Staff Portal</span>
+                        </div>
+                        <ChevronRight className="w-3.5 h-3.5 text-purple-400" />
                       </Link>
                     )}
 
@@ -138,21 +173,30 @@ export const Header: React.FC<HeaderProps> = ({
                       <Link
                         to="/admin"
                         onClick={() => setUserMenuOpen(false)}
-                        className="p-2 rounded-lg hover:bg-emerald-50 text-emerald-800 flex items-center gap-2 font-medium border border-emerald-100 mt-0.5"
+                        className="p-2.5 rounded-lg hover:bg-emerald-50 text-emerald-800 flex items-center justify-between font-medium border border-emerald-100 mt-0.5"
                       >
-                        <Shield className="w-4 h-4 text-emerald-600" /> Admin Portal
+                        <div className="flex items-center gap-2.5">
+                          <Shield className="w-4 h-4 text-emerald-600" />
+                          <span>Admin Portal</span>
+                        </div>
+                        <ChevronRight className="w-3.5 h-3.5 text-emerald-400" />
                       </Link>
                     )}
+                  </div>
 
-                    <div className="border-t border-slate-100 my-1" />
-
+                  {/* Sign Out Button */}
+                  <div className="border-t border-slate-100 p-2">
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left p-2 rounded-lg hover:bg-red-50 text-red-600 flex items-center gap-2 font-normal transition-colors cursor-pointer"
+                      className="w-full text-left p-2.5 rounded-lg hover:bg-red-50 text-red-600 flex items-center justify-between font-normal transition-colors cursor-pointer"
                     >
-                      <LogOut className="w-4 h-4 text-red-600" /> Sign Out
+                      <div className="flex items-center gap-2.5">
+                        <LogOut className="w-4 h-4 text-red-600" />
+                        <span>Sign out</span>
+                      </div>
                     </button>
                   </div>
+
                 </PopoverContent>
               </Popover>
             </div>

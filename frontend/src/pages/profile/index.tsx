@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/use-auth';
 import { userService } from '@/services/user';
 import { authService } from '@/services/auth';
@@ -6,18 +7,32 @@ import type { ActiveSession, SavedPassenger } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { User, KeyRound, Monitor, Users, Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import { 
+  User, 
+  KeyRound, 
+  Users, 
+  Trash2, 
+  Edit2, 
+  Check, 
+  X, 
+  ChevronRight,
+  ShieldCheck,
+  Mail,
+  Phone,
+  Bell,
+  Ticket,
+  Heart,
+  Tag,
+  HelpCircle
+} from 'lucide-react';
 
 export const Profile: React.FC = () => {
-  const { user, setUser } = useAuthStore();
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'PROFILE' | 'PASSWORD' | 'SESSIONS' | 'PASSENGERS'>('PROFILE');
 
-  // Profile Form
-  const [fullName, setFullName] = useState(user?.full_name || '');
-  const [phone, setPhone] = useState('');
-  const [updatingProfile, setUpdatingProfile] = useState(false);
-
-  // Password Form
+  // Password Form State
+  const [editingPassword, setEditingPassword] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [changingPassword, setChangingPassword] = useState(false);
@@ -28,61 +43,32 @@ export const Profile: React.FC = () => {
 
   // Saved Passengers
   const [passengers, setPassengers] = useState<SavedPassenger[]>([]);
-  const [loadingPassengers, setLoadingPassengers] = useState(false);
   const [editingPassenger, setEditingPassenger] = useState<Partial<SavedPassenger> | null>(null);
   const [savingPassenger, setSavingPassenger] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setFullName(user.full_name || '');
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (activeTab === 'SESSIONS') {
-      loadSessions();
-    } else if (activeTab === 'PASSENGERS') {
-      loadPassengers();
-    }
-  }, [activeTab]);
+    loadSessions();
+    loadPassengers();
+  }, []);
 
   const loadSessions = async () => {
     setLoadingSessions(true);
     try {
       const res = await userService.getSessions();
       setSessions(res.items || []);
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to load active sessions');
+    } catch {
+      // ignore
     } finally {
       setLoadingSessions(false);
     }
   };
 
   const loadPassengers = async () => {
-    setLoadingPassengers(true);
     try {
       const res = await userService.getSavedPassengers();
       setPassengers(res || []);
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to load saved passengers');
-    } finally {
-      setLoadingPassengers(false);
-    }
-  };
-
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setUpdatingProfile(true);
-    try {
-      await userService.updateProfile({ full_name: fullName, phone });
-      if (user) {
-        setUser({ ...user, full_name: fullName });
-      }
-      toast.success('Profile updated successfully');
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to update profile');
-    } finally {
-      setUpdatingProfile(false);
+    } catch {
+      // ignore
     }
   };
 
@@ -94,6 +80,7 @@ export const Profile: React.FC = () => {
       toast.success('Password changed successfully. Please sign in again.');
       setOldPassword('');
       setNewPassword('');
+      setEditingPassword(false);
     } catch (err: any) {
       toast.error(err.message || 'Failed to change password');
     } finally {
@@ -142,170 +129,380 @@ export const Profile: React.FC = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Logged out successfully');
+      navigate('/');
+    } catch {
+      toast.error('Logout failed');
+    }
+  };
+
+  const firstName = user?.full_name?.split(' ')[0] || user?.full_name || 'User';
+
   return (
-    <div className="max-w-[1240px] mx-auto px-4 py-8 font-sans">
-      <div className="flex items-center gap-4 mb-8 border-b border-slate-200 pb-4">
-        <div className="w-14 h-14 rounded-full bg-blue-100 text-blue-600 font-semibold text-xl flex items-center justify-center">
-          {user?.full_name?.charAt(0).toUpperCase() || 'U'}
-        </div>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-slate-900">{user?.full_name}</h1>
-          <p className="text-xs sm:text-sm text-slate-500">{user?.email} • <span className="uppercase text-[11px] font-medium px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md">{user?.role}</span></p>
-        </div>
+    <div className="max-w-[1240px] mx-auto px-4 py-4 sm:py-6 font-sans">
+      
+      {/* Top Header Title */}
+      <div className="mb-4">
+        <h1 className="text-lg sm:text-xl font-bold text-slate-900">Hi, {firstName}</h1>
+        <p className="text-[11px] text-slate-500">{user?.email}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Navigation Sidebar */}
-        <div className="flex flex-col gap-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
+        
+        {/* Left Sidebar Navigation Cards (Expedia Layout matching image) */}
+        <div className="flex flex-col gap-2">
+          
+          {/* Account Overview Summary Card */}
+          <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col gap-1 relative mb-1">
+            <span className="absolute top-3 right-3 text-[9px] font-semibold px-2 py-0.5 bg-blue-100 text-blue-800 rounded-md uppercase">
+              {user?.role}
+            </span>
+            <div className="flex items-center gap-1 text-[11px] text-slate-500">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Account Status</span>
+            </div>
+            <p className="text-base font-bold text-slate-900 capitalize">{user?.status || 'Active'}</p>
+            <p className="text-[10px] text-slate-500">{user?.email}</p>
+          </div>
+
+          {/* 1. Profile */}
           <button
             onClick={() => setActiveTab('PROFILE')}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors text-left cursor-pointer ${activeTab === 'PROFILE' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+            className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
+              activeTab === 'PROFILE' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+            }`}
           >
-            <User className="w-4 h-4" /> Personal Information
+            <div className="flex items-start gap-2.5">
+              <User className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Profile</p>
+                <p className="text-[10px] text-slate-500">Provide your personal details and travel documents</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           </button>
+
+          {/* 2. Communications */}
           <button
-            onClick={() => setActiveTab('PASSWORD')}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors text-left cursor-pointer ${activeTab === 'PASSWORD' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+            onClick={() => navigate('/price-alerts')}
+            className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50/80 transition-colors text-left flex items-start justify-between cursor-pointer"
           >
-            <KeyRound className="w-4 h-4" /> Change Password
+            <div className="flex items-start gap-2.5">
+              <Bell className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Communications</p>
+                <p className="text-[10px] text-slate-500">Control which notifications & price alerts you get</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           </button>
+
+          {/* 3. My Trips */}
           <button
-            onClick={() => setActiveTab('SESSIONS')}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors text-left cursor-pointer ${activeTab === 'SESSIONS' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+            onClick={() => navigate('/my-bookings')}
+            className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50/80 transition-colors text-left flex items-start justify-between cursor-pointer"
           >
-            <Monitor className="w-4 h-4" /> Active Sessions
+            <div className="flex items-start gap-2.5">
+              <Ticket className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">My Trips</p>
+                <p className="text-[10px] text-slate-500">View upcoming flight bookings and e-tickets</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           </button>
+
+          {/* 4. Saved Flights */}
+          <button
+            onClick={() => navigate('/saved-flights')}
+            className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50/80 transition-colors text-left flex items-start justify-between cursor-pointer"
+          >
+            <div className="flex items-start gap-2.5">
+              <Heart className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Saved Flights</p>
+                <p className="text-[10px] text-slate-500">View your saved flight offers and favorites</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+          </button>
+
+          {/* 5. Coupons & Offers */}
+          <button
+            onClick={() => navigate('/flights/search')}
+            className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50/80 transition-colors text-left flex items-start justify-between cursor-pointer"
+          >
+            <div className="flex items-start gap-2.5">
+              <Tag className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Coupons & Offers</p>
+                <p className="text-[10px] text-slate-500">View your available discount coupons</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+          </button>
+
+          {/* 6. Additional Travelers */}
           <button
             onClick={() => setActiveTab('PASSENGERS')}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors text-left cursor-pointer ${activeTab === 'PASSENGERS' ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+            className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
+              activeTab === 'PASSENGERS' ? 'bg-[#fff] border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+            }`}
           >
-            <Users className="w-4 h-4" /> Saved Passengers
+            <div className="flex items-start gap-2.5">
+              <Users className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Additional Travelers</p>
+                <p className="text-[10px] text-slate-500">Save travel profiles ({passengers.length})</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           </button>
+
+          {/* 7. Security and settings */}
+          <button
+            onClick={() => setActiveTab('PASSWORD')}
+            className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
+              activeTab === 'PASSWORD' || activeTab === 'SESSIONS' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+            }`}
+          >
+            <div className="flex items-start gap-2.5">
+              <KeyRound className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Security and settings</p>
+                <p className="text-[10px] text-slate-500">Update your email, password or active devices ({sessions.length})</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+          </button>
+
+          {/* 8. Help and feedback */}
+          <button
+            onClick={() => navigate('/support')}
+            className="p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50/80 transition-colors text-left flex items-start justify-between cursor-pointer"
+          >
+            <div className="flex items-start gap-2.5">
+              <HelpCircle className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-slate-900">Help and feedback</p>
+                <p className="text-[10px] text-slate-500">Get customer support and help</p>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+          </button>
+
+          {/* Sign out link at bottom */}
+          <div className="text-center pt-2">
+            <button
+              onClick={handleLogout}
+              className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer py-1"
+            >
+              Sign out
+            </button>
+          </div>
+
         </div>
 
-        {/* Tab Content */}
-        <div className="md:col-span-3 bg-white p-6 rounded-2xl border border-slate-200 shadow-none">
-          {activeTab === 'PROFILE' && (
-            <form onSubmit={handleUpdateProfile} className="flex flex-col gap-4 max-w-lg">
-              <h2 className="text-base font-semibold text-slate-900 mb-1">Personal Information</h2>
-              <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Email Address</label>
-                <Input value={user?.email || ''} disabled className="bg-slate-50 text-slate-500 border-slate-200 text-xs" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Full Name</label>
-                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} required className="text-xs" />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Phone Number</label>
-                <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+84 901 234 567" className="text-xs" />
-              </div>
-              <Button type="submit" disabled={updatingProfile} className="bg-blue-600 hover:bg-blue-700 text-white font-medium w-fit mt-2 rounded-full px-6 cursor-pointer">
-                {updatingProfile ? 'Saving...' : 'Save Changes'}
-              </Button>
-            </form>
-          )}
+        {/* Right Main Content Panel (Compact Expedia Layout) */}
+        <div className="lg:col-span-2 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 flex flex-col gap-5">
+          
+          {/* Main User Name Display */}
+          <div className="border-b border-slate-100 pb-2.5">
+            <h2 className="text-lg font-semibold text-slate-900">{user?.full_name}</h2>
+          </div>
 
-          {activeTab === 'PASSWORD' && (
-            <form onSubmit={handleChangePassword} className="flex flex-col gap-4 max-w-lg">
-              <h2 className="text-base font-semibold text-slate-900 mb-1">Change Password</h2>
+          {/* Section 1: Basic Information */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
               <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">Old Password</label>
-                <Input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required className="text-xs" />
+                <h3 className="text-sm font-semibold text-slate-900">Basic information</h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">Make sure this information matches your travel ID, like your passport or license.</p>
               </div>
-              <div>
-                <label className="text-xs font-medium text-slate-600 block mb-1">New Password</label>
-                <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required className="text-xs" />
-              </div>
-              <Button type="submit" disabled={changingPassword} className="bg-blue-600 hover:bg-blue-700 text-white font-medium w-fit mt-2 rounded-full px-6 cursor-pointer">
-                {changingPassword ? 'Updating...' : 'Update Password'}
-              </Button>
-            </form>
-          )}
+              <button
+                onClick={() => navigate('/profile/edit')}
+                className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer"
+              >
+                Edit
+              </button>
+            </div>
 
-          {activeTab === 'SESSIONS' && (
-            <div className="flex flex-col gap-4">
-              <h2 className="text-base font-semibold text-slate-900">Active Login Sessions</h2>
-              {loadingSessions ? (
-                <p className="text-xs text-slate-500">Loading sessions...</p>
-              ) : sessions.length === 0 ? (
-                <p className="text-xs text-slate-500">No active sessions found.</p>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {sessions.map((s) => (
-                    <div key={s.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
-                      <div>
-                        <p className="text-xs font-semibold text-slate-800">{s.user_agent || 'Unknown Device'}</p>
-                        <p className="text-xs text-slate-500">IP: {s.ip_address || '127.0.0.1'} • Created: {new Date(s.created_at).toLocaleString()}</p>
-                      </div>
-                      <Button variant="outline" size="sm" onClick={() => handleRevokeSession(s.id)} className="text-red-600 border-red-200 hover:bg-red-50 font-medium cursor-pointer">
-                        Revoke
-                      </Button>
-                    </div>
-                  ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+              <div>
+                <p className="font-semibold text-slate-700 text-[11px]">Full Name</p>
+                <p className="text-slate-600 mt-0.5 text-xs">{user?.full_name}</p>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-700 text-[11px]">Role</p>
+                <p className="text-slate-600 mt-0.5 uppercase text-xs">{user?.role}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-100" />
+
+          {/* Section 2: Contact */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">Contact</h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">You can sign in, receive account activity alerts, and get trip updates by sharing this information.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+              <div className="flex items-start gap-2">
+                <Mail className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-slate-700 text-[11px]">Email Address</p>
+                  <p className="text-slate-600 mt-0.5 text-xs">{user?.email}</p>
                 </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Phone className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-slate-700 text-[11px]">Account Status</p>
+                  <p className="text-slate-600 mt-0.5 capitalize text-xs">{user?.status || 'Active'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-100" />
+
+          {/* Section 3: Security & Password */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">Account security</h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">Manage password updates and login protection.</p>
+              </div>
+              {!editingPassword && (
+                <button
+                  onClick={() => setEditingPassword(true)}
+                  className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer"
+                >
+                  Change Password
+                </button>
               )}
             </div>
-          )}
 
-          {activeTab === 'PASSENGERS' && (
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-slate-900">Saved Passengers</h2>
-                <Button onClick={() => setEditingPassenger({ full_name: '', nationality: 'Vietnam' })} size="sm" className="bg-blue-600 text-white gap-1 rounded-full px-4 cursor-pointer">
-                  <Plus className="w-4 h-4" /> Add Passenger
+            {editingPassword && (
+              <form onSubmit={handleChangePassword} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-2.5 max-w-md">
+                <div>
+                  <label className="text-[11px] font-medium text-slate-600 block mb-1">Old Password</label>
+                  <Input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required className="text-xs bg-white h-9" />
+                </div>
+                <div>
+                  <label className="text-[11px] font-medium text-slate-600 block mb-1">New Password</label>
+                  <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required className="text-xs bg-white h-9" />
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Button type="submit" disabled={changingPassword} size="sm" className="bg-[#0065eb] hover:bg-blue-700 text-white font-medium text-xs rounded-full px-4 h-8 cursor-pointer">
+                    {changingPassword ? 'Updating...' : 'Update Password'}
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setEditingPassword(false)} className="text-xs h-8 cursor-pointer">
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
+          </div>
+
+          <div className="border-t border-slate-100" />
+
+          {/* Section 4: Additional Travelers / Saved Passengers */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-slate-900">Additional travelers</h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">Make booking a breeze by saving profiles of family, friends, or teammates who often travel with you.</p>
+              </div>
+            </div>
+
+            {editingPassenger ? (
+              <form onSubmit={handleSavePassenger} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-2.5">
+                <h4 className="text-xs font-semibold text-slate-800">{editingPassenger.id ? 'Edit Traveler' : 'Add New Traveler'}</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  <Input placeholder="Full Name" value={editingPassenger.full_name || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, full_name: e.target.value })} required className="text-xs bg-white h-9" />
+                  <Input type="date" placeholder="Date of Birth" value={editingPassenger.date_of_birth || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, date_of_birth: e.target.value })} className="text-xs bg-white h-9" />
+                  <Input placeholder="Nationality" value={editingPassenger.nationality || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, nationality: e.target.value })} className="text-xs bg-white h-9" />
+                  <Input placeholder="Passport Number" value={editingPassenger.passport_number || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, passport_number: e.target.value })} className="text-xs bg-white h-9" />
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Button type="submit" size="sm" disabled={savingPassenger} className="bg-[#0065eb] text-white font-medium text-xs rounded-full px-4 h-8 cursor-pointer">
+                    <Check className="w-3.5 h-3.5 mr-1" /> Save Traveler
+                  </Button>
+                  <Button type="button" size="sm" variant="ghost" onClick={() => setEditingPassenger(null)} className="text-xs h-8 cursor-pointer">
+                    <X className="w-3.5 h-3.5 mr-1" /> Cancel
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <div className="flex flex-col gap-2.5">
+                {passengers.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {passengers.map((p) => (
+                      <div key={p.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-start text-xs">
+                        <div>
+                          <h4 className="font-semibold text-slate-900">{p.full_name}</h4>
+                          <p className="text-[11px] text-slate-500">DOB: {p.date_of_birth || 'N/A'}</p>
+                          <p className="text-[11px] text-slate-500">Nationality: {p.nationality || 'N/A'}</p>
+                          {p.passport_number && <p className="text-[11px] text-slate-500">Passport: {p.passport_number}</p>}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => setEditingPassenger(p)} className="p-1 text-slate-500 hover:text-blue-600 rounded hover:bg-slate-200 cursor-pointer">
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={() => handleDeletePassenger(p.id)} className="p-1 text-slate-500 hover:text-red-600 rounded hover:bg-slate-200 cursor-pointer">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <Button
+                  onClick={() => setEditingPassenger({ full_name: '', nationality: 'Vietnam' })}
+                  variant="outline"
+                  className="w-full sm:w-fit text-xs font-semibold text-slate-700 border-slate-300 rounded-full px-5 py-1.5 h-8 hover:bg-slate-50 cursor-pointer"
+                >
+                  Add additional traveler
                 </Button>
               </div>
+            )}
+          </div>
 
-              {editingPassenger && (
-                <form onSubmit={handleSavePassenger} className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-3">
-                  <h3 className="text-xs font-semibold text-slate-800">{editingPassenger.id ? 'Edit Passenger' : 'Add New Passenger'}</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <Input placeholder="Full Name" value={editingPassenger.full_name || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, full_name: e.target.value })} required className="text-xs" />
-                    <Input type="date" placeholder="Date of Birth" value={editingPassenger.date_of_birth || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, date_of_birth: e.target.value })} className="text-xs" />
-                    <Input placeholder="Nationality" value={editingPassenger.nationality || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, nationality: e.target.value })} className="text-xs" />
-                    <Input placeholder="Passport Number" value={editingPassenger.passport_number || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, passport_number: e.target.value })} className="text-xs" />
-                  </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Button type="submit" size="sm" disabled={savingPassenger} className="bg-blue-600 text-white font-medium cursor-pointer">
-                      <Check className="w-4 h-4 mr-1" /> Save
-                    </Button>
-                    <Button type="button" size="sm" variant="ghost" onClick={() => setEditingPassenger(null)} className="cursor-pointer">
-                      <X className="w-4 h-4 mr-1" /> Cancel
-                    </Button>
-                  </div>
-                </form>
-              )}
-
-              {loadingPassengers ? (
-                <p className="text-xs text-slate-500">Loading passengers...</p>
-              ) : passengers.length === 0 ? (
-                <p className="text-xs text-slate-500">No saved passengers yet.</p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {passengers.map((p) => (
-                    <div key={p.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-start">
-                      <div>
-                        <h4 className="font-semibold text-slate-900 text-xs sm:text-sm">{p.full_name}</h4>
-                        <p className="text-xs text-slate-500">DOB: {p.date_of_birth || 'N/A'}</p>
-                        <p className="text-xs text-slate-500">Nationality: {p.nationality || 'N/A'}</p>
-                        {p.passport_number && <p className="text-xs text-slate-500">Passport: {p.passport_number}</p>}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => setEditingPassenger(p)} className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-200 cursor-pointer">
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDeletePassenger(p.id)} className="p-1.5 text-slate-500 hover:text-red-600 rounded-lg hover:bg-slate-200 cursor-pointer">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+          {/* Section 5: Active Sessions */}
+          <div className="border-t border-slate-100 pt-4">
+            <h3 className="text-sm font-semibold text-slate-900 mb-0.5">Active login devices</h3>
+            <p className="text-[11px] text-slate-500 mb-3">View active browser sessions logged into your account.</p>
+            {loadingSessions ? (
+              <p className="text-[11px] text-slate-500">Loading active sessions...</p>
+            ) : sessions.length === 0 ? (
+              <p className="text-[11px] text-slate-500">No active sessions found.</p>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {sessions.map((s) => (
+                  <div key={s.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                    <div>
+                      <p className="font-semibold text-slate-800">{s.user_agent || 'Browser Device'}</p>
+                      <p className="text-[10px] text-slate-500">IP: {s.ip_address || '127.0.0.1'} • Logged in: {new Date(s.created_at).toLocaleString()}</p>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                    <Button variant="outline" size="sm" onClick={() => handleRevokeSession(s.id)} className="text-red-600 border-red-200 hover:bg-red-50 text-[11px] font-medium cursor-pointer rounded-full h-7 px-3">
+                      Revoke
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
+
       </div>
     </div>
   );
