@@ -30,8 +30,6 @@ import {
   X, 
   ChevronRight,
   ShieldCheck,
-  Mail,
-  Phone,
   Bell,
   Ticket,
   Heart,
@@ -492,19 +490,19 @@ export const Profile: React.FC = () => {
         {/* Right Main Content Panel (Dynamically changes based on active tab) */}
         <div className="lg:col-span-2 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 flex flex-col gap-5 min-h-[480px]">
           
-          {/* TAB 1: PROFILE (BASIC INFO & CONTACT) */}
+          {/* TAB 1: PROFILE (BASIC INFO, CONTACT, MORE DETAILS & ADDITIONAL TRAVELERS) */}
           {activeTab === 'PROFILE' && (
-            <>
-              <div className="border-b border-slate-100 pb-2.5">
-                <h2 className="text-lg font-semibold text-slate-900">{user?.full_name}</h2>
+            <div className="flex flex-col gap-5">
+              
+              {/* 1. Header Name */}
+              <div className="border-b border-slate-100 pb-2">
+                <h2 className="text-xl font-bold text-slate-900">{user?.full_name}</h2>
               </div>
 
-              <div className="flex flex-col gap-3">
+              {/* 2. Basic information */}
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-semibold text-slate-900">Basic information</h3>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Make sure this information matches your travel ID, like your passport or license.</p>
-                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900">Basic information</h3>
                   <button
                     onClick={() => navigate('/profile/edit')}
                     className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer"
@@ -512,47 +510,132 @@ export const Profile: React.FC = () => {
                     Edit
                   </button>
                 </div>
+                <p className="text-xs text-slate-500 leading-normal mb-1">
+                  Make sure this information matches your travel ID, like your passport or license.
+                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+                {/* 2-Column Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-xs">
                   <div>
-                    <p className="font-semibold text-slate-700 text-[11px]">Full Name</p>
-                    <p className="text-slate-600 mt-0.5 text-xs">{user?.full_name}</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Name</p>
+                    <p className="text-slate-600">{user?.full_name}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-700 text-[11px]">Role</p>
-                    <p className="text-slate-600 mt-0.5 uppercase text-xs">{user?.role}</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Bio</p>
+                    <p className="text-slate-600">Not provided</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-0.5">Date of birth</p>
+                    <p className="text-slate-600">Not provided</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-0.5">Gender</p>
+                    <p className="text-slate-600">Not provided</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-0.5">Accessibility needs</p>
+                    <p className="text-slate-600">Not provided</p>
                   </div>
                 </div>
               </div>
 
               <div className="border-t border-slate-100" />
 
-              <div className="flex flex-col gap-3">
+              {/* 3. Contact */}
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-semibold text-slate-900">Contact</h3>
-                    <p className="text-[11px] text-slate-500 mt-0.5">You can sign in, receive account activity alerts, and get trip updates by sharing this information.</p>
-                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900">Contact</h3>
+                  <button
+                    onClick={() => navigate('/profile/edit')}
+                    className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer"
+                  >
+                    Edit
+                  </button>
                 </div>
+                <p className="text-xs text-slate-500 leading-normal mb-1">
+                  You can sign in, receive account activity alerts, and get trip updates by sharing this information.
+                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
-                  <div className="flex items-start gap-2">
-                    <Mail className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-slate-700 text-[11px]">Email Address</p>
-                      <p className="text-slate-600 mt-0.5 text-xs">{user?.email}</p>
-                    </div>
+                {/* 2-Column Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-xs">
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-0.5">Mobile number</p>
+                    <p className="text-slate-600">{user?.phone || 'Not provided'}</p>
                   </div>
-                  <div className="flex items-start gap-2">
-                    <Phone className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-slate-700 text-[11px]">Account Status</p>
-                      <p className="text-slate-600 mt-0.5 capitalize text-xs">{user?.status || 'Active'}</p>
-                    </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-0.5">Email</p>
+                    <p className="text-slate-600">{user?.email}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-0.5">Emergency contact</p>
+                    <p className="text-slate-600">Not provided</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 mb-0.5">Address</p>
+                    <p className="text-slate-600">Not provided</p>
                   </div>
                 </div>
               </div>
-            </>
+
+              <div className="border-t border-slate-100" />
+
+              {/* 4. Bottom 2-Column Grid: More details & Additional travelers */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                
+                {/* Left Col: More details */}
+                <div className="flex flex-col gap-2">
+                  <h3 className="text-lg font-semibold text-slate-900">More details</h3>
+                  <p className="text-xs text-slate-500 leading-normal mb-1">
+                    Speed up your booking by securely saving essential travel details.
+                  </p>
+
+                  <div className="flex flex-col gap-2 mt-1">
+                    <button
+                      onClick={() => setActiveTab('PASSENGERS')}
+                      className="p-3 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left flex items-center justify-between cursor-pointer"
+                    >
+                      <div>
+                        <p className="text-xs font-semibold text-slate-900">Travel documents</p>
+                        <p className="text-[10px] text-slate-500">Passport information</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('COMMUNICATIONS')}
+                      className="p-3 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left flex items-center justify-between cursor-pointer"
+                    >
+                      <div>
+                        <p className="text-xs font-semibold text-slate-900">Flight preferences</p>
+                        <p className="text-[10px] text-slate-500">Seat preference and home airport</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Right Col: Additional travelers */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-slate-900">Additional travelers</h3>
+                  </div>
+                  <p className="text-xs text-slate-500 leading-normal mb-1">
+                    Make booking a breeze by saving profiles of family, friends, or teammates who often travel with you.
+                  </p>
+
+                  <div className="mt-2">
+                    <button
+                      onClick={() => setActiveTab('PASSENGERS')}
+                      className="w-full text-xs font-semibold text-[#0065eb] border border-slate-300 rounded-full px-5 py-2 hover:bg-slate-50 transition-colors cursor-pointer text-center"
+                    >
+                      Add additional traveler
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
           )}
 
           {/* TAB 2: COMMUNICATIONS (PRICE ALERTS & NOTIFICATIONS) */}
