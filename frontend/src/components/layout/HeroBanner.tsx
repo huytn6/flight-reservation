@@ -1,0 +1,25 @@
+import React from 'react';
+
+interface HeroBannerProps {
+  title: string;
+  bgImageUrl?: string;
+}
+
+export const HeroBanner: React.FC<HeroBannerProps> = ({
+  title,
+  bgImageUrl = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2000&q=80',
+}) => {
+  return (
+    <div 
+      className="relative w-full h-[280px] sm:h-[340px] md:h-[380px] bg-cover bg-center overflow-hidden"
+      style={{ backgroundImage: `url('${bgImageUrl}')` }}
+    >
+      <div className="absolute inset-0 bg-black/20" />
+      <div className="relative z-10 max-w-[1240px] mx-auto px-4 h-full flex flex-col items-center pt-8 sm:pt-12 text-center">
+        <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-serif tracking-wide font-normal drop-shadow-md">
+          {title}
+        </h1>
+      </div>
+    </div>
+  );
+};
