@@ -15,6 +15,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { LoadingState } from '@/components/common/LoadingState';
 import { EmptyState } from '@/components/common/EmptyState';
 import { toast } from 'sonner';
@@ -37,7 +39,8 @@ import {
   HelpCircle,
   TrendingDown,
   Plus,
-  Send
+  Send,
+  CalendarIcon
 } from 'lucide-react';
 
 type TabType = 'PROFILE' | 'COMMUNICATIONS' | 'MY_TRIPS' | 'SAVED_FLIGHTS' | 'COUPONS' | 'PASSENGERS' | 'SECURITY' | 'SUPPORT';
@@ -790,7 +793,35 @@ export const Profile: React.FC = () => {
                   <h4 className="text-xs font-semibold text-slate-800">{editingPassenger.id ? 'Edit Traveler' : 'Add New Traveler'}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                     <Input placeholder="Full Name" value={editingPassenger.full_name || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, full_name: e.target.value })} required className="text-xs bg-white h-9" />
-                    <Input type="date" placeholder="Date of Birth" value={editingPassenger.date_of_birth || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, date_of_birth: e.target.value })} className="text-xs bg-white h-9" />
+                    
+                    {/* Official shadcn Date Picker */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          type="button"
+                          className="w-full justify-start text-left font-normal text-xs bg-white h-9 border-slate-300 rounded-lg text-slate-700 cursor-pointer"
+                        >
+                          <CalendarIcon className="mr-2 h-3.5 w-3.5 text-slate-500" />
+                          {editingPassenger.date_of_birth
+                            ? new Date(editingPassenger.date_of_birth).toLocaleDateString()
+                            : <span className="text-slate-400">Date of Birth</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-white border border-slate-200 shadow-none rounded-xl" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={editingPassenger.date_of_birth ? new Date(editingPassenger.date_of_birth) : undefined}
+                          onSelect={(date) =>
+                            setEditingPassenger({
+                              ...editingPassenger,
+                              date_of_birth: date ? date.toISOString().split('T')[0] : '',
+                            })
+                          }
+                        />
+                      </PopoverContent>
+                    </Popover>
+
                     <Input placeholder="Nationality" value={editingPassenger.nationality || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, nationality: e.target.value })} className="text-xs bg-white h-9" />
                     <Input placeholder="Passport Number" value={editingPassenger.passport_number || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, passport_number: e.target.value })} className="text-xs bg-white h-9" />
                   </div>
