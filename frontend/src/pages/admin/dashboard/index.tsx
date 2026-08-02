@@ -5,14 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
+import { ChartRadialGrid, ChartRadialShape, ChartPieDonutText } from '@/components/charts';
 import { 
   AreaChart, 
   Area, 
   BarChart, 
   Bar, 
-  PieChart, 
-  Pie, 
-  Cell, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -33,8 +31,7 @@ import {
   ShieldCheck,
   ChevronRight,
   Zap,
-  BarChart3,
-  PieChart as PieIcon
+  BarChart3
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -107,17 +104,26 @@ export const AdminDashboard: React.FC = () => {
     { date: 'Aug 02', count: 35, revenue: 45800000 },
   ];
 
-  const flightPieData = flightMetrics.length > 0 ? flightMetrics.map(item => ({
+  const pieDonutData = flightMetrics.length > 0 ? flightMetrics.map(item => ({
     name: item.status || 'SCHEDULED',
     value: item.count || 10,
+    fill: item.status === 'SCHEDULED' ? '#0065eb' : item.status === 'BOARDING' ? '#3b82f6' : item.status === 'DELAYED' ? '#f59e0b' : '#ef4444'
   })) : [
-    { name: 'SCHEDULED', value: 28 },
-    { name: 'BOARDING', value: 8 },
-    { name: 'DELAYED', value: 4 },
-    { name: 'CANCELLED', value: 2 },
+    { name: 'SCHEDULED', value: 28, fill: '#0065eb' },
+    { name: 'BOARDING', value: 8, fill: '#3b82f6' },
+    { name: 'DELAYED', value: 4, fill: '#f59e0b' },
+    { name: 'CANCELLED', value: 2, fill: '#ef4444' },
   ];
 
-  const chartConfig = {
+  const radialGridData = [
+    { name: "Direct Booking", value: 420, fill: "#0065eb" },
+    { name: "Partner API", value: 310, fill: "#3b82f6" },
+    { name: "Corporate Portal", value: 240, fill: "#60a5fa" },
+    { name: "Mobile App", value: 190, fill: "#93c5fd" },
+    { name: "Kiosk", value: 85, fill: "#cbd5e1" },
+  ];
+
+  const areaChartConfig = {
     revenue: {
       label: "Revenue (VND)",
       color: "#0065eb",
@@ -127,8 +133,6 @@ export const AdminDashboard: React.FC = () => {
       color: "#64748b",
     },
   } satisfies ChartConfig;
-
-  const pieColors = ["#0065eb", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
 
   return (
     <div className="flex flex-col gap-6 font-sans">
@@ -263,7 +267,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* Row 2: Interactive Main Charts Section */}
+      {/* Row 2: Interactive Main Area & Bar Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* Left: Interactive Area Chart for Revenue Trend (7/12 cols) */}
@@ -283,7 +287,7 @@ export const AdminDashboard: React.FC = () => {
           </CardHeader>
 
           <CardContent className="p-0 pt-2">
-            <ChartContainer config={chartConfig} className="h-64 w-full">
+            <ChartContainer config={areaChartConfig} className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
@@ -338,7 +342,7 @@ export const AdminDashboard: React.FC = () => {
           </CardHeader>
 
           <CardContent className="p-0 pt-2">
-            <ChartContainer config={chartConfig} className="h-64 w-full">
+            <ChartContainer config={areaChartConfig} className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
@@ -364,123 +368,109 @@ export const AdminDashboard: React.FC = () => {
 
       </div>
 
-      {/* Row 3: Fleet Operations Donut Chart & Tables */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Row 3: Reusable Custom Charts Grid (3 Columns for the 3 requested charts) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        {/* Fleet Distribution Donut Chart (4/12 cols) */}
-        <Card className="lg:col-span-4 bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-4">
+        {/* Reusable Chart 1: Radial Grid */}
+        <ChartRadialGrid 
+          title="Booking Source Channels (Radial Grid)"
+          description="Traffic segment breakdown"
+          data={radialGridData}
+          footerTrendText="Direct channel grew +12.4%"
+          footerSubText="Distribution across API, Web, App & Kiosks"
+        />
+
+        {/* Reusable Chart 2: Radial Shape Gauge */}
+        <ChartRadialShape 
+          title="Fleet Capacity Utilization"
+          description="Operational seat occupancy rate"
+          value={88}
+          label="Occupancy %"
+          color="#0065eb"
+          endAngle={280}
+          footerTrendText="Target set at 85.0%"
+          footerSubText="Surpassed monthly revenue flight target"
+        />
+
+        {/* Reusable Chart 3: Donut with Center Text */}
+        <ChartPieDonutText 
+          title="Active Fleet Operational Status"
+          description="Flights segmented by status code"
+          data={pieDonutData}
+          centerLabel="Total Flights"
+          footerTrendText="92% On-time dispatch rate"
+          footerSubText="Live operational status breakdown"
+        />
+
+      </div>
+
+      {/* Row 4: Infrastructure Health & Live Activity Trail */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        {/* Node Health Status */}
+        <Card className="bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
           <CardHeader className="p-0">
-            <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-              <PieIcon className="w-4 h-4 text-[#0065eb]" /> Fleet Status (Donut Chart)
+            <CardTitle className="text-xs font-semibold text-slate-900 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <Server className="w-4 h-4 text-[#0065eb]" /> Infrastructure Node Status
+              </span>
+              <span className="text-[10px] font-mono text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                ALL OK
+              </span>
             </CardTitle>
-            <CardDescription className="text-[11px] text-slate-500 mt-0.5">
-              Active flights segmented by operational status.
-            </CardDescription>
           </CardHeader>
 
-          <CardContent className="p-0 flex flex-col items-center justify-center pt-2">
-            <div className="h-52 w-full flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={flightPieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={80}
-                    paddingAngle={3}
-                    dataKey="value"
-                  >
-                    {flightPieData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Custom Legend */}
-            <div className="grid grid-cols-2 gap-2 w-full pt-3 border-t border-slate-100 text-[11px]">
-              {flightPieData.map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: pieColors[i % pieColors.length] }} />
-                  <span className="text-slate-600 font-normal truncate">{item.name}:</span>
-                  <span className="font-semibold text-slate-900">{item.value}</span>
+          <CardContent className="p-0 flex flex-col gap-2 mt-1">
+            {systemHealthNodes.map((node, i) => {
+              const Icon = node.icon;
+              return (
+                <div key={i} className="p-2.5 bg-slate-50/70 border border-slate-100 rounded-md flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="w-4 h-4 text-slate-500" />
+                    <div>
+                      <p className="font-medium text-slate-800 text-[11px]">{node.name}</p>
+                      <p className="text-[10px] text-slate-400">Latency: {node.latency}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] font-semibold text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded">
+                      {node.status}
+                    </span>
+                  </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </CardContent>
         </Card>
 
-        {/* Real-Time Infrastructure Health & Live Activity Trail (8/12 cols) */}
-        <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Node Health Status */}
-          <Card className="bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
-            <CardHeader className="p-0">
-              <CardTitle className="text-xs font-semibold text-slate-900 flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <Server className="w-4 h-4 text-[#0065eb]" /> Infrastructure Node Status
-                </span>
-                <span className="text-[10px] font-mono text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                  ALL OK
-                </span>
-              </CardTitle>
-            </CardHeader>
+        {/* Live System Audit Feed */}
+        <Card className="bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
+          <CardHeader className="p-0 flex flex-row items-center justify-between">
+            <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-slate-700" /> Live Audit Trail Feed
+            </CardTitle>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/admin/audit')} className="text-xs font-medium text-[#0065eb] hover:text-blue-700 cursor-pointer h-6 px-1.5">
+              Audit Log <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+            </Button>
+          </CardHeader>
 
-            <CardContent className="p-0 flex flex-col gap-2 mt-1">
-              {systemHealthNodes.map((node, i) => {
-                const Icon = node.icon;
-                return (
-                  <div key={i} className="p-2.5 bg-slate-50/70 border border-slate-100 rounded-md flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2.5">
-                      <Icon className="w-4 h-4 text-slate-500" />
-                      <div>
-                        <p className="font-medium text-slate-800 text-[11px]">{node.name}</p>
-                        <p className="text-[10px] text-slate-400">Latency: {node.latency}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-[10px] font-semibold text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded">
-                        {node.status}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-
-          {/* Live System Audit Feed */}
-          <Card className="bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
-            <CardHeader className="p-0 flex flex-row items-center justify-between">
-              <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-slate-700" /> Live Audit Trail Feed
-              </CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/admin/audit')} className="text-xs font-medium text-[#0065eb] hover:text-blue-700 cursor-pointer h-6 px-1.5">
-                Audit Log <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-              </Button>
-            </CardHeader>
-
-            <CardContent className="p-0 flex flex-col gap-2.5 mt-1">
-              {recentActivities.map((act, i) => (
-                <div key={i} className="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50/80 transition-colors border-b border-slate-100 last:border-none">
-                  <div className="w-2 h-2 rounded-full bg-[#0065eb] mt-1.5 shrink-0" />
-                  <div className="flex flex-col gap-0.5 min-w-0">
-                    <p className="text-xs text-slate-800 font-normal leading-tight">{act.action}</p>
-                    <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                      <span className="font-semibold text-slate-600">{act.user}</span>
-                      <span>•</span>
-                      <span>{act.time}</span>
-                    </div>
+          <CardContent className="p-0 flex flex-col gap-2.5 mt-1">
+            {recentActivities.map((act, i) => (
+              <div key={i} className="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50/80 transition-colors border-b border-slate-100 last:border-none">
+                <div className="w-2 h-2 rounded-full bg-[#0065eb] mt-1.5 shrink-0" />
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <p className="text-xs text-slate-800 font-normal leading-tight">{act.action}</p>
+                  <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                    <span className="font-semibold text-slate-600">{act.user}</span>
+                    <span>•</span>
+                    <span>{act.time}</span>
                   </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
-        </div>
       </div>
     </div>
   );
