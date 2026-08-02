@@ -66,19 +66,24 @@ export const ProfileEdit: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900 relative px-4 py-4 sm:py-6">
-      {/* Top Left Close Button X */}
-      <button
-        onClick={() => navigate('/profile')}
-        className="fixed top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer z-50"
-        aria-label="Close"
-      >
-        <X className="w-4 h-4" />
-      </button>
+    <div className="bg-white font-sans text-slate-900 px-4 py-4 sm:py-6">
 
       {/* Centered Compact Expedia Edit Layout */}
       <div className="max-w-md sm:max-w-lg mx-auto pt-2 pb-10 flex flex-col gap-4">
         
+        {/* Header Action Row with X Close Button Below Sticky Header */}
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-1">
+          <button
+            type="button"
+            onClick={() => navigate('/profile')}
+            className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+            aria-label="Back to profile"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <span className="text-xs font-semibold text-slate-500">Edit Profile</span>
+        </div>
+
         {/* Header Title & Description */}
         <div>
           <h1 className="text-lg font-semibold text-slate-900 mb-0.5">Basic information</h1>
