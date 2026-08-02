@@ -3,30 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SignInForm } from '@/components/auth/SignInForm';
-import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
-import { BrandFooterLogos } from '@/components/auth/BrandFooterLogos';
 
 export const SignIn: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleSuccessSignIn = (email: string) => {
-    console.log('User signed in with email:', email);
-    navigate('/');
-  };
-
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col items-center justify-between p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-slate-50/50 text-slate-900 flex flex-col items-center justify-between p-4 sm:p-6 font-sans">
       
-      {/* Top Header Bar with Back Arrow and Logo */}
-      <div className="w-full max-w-[1240px] flex items-center justify-between py-2">
+      {/* Top Header Bar */}
+      <div className="w-full max-w-5xl flex items-center justify-between py-2">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate(-1)}
-          className="w-10 h-10 rounded-full hover:bg-slate-100 transition-colors text-slate-700"
+          className="w-9 h-9 rounded-full hover:bg-slate-200/60 transition-colors text-slate-700 cursor-pointer"
           aria-label="Go back"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4" />
         </Button>
 
         {/* Expedia Brand Logo */}
@@ -37,52 +30,34 @@ export const SignIn: React.FC = () => {
               <path d="M7 7h10v10" />
             </svg>
           </div>
-          <span className="text-xl font-black tracking-tight text-slate-900 font-sans">Expedia</span>
+          <span className="text-lg font-black tracking-tight text-slate-900 font-sans">Expedia</span>
         </div>
 
-        <div className="w-10" />
+        <div className="w-9" />
       </div>
 
-      {/* Main Authentication Container */}
-      <div className="w-full max-w-[400px] flex flex-col items-center gap-6 my-auto py-8">
+      {/* Main Authentication Card */}
+      <div className="w-full max-w-[420px] bg-white rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-slate-200/80 flex flex-col gap-6 my-auto">
         
-        {/* Page Title & Subtitle */}
-        <div className="text-center flex flex-col gap-2">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            Sign in or create an account
+        {/* Card Header Title */}
+        <div className="text-center flex flex-col gap-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            Sign in to your account
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
-            Unlock a world of rewards with one account across Expedia, Hotels.com, and Vrbo.
+          <p className="text-xs text-slate-500 font-normal leading-relaxed">
+            Access your flight bookings, saved trips, and account details.
           </p>
         </div>
 
-        {/* Email Sign In Form */}
-        <SignInForm onSubmitEmail={handleSuccessSignIn} />
-
-        {/* Divider */}
-        <div className="w-full flex items-center gap-4 my-1">
-          <div className="h-[1px] bg-gray-200 flex-1" />
-          <span className="text-xs text-gray-400 font-medium">or</span>
-          <div className="h-[1px] bg-gray-200 flex-1" />
-        </div>
-
-        {/* Social Authentication Buttons */}
-        <SocialLoginButtons />
-
-        {/* Legal Statement */}
-        <p className="text-[11px] text-gray-500 text-center leading-relaxed mt-2">
-          By continuing, you have read and agree to our{' '}
-          <a href="#" className="text-blue-600 hover:underline">Terms of Service</a>,{' '}
-          <a href="#" className="text-blue-600 hover:underline">Privacy Statement</a>, and{' '}
-          <a href="#" className="text-blue-600 hover:underline">Rewards Terms</a>.
-        </p>
-
-        {/* Brand Family Footer */}
-        <BrandFooterLogos />
+        {/* Email Authentication Form */}
+        <SignInForm />
 
       </div>
 
-      <div className="py-2" />
+      {/* Footer */}
+      <div className="py-2 text-center text-[11px] text-slate-400">
+        © 2026 Expedia, Inc. All rights reserved.
+      </div>
     </div>
   );
 };
