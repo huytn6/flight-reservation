@@ -19,6 +19,7 @@ Monorepo layout for the flight booking project.
 │   ├── src/
 │   ├── index.html
 │   └── package.json
+├── BACKEND_API_REFERENCE.md # Backend API functions and endpoint reference
 ├── docker-compose.yml       # MySQL and Flyway
 └── start.sh                 # Starts the backend API
 ```
