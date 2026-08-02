@@ -12,8 +12,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { UserCheck, CreditCard, Lock } from 'lucide-react';
 
-
-export const CheckoutPage: React.FC = () => {
+export const Checkout: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();

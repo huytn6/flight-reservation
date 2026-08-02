@@ -4,28 +4,28 @@ import { AuthLayout } from '@/layouts/AuthLayout';
 import { StaffLayout } from '@/layouts/StaffLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
 
-import { HomePage } from '@/pages/HomePage';
-import { SignInPage } from '@/pages/SignInPage';
-import { FlightResultsPage } from '@/pages/FlightResultsPage';
-import { ReviewTripPage } from '@/pages/ReviewTripPage';
-import { CheckoutPage } from '@/pages/CheckoutPage';
-import { ProfilePage } from '@/pages/ProfilePage';
-import { SavedFlightsPage } from '@/pages/SavedFlightsPage';
-import { MyBookingsPage } from '@/pages/MyBookingsPage';
-import { BookingDetailPage } from '@/pages/BookingDetailPage';
-import { BookingLookupPage } from '@/pages/BookingLookupPage';
-import { PriceAlertsPage } from '@/pages/PriceAlertsPage';
-import { SupportPage } from '@/pages/SupportPage';
+import { Home } from '@/pages/home';
+import { SignIn } from '@/pages/sign-in';
+import { FlightResults } from '@/pages/flight-results';
+import { ReviewTrip } from '@/pages/review-trip';
+import { Checkout } from '@/pages/checkout';
+import { Profile } from '@/pages/profile';
+import { SavedFlights } from '@/pages/saved-flights';
+import { MyBookings } from '@/pages/my-bookings';
+import { BookingDetail } from '@/pages/booking-detail';
+import { BookingLookup } from '@/pages/booking-lookup';
+import { PriceAlerts } from '@/pages/price-alerts';
+import { Support } from '@/pages/support';
 
-import { StaffBookingsPage } from '@/pages/staff/StaffBookingsPage';
-import { StaffTicketsPage } from '@/pages/staff/StaffTicketsPage';
+import { StaffBookings } from '@/pages/staff/bookings';
+import { StaffTickets } from '@/pages/staff/tickets';
 
-import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
-import { AdminUsersPage } from '@/pages/admin/AdminUsersPage';
-import { AdminFlightCatalogPage } from '@/pages/admin/AdminFlightCatalogPage';
-import { AdminBookingsFinancePage } from '@/pages/admin/AdminBookingsFinancePage';
-import { AdminCouponsCMSPage } from '@/pages/admin/AdminCouponsCMSPage';
-import { AdminAuditLogsPage } from '@/pages/admin/AdminAuditLogsPage';
+import { AdminDashboard } from '@/pages/admin/dashboard';
+import { AdminUsers } from '@/pages/admin/users';
+import { AdminCatalog } from '@/pages/admin/catalog';
+import { AdminFinance } from '@/pages/admin/finance';
+import { AdminCoupons } from '@/pages/admin/coupons';
+import { AdminAudit } from '@/pages/admin/audit';
 
 export const router = createBrowserRouter([
   {
@@ -34,51 +34,51 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <Home />,
       },
       {
         path: 'flights/search',
-        element: <FlightResultsPage />,
+        element: <FlightResults />,
       },
       {
         path: 'Flights-Search',
-        element: <FlightResultsPage />,
+        element: <FlightResults />,
       },
       {
         path: 'review-trip',
-        element: <ReviewTripPage />,
+        element: <ReviewTrip />,
       },
       {
         path: 'checkout',
-        element: <CheckoutPage />,
+        element: <Checkout />,
       },
       {
         path: 'profile',
-        element: <ProfilePage />,
+        element: <Profile />,
       },
       {
         path: 'saved-flights',
-        element: <SavedFlightsPage />,
+        element: <SavedFlights />,
       },
       {
         path: 'my-bookings',
-        element: <MyBookingsPage />,
+        element: <MyBookings />,
       },
       {
         path: 'bookings/:id',
-        element: <BookingDetailPage />,
+        element: <BookingDetail />,
       },
       {
         path: 'booking-lookup',
-        element: <BookingLookupPage />,
+        element: <BookingLookup />,
       },
       {
         path: 'price-alerts',
-        element: <PriceAlertsPage />,
+        element: <PriceAlerts />,
       },
       {
         path: 'support',
-        element: <SupportPage />,
+        element: <Support />,
       },
     ],
   },
@@ -88,11 +88,11 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <StaffBookingsPage />,
+        element: <StaffBookings />,
       },
       {
         path: 'tickets',
-        element: <StaffTicketsPage />,
+        element: <StaffTickets />,
       },
     ],
   },
@@ -102,27 +102,27 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminDashboardPage />,
+        element: <AdminDashboard />,
       },
       {
         path: 'users',
-        element: <AdminUsersPage />,
+        element: <AdminUsers />,
       },
       {
         path: 'catalog',
-        element: <AdminFlightCatalogPage />,
+        element: <AdminCatalog />,
       },
       {
         path: 'finance',
-        element: <AdminBookingsFinancePage />,
+        element: <AdminFinance />,
       },
       {
         path: 'cms',
-        element: <AdminCouponsCMSPage />,
+        element: <AdminCoupons />,
       },
       {
         path: 'audit',
-        element: <AdminAuditLogsPage />,
+        element: <AdminAudit />,
       },
     ],
   },
@@ -131,12 +131,12 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'signin',
-        element: <SignInPage />,
+        element: <SignIn />,
       },
     ],
   },
   {
     path: '*',
-    element: <HomePage />,
+    element: <Home />,
   },
 ]);

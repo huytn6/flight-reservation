@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminService } from '@/services/admin';
 import { toast } from 'sonner';
 
-export const AdminBookingsFinancePage: React.FC = () => {
+export const AdminFinance: React.FC = () => {
   const [subTab, setSubTab] = useState<'BOOKINGS' | 'PAYMENTS' | 'REFUNDS'>('BOOKINGS');
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

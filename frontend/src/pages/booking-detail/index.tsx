@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { bookingService, type BookingDetail, type ETicket } from '@/services/booking';
+import { bookingService, type BookingDetail as BookingDetailType, type ETicket } from '@/services/booking';
 import { reviewService } from '@/services/review';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,11 +16,10 @@ import {
   FileText 
 } from 'lucide-react';
 
-export const BookingDetailPage: React.FC = () => {
+export const BookingDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-
-  const [detail, setDetail] = useState<BookingDetail | null>(null);
+  const [detail, setDetail] = useState<BookingDetailType | null>(null);
   const [etickets, setEtickets] = useState<ETicket[]>([]);
   const [flightStatus, setFlightStatus] = useState<any>(null);
   const [travelAlerts, setTravelAlerts] = useState<any[]>([]);

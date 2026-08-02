@@ -6,7 +6,7 @@ import { RecentActivitySection } from '@/components/RecentActivitySection';
 import { TravelValueBanners } from '@/components/promotion/TravelValueBanners';
 import { MOCK_AIRPORTS } from '@/constants/mockAirports';
 
-export const HomePage: React.FC = () => {
+export const Home: React.FC = () => {
   const handleSearchSubmit = (searchParams: unknown) => {
     console.log('Flight search submitted:', searchParams);
   };

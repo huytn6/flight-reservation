@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const AdminFlightCatalogPage: React.FC = () => {
+export const AdminCatalog: React.FC = () => {
   const [subTab, setSubTab] = useState<'AIRPORTS' | 'AIRLINES' | 'AIRCRAFT' | 'FLIGHTS'>('AIRPORTS');
   const [airports, setAirports] = useState<any[]>([]);
   const [airlines, setAirlines] = useState<any[]>([]);
@@ -32,8 +32,6 @@ export const AdminFlightCatalogPage: React.FC = () => {
   const flArrId = '';
   const [flDepTime, setFlDepTime] = useState('2026-08-20T08:00:00');
   const [flArrTime, setFlArrTime] = useState('2026-08-20T10:10:00');
-
-
 
   useEffect(() => {
     loadData();
@@ -284,7 +282,6 @@ export const AdminFlightCatalogPage: React.FC = () => {
             )}
 
             {subTab === 'FLIGHTS' && (
-
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b text-slate-500 font-bold uppercase text-[10px]">

@@ -6,7 +6,7 @@ import { SignInForm } from '@/components/auth/SignInForm';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 import { BrandFooterLogos } from '@/components/auth/BrandFooterLogos';
 
-export const SignInPage: React.FC = () => {
+export const SignIn: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSuccessSignIn = (email: string) => {

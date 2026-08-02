@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { ShieldCheck, Tag, ShoppingBag, Plus, Trash2, ArrowRight } from 'lucide-react';
 
-export const ReviewTripPage: React.FC = () => {
+export const ReviewTrip: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 

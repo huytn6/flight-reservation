@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { LifeBuoy, UserPlus, Send, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const StaffTicketsPage: React.FC = () => {
+export const StaffTickets: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(true);

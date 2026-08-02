@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const AdminCouponsCMSPage: React.FC = () => {
+export const AdminCoupons: React.FC = () => {
   const [subTab, setSubTab] = useState<'COUPONS' | 'CMS'>('COUPONS');
   const [coupons, setCoupons] = useState<any[]>([]);
   const [contents, setContents] = useState<any[]>([]);
@@ -17,7 +17,6 @@ export const AdminCouponsCMSPage: React.FC = () => {
   const [cpValue, setCpValue] = useState(100000);
   const [cpFrom, setCpFrom] = useState('2026-01-01T00:00');
   const [cpUntil, setCpUntil] = useState('2026-12-31T23:59');
-
 
   // CMS Content form
   const [cmsKey, setCmsKey] = useState('');

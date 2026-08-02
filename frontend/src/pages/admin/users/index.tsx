@@ -6,12 +6,11 @@ import { Input } from '@/components/ui/input';
 import { UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const AdminUsersPage: React.FC = () => {
+export const AdminUsers: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'CUSTOMERS' | 'STAFF'>('CUSTOMERS');
   const [customers, setCustomers] = useState<AuthUser[]>([]);
   const [staffList, setStaffList] = useState<AuthUser[]>([]);
   const [loading, setLoading] = useState(true);
-
 
   // Create staff modal form
   const [staffEmail, setStaffEmail] = useState('');
@@ -31,7 +30,6 @@ export const AdminUsersPage: React.FC = () => {
         const res = await adminService.getCustomers('');
         setCustomers(res.items || []);
       } else {
-
         const res = await adminService.getStaff();
         setStaffList(res.items || []);
       }

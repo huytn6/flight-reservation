@@ -12,7 +12,7 @@ import { flightService, type FlightOffer, type FareOption, type FareRule, type F
 import { useAuthStore } from '@/store/use-auth';
 import { toast } from 'sonner';
 
-export const FlightResultsPage: React.FC = () => {
+export const FlightResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();

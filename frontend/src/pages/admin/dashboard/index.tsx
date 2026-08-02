@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { DollarSign, Ticket, Users, Plane, TrendingUp } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const AdminDashboardPage: React.FC = () => {
+export const AdminDashboard: React.FC = () => {
   const [summary, setSummary] = useState<any>(null);
   const [bookingMetrics, setBookingMetrics] = useState<any[]>([]);
   const [flightMetrics, setFlightMetrics] = useState<any[]>([]);
@@ -32,7 +32,6 @@ export const AdminDashboardPage: React.FC = () => {
       setLoading(false);
     }
   };
-
 
   if (loading) {
     return <div className="p-8 text-slate-500 font-medium">Loading admin dashboard...</div>;

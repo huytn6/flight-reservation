@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Bell, TrendingDown, Plus, Trash2, History } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const PriceAlertsPage: React.FC = () => {
+export const PriceAlerts: React.FC = () => {
   const [alerts, setAlerts] = useState<PriceAlert[]>([]);
   const [prefs, setPrefs] = useState<TravelAlertPreferences | null>(null);
   const [loading, setLoading] = useState(true);
@@ -132,7 +132,6 @@ export const PriceAlertsPage: React.FC = () => {
                 <Input type="number" value={targetPrice || ''} onChange={(e) => setTargetPrice(e.target.value ? Number(e.target.value) : undefined)} placeholder="1500000" className="text-xs" />
               </div>
             </div>
-
 
             <Button type="submit" disabled={creating} className="bg-purple-600 hover:bg-purple-700 text-white font-bold w-fit rounded-xl text-xs px-5">
               {creating ? 'Creating...' : 'Create Alert'}

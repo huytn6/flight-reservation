@@ -6,7 +6,7 @@ import { Search, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
-export const BookingLookupPage: React.FC = () => {
+export const BookingLookup: React.FC = () => {
   const [pnr, setPnr] = useState('');
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);

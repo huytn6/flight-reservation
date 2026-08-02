@@ -5,7 +5,7 @@ import { Trash2, Plane } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
-export const SavedFlightsPage: React.FC = () => {
+export const SavedFlights: React.FC = () => {
   const [savedFlights, setSavedFlights] = useState<SavedFlight[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

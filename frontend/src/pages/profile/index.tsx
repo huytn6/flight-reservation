@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { User, KeyRound, Monitor, Users, Plus, Trash2, Edit2, Check, X } from 'lucide-react';
 
-export const ProfilePage: React.FC = () => {
+export const Profile: React.FC = () => {
   const { user, setUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'PROFILE' | 'PASSWORD' | 'SESSIONS' | 'PASSENGERS'>('PROFILE');
 

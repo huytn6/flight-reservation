@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { LifeBuoy, Plus, MessageSquare, Send } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const SupportPage: React.FC = () => {
+export const Support: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [activeTicketDetail, setActiveTicketDetail] = useState<SupportTicketDetail | null>(null);
   const [loading, setLoading] = useState(true);

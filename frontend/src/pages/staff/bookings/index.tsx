@@ -6,12 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Search, Edit2, StickyNote, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-export const StaffBookingsPage: React.FC = () => {
+export const StaffBookings: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [query, setQuery] = useState('');
   const [pnrFilter, setPnrFilter] = useState('');
   const [loading, setLoading] = useState(true);
-
 
   // Selected booking detail for staff edit
   const [selectedDetail, setSelectedDetail] = useState<StaffBookingDetail | null>(null);
@@ -25,7 +24,6 @@ export const StaffBookingsPage: React.FC = () => {
   useEffect(() => {
     loadBookings();
   }, [pnrFilter]);
-
 
   const loadBookings = async () => {
     setLoading(true);
