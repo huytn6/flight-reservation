@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { adminService } from '@/services/admin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { DataTable, DataTableColumnHeader } from '@/components/datatable';
+import type { ColumnDef } from '@tanstack/react-table';
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -101,27 +104,99 @@ export const AdminCoupons: React.FC = () => {
     }
   };
 
+  const couponColumns: ColumnDef<any>[] = useMemo(() => [
+    {
+      accessorKey: "code",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Coupon Code" />,
+      cell: ({ row }) => <span className="font-bold font-mono text-[#0065eb]">{row.getValue("code")}</span>,
+    },
+    {
+      accessorKey: "discount_type",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
+      cell: ({ row }) => <span className="font-semibold text-slate-800">{row.getValue("discount_type")}</span>,
+    },
+    {
+      accessorKey: "discount_value",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Discount Value" />,
+      cell: ({ row }) => <span className="font-bold text-slate-900">{row.getValue<number>("discount_value")?.toLocaleString()}</span>,
+    },
+    {
+      accessorKey: "is_active",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      cell: ({ row }) => {
+        const active = row.getValue("is_active");
+        return (
+          <Badge variant="outline" className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded ${
+            active ? 'bg-blue-50 text-[#0065eb] border-blue-200' : 'bg-red-50 text-red-700 border-red-200'
+          }`}>
+            {active ? 'Active' : 'Disabled'}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-right font-semibold text-slate-700">Actions</div>,
+      cell: ({ row }) => (
+        <div className="text-right">
+          <button onClick={() => handleDeleteCoupon(row.original.id)} className="text-slate-400 hover:text-red-600 p-1 cursor-pointer">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      ),
+    },
+  ], []);
+
+  const cmsColumns: ColumnDef<any>[] = useMemo(() => [
+    {
+      accessorKey: "slug",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Key / Slug" />,
+      cell: ({ row }) => <span className="font-bold font-mono text-[#0065eb]">{row.original.slug || row.original.key}</span>,
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+      cell: ({ row }) => <span className="font-semibold text-slate-900">{row.getValue("title")}</span>,
+    },
+    {
+      accessorKey: "created_at",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
+      cell: ({ row }) => <span className="text-slate-500">{new Date(row.getValue<string>("created_at")).toLocaleDateString()}</span>,
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-right font-semibold text-slate-700">Actions</div>,
+      cell: ({ row }) => (
+        <div className="text-right">
+          <button onClick={() => handleDeleteContent(row.original.id)} className="text-slate-400 hover:text-red-600 p-1 cursor-pointer">
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      ),
+    },
+  ], []);
+
   return (
     <div className="flex flex-col gap-6 font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Coupons & Content Management</h1>
-          <p className="text-xs text-slate-500">Create discount promotional coupons and manage CMS website articles.</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Coupons & Content Management</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Create discount promotional coupons and manage CMS website articles.</p>
         </div>
 
-        <div className="flex bg-white p-1 rounded-xl border gap-1 text-xs font-semibold">
+        <div className="flex bg-white p-1 rounded-md border border-slate-200 gap-1 text-xs font-semibold">
           <button
             onClick={() => setSubTab('COUPONS')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              subTab === 'COUPONS' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-1.5 rounded-md transition-colors cursor-pointer ${
+              subTab === 'COUPONS' ? 'bg-[#0065eb] text-white font-bold' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             Discount Coupons
           </button>
           <button
             onClick={() => setSubTab('CMS')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              subTab === 'CMS' ? 'bg-emerald-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'
+            className={`px-3.5 py-1.5 rounded-md transition-colors cursor-pointer ${
+              subTab === 'CMS' ? 'bg-[#0065eb] text-white font-bold' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             CMS Articles & Content
@@ -130,105 +205,62 @@ export const AdminCoupons: React.FC = () => {
       </div>
 
       {subTab === 'COUPONS' ? (
-        <form onSubmit={handleCreateCoupon} className="bg-white p-5 rounded-2xl border shadow-xs flex flex-col gap-3 max-w-2xl">
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Plus className="w-4 h-4 text-emerald-600" /> Create Discount Coupon
+        <form onSubmit={handleCreateCoupon} className="bg-white p-4 sm:p-5 rounded-lg border-0 shadow-none flex flex-col gap-3 max-w-2xl">
+          <h2 className="text-xs font-bold text-slate-900 flex items-center gap-2">
+            <Plus className="w-4 h-4 text-[#0065eb]" /> Create Discount Coupon
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-            <Input placeholder="Code (SUMMER2026)" value={cpCode} onChange={(e) => setCpCode(e.target.value)} required className="text-xs uppercase font-mono" />
-            <select value={cpType} onChange={(e) => setCpType(e.target.value as any)} className="text-xs p-2 border rounded-xl bg-white font-semibold">
+            <Input placeholder="Code (SUMMER2026)" value={cpCode} onChange={(e) => setCpCode(e.target.value)} required className="text-xs uppercase font-mono bg-slate-50 border-slate-200" />
+            <select value={cpType} onChange={(e) => setCpType(e.target.value as any)} className="text-xs p-2 border border-slate-200 rounded-md bg-slate-50 font-medium">
               <option value="FIXED">FIXED AMOUNT (VND)</option>
               <option value="PERCENT">PERCENTAGE (%)</option>
             </select>
-            <Input type="number" placeholder="Value (100000)" value={cpValue} onChange={(e) => setCpValue(Number(e.target.value))} required className="text-xs" />
-            <Input type="datetime-local" value={cpFrom} onChange={(e) => setCpFrom(e.target.value)} className="text-xs" required />
-            <Input type="datetime-local" value={cpUntil} onChange={(e) => setCpUntil(e.target.value)} className="text-xs" required />
+            <Input type="number" placeholder="Value (100000)" value={cpValue} onChange={(e) => setCpValue(Number(e.target.value))} required className="text-xs bg-slate-50 border-slate-200" />
+            <Input type="datetime-local" value={cpFrom} onChange={(e) => setCpFrom(e.target.value)} className="text-xs bg-slate-50 border-slate-200" required />
+            <Input type="datetime-local" value={cpUntil} onChange={(e) => setCpUntil(e.target.value)} className="text-xs bg-slate-50 border-slate-200" required />
           </div>
 
-          <Button type="submit" className="bg-emerald-600 text-white font-bold text-xs rounded-xl w-fit px-5">Create Coupon</Button>
+          <Button type="submit" className="bg-[#0065eb] hover:bg-blue-700 text-white font-medium text-xs rounded-md w-fit px-5 cursor-pointer">Create Coupon</Button>
         </form>
       ) : (
-        <form onSubmit={handleCreateContent} className="bg-white p-5 rounded-2xl border shadow-xs flex flex-col gap-3 max-w-2xl">
-          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Plus className="w-4 h-4 text-emerald-600" /> Create CMS Article / Page
+        <form onSubmit={handleCreateContent} className="bg-white p-4 sm:p-5 rounded-lg border-0 shadow-none flex flex-col gap-3 max-w-2xl">
+          <h2 className="text-xs font-bold text-slate-900 flex items-center gap-2">
+            <Plus className="w-4 h-4 text-[#0065eb]" /> Create CMS Article / Page
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Input placeholder="Slug Key (e.g. promo-banner-1)" value={cmsKey} onChange={(e) => setCmsKey(e.target.value)} required className="text-xs font-mono" />
-            <Input placeholder="Title" value={cmsTitle} onChange={(e) => setCmsTitle(e.target.value)} required className="text-xs" />
+            <Input placeholder="Slug Key (e.g. promo-banner-1)" value={cmsKey} onChange={(e) => setCmsKey(e.target.value)} required className="text-xs font-mono bg-slate-50 border-slate-200" />
+            <Input placeholder="Title" value={cmsTitle} onChange={(e) => setCmsTitle(e.target.value)} required className="text-xs bg-slate-50 border-slate-200" />
           </div>
-          <textarea placeholder="Body content..." value={cmsBody} onChange={(e) => setCmsBody(e.target.value)} required className="w-full text-xs p-2 border rounded-xl h-24" />
-          <Button type="submit" className="bg-emerald-600 text-white font-bold text-xs rounded-xl w-fit px-5">Publish Content</Button>
+          <textarea placeholder="Body content..." value={cmsBody} onChange={(e) => setCmsBody(e.target.value)} required className="w-full text-xs p-2 border border-slate-200 rounded-md h-24 bg-slate-50 focus:bg-white" />
+          <Button type="submit" className="bg-[#0065eb] hover:bg-blue-700 text-white font-medium text-xs rounded-md w-fit px-5 cursor-pointer">Publish Content</Button>
         </form>
       )}
 
-      {/* Main Table */}
-      <div className="bg-white p-6 rounded-2xl border shadow-xs">
-        <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-3">{subTab} Records</h2>
+      {/* Main Enterprise Reusable DataTable */}
+      <div className="bg-white p-4 sm:p-5 rounded-lg border-0 shadow-none">
+        <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-3 mb-3">{subTab} Records</h2>
 
-        {loading ? (
-          <p className="text-xs text-slate-500">Loading records...</p>
+        {subTab === 'COUPONS' ? (
+          <DataTable
+            columns={couponColumns}
+            data={coupons}
+            loading={loading}
+            onRefresh={loadData}
+            enableRowSelection={true}
+            searchPlaceholder="Search coupon code, discount type..."
+          />
         ) : (
-          <div className="overflow-x-auto">
-            {subTab === 'COUPONS' ? (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="pb-2">Code</th>
-                    <th className="pb-2">Type</th>
-                    <th className="pb-2">Discount Value</th>
-                    <th className="pb-2">Active</th>
-                    <th className="pb-2 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {coupons.map((c) => (
-                    <tr key={c.id} className="hover:bg-slate-50">
-                      <td className="py-2.5 font-bold font-mono text-purple-700">{c.code}</td>
-                      <td className="py-2.5 font-bold text-slate-700">{c.discount_type}</td>
-                      <td className="py-2.5 font-bold text-emerald-700">{c.discount_value?.toLocaleString()}</td>
-                      <td className="py-2.5">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}`}>
-                          {c.is_active ? 'Active' : 'Disabled'}
-                        </span>
-                      </td>
-                      <td className="py-2.5 text-right">
-                        <button onClick={() => handleDeleteCoupon(c.id)} className="text-slate-400 hover:text-red-600 p-1">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="pb-2">Key / Slug</th>
-                    <th className="pb-2">Title</th>
-                    <th className="pb-2">Created At</th>
-                    <th className="pb-2 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {contents.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50">
-                      <td className="py-2.5 font-mono text-blue-700 font-bold">{item.slug || item.key}</td>
-                      <td className="py-2.5 font-bold text-slate-900">{item.title}</td>
-                      <td className="py-2.5 text-slate-500">{new Date(item.created_at).toLocaleDateString()}</td>
-                      <td className="py-2.5 text-right">
-                        <button onClick={() => handleDeleteContent(item.id)} className="text-slate-400 hover:text-red-600 p-1">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+          <DataTable
+            columns={cmsColumns}
+            data={contents}
+            loading={loading}
+            onRefresh={loadData}
+            enableRowSelection={true}
+            searchPlaceholder="Search title, slug key..."
+          />
         )}
       </div>
     </div>
   );
 };
+
