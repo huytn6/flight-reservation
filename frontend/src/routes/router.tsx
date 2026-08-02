@@ -4,6 +4,8 @@ import { AuthLayout } from '@/layouts/AuthLayout';
 import { StaffLayout } from '@/layouts/StaffLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
 
+import { ProtectedRoute, GuestGuard } from '@/components/auth/Guards';
+
 import { Home } from '@/pages/home';
 import { SignIn } from '@/pages/sign-in';
 import { FlightResults } from '@/pages/flight-results';
@@ -27,6 +29,9 @@ import { AdminFinance } from '@/pages/admin/finance';
 import { AdminCoupons } from '@/pages/admin/coupons';
 import { AdminAudit } from '@/pages/admin/audit';
 
+import { Forbidden } from '@/pages/forbidden';
+import { NotFound } from '@/pages/not-found';
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -49,42 +54,76 @@ export const router = createBrowserRouter([
         element: <ReviewTrip />,
       },
       {
-        path: 'checkout',
-        element: <Checkout />,
-      },
-      {
-        path: 'profile',
-        element: <Profile />,
-      },
-      {
-        path: 'saved-flights',
-        element: <SavedFlights />,
-      },
-      {
-        path: 'my-bookings',
-        element: <MyBookings />,
-      },
-      {
-        path: 'bookings/:id',
-        element: <BookingDetail />,
-      },
-      {
         path: 'booking-lookup',
         element: <BookingLookup />,
       },
+      // Protected Customer Routes
+      {
+        path: 'checkout',
+        element: (
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'profile',
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'saved-flights',
+        element: (
+          <ProtectedRoute>
+            <SavedFlights />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'my-bookings',
+        element: (
+          <ProtectedRoute>
+            <MyBookings />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'bookings/:id',
+        element: (
+          <ProtectedRoute>
+            <BookingDetail />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: 'price-alerts',
-        element: <PriceAlerts />,
+        element: (
+          <ProtectedRoute>
+            <PriceAlerts />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'support',
-        element: <Support />,
+        element: (
+          <ProtectedRoute>
+            <Support />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
+  // Staff Portal Protected Routes (Staff & Admin)
   {
     path: '/staff',
-    element: <StaffLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
+        <StaffLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -96,9 +135,14 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Admin Portal Protected Routes (Admin only)
   {
     path: '/admin',
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={['ADMIN']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
@@ -126,17 +170,27 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Guest Routes (Already logged-in users redirected to /)
   {
     element: <AuthLayout />,
     children: [
       {
         path: 'signin',
-        element: <SignIn />,
+        element: (
+          <GuestGuard>
+            <SignIn />
+          </GuestGuard>
+        ),
       },
     ],
   },
+  // System Status Routes
+  {
+    path: '/403',
+    element: <Forbidden />,
+  },
   {
     path: '*',
-    element: <Home />,
+    element: <NotFound />,
   },
 ]);

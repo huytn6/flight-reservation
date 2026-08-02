@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { authService } from '@/services/auth';
 import { useAuthStore } from '@/store/use-auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 interface SignInFormProps {
@@ -20,6 +20,8 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
 
   const setAuth = useAuthStore((state) => state.setAuth);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
 
   const handleFillDemo = (userEmail: string, userPass: string) => {
     setEmail(userEmail);
@@ -29,6 +31,8 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+
     setError(null);
     setLoading(true);
 
@@ -37,7 +41,10 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
         const res = await authService.login({ email, password });
         setAuth(res.user, res.token);
         toast.success(`Welcome back, ${res.user.full_name}!`);
-        if (res.user.role === 'ADMIN') {
+
+        if (returnUrl) {
+          navigate(decodeURIComponent(returnUrl));
+        } else if (res.user.role === 'ADMIN') {
           navigate('/admin');
         } else if (res.user.role === 'STAFF') {
           navigate('/staff');
@@ -49,7 +56,7 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
         toast.success('Registration successful! Logging you in...');
         const res = await authService.login({ email, password });
         setAuth(res.user, res.token);
-        navigate('/');
+        navigate(returnUrl ? decodeURIComponent(returnUrl) : '/');
       } else if (mode === 'FORGOT') {
         await authService.forgotPassword(email);
         toast.info('Reset instructions sent to your email (simulated)');
