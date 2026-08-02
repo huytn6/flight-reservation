@@ -1,7 +1,13 @@
 import { create } from 'zustand';
 import type { Airport } from '@/types/airport';
 import type { FlightType, PassengerState, DateRangeState } from '@/types/flight';
-import { MOCK_AIRPORTS } from '@/constants/mockAirports';
+
+const DEFAULT_ORIGIN_AIRPORT: Airport = {
+  code: 'SGN',
+  city: 'Ho Chi Minh City',
+  name: 'Tan Son Nhat International Airport',
+  sublabel: 'Tan Son Nhat Intl., Vietnam',
+};
 
 interface FlightStoreState {
   flightType: FlightType;
@@ -26,7 +32,7 @@ interface FlightStoreState {
 
 export const useFlightStore = create<FlightStoreState>((set, get) => ({
   flightType: 'roundtrip',
-  leavingFrom: MOCK_AIRPORTS[0],
+  leavingFrom: DEFAULT_ORIGIN_AIRPORT,
   goingTo: null,
 
   dateRange: {

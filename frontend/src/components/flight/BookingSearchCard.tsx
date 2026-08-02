@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeftRight } from 'lucide-react';
 import type { Airport } from '../../types/airport';
-import { MOCK_AIRPORTS } from '../../constants/mockAirports';
 import { useFlightSearch } from '../../hooks/use-flight-search';
 import { FlightTypeTabs } from './FlightTypeTabs';
 import { AirportSelectorPopover } from './AirportSelectorPopover';
@@ -19,7 +18,7 @@ interface BookingSearchCardProps {
 }
 
 export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
-  airports = MOCK_AIRPORTS,
+  airports = [],
   onSearch,
   isHero = true,
 }) => {
@@ -164,7 +163,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
           <div className="w-full lg:w-auto mt-2 lg:mt-0">
             <Button 
               onClick={handleSearchSubmit}
-              className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-semibold rounded-full px-8 py-3 h-[56px] text-sm shadow-md transition-colors"
+              className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-semibold rounded-full px-8 py-3 h-[56px] text-sm shadow-md transition-colors cursor-pointer"
             >
               Search
             </Button>
