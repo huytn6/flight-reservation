@@ -70,7 +70,7 @@ export const NotificationDropdown: React.FC = () => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 bg-white border border-slate-200 shadow-none rounded-xl p-2">
+      <DropdownMenuContent align="end" className="w-80 bg-white border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-2xl p-2">
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
           <span className="font-semibold text-sm text-slate-800">Notifications</span>
           {unreadCount > 0 && (

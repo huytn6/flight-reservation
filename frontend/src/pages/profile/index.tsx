@@ -343,7 +343,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('PROFILE')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'PROFILE' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'PROFILE' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
@@ -360,7 +360,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('COMMUNICATIONS')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'COMMUNICATIONS' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'COMMUNICATIONS' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
@@ -377,7 +377,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('MY_TRIPS')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'MY_TRIPS' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'MY_TRIPS' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
@@ -394,7 +394,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('SAVED_FLIGHTS')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'SAVED_FLIGHTS' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'SAVED_FLIGHTS' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
@@ -411,7 +411,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('COUPONS')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'COUPONS' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'COUPONS' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
@@ -428,7 +428,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('PASSENGERS')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'PASSENGERS' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'PASSENGERS' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
@@ -445,7 +445,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('SECURITY')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'SECURITY' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'SECURITY' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
@@ -462,7 +462,7 @@ export const Profile: React.FC = () => {
           <button
             onClick={() => setActiveTab('SUPPORT')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'SUPPORT' ? 'bg-white border-[#0065eb] ring-1 ring-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
+              activeTab === 'SUPPORT' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
             }`}
           >
             <div className="flex items-start gap-2.5">
