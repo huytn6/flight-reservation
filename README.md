@@ -20,8 +20,7 @@ Monorepo layout for the flight booking project.
 │   ├── index.html
 │   └── package.json
 ├── docker-compose.yml       # MySQL and Flyway
-├── start.sh                 # Starts the backend API
-└── flight-booking-api.postman_collection.json
+└── start.sh                 # Starts the backend API
 ```
 
 ## Run Backend
