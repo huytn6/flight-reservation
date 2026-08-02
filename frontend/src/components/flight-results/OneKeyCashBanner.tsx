@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 export const OneKeyCashBanner: React.FC = () => {
@@ -22,8 +22,7 @@ export const OneKeyCashBanner: React.FC = () => {
 
       <Button
         onClick={() => navigate('/signin')}
-        variant="primary"
-        className="bg-[#0065eb] hover:bg-blue-700 text-white font-bold text-xs rounded-full px-5 py-2 shrink-0"
+        className="bg-[#0065eb] hover:bg-blue-700 text-white font-bold text-xs rounded-full px-5 py-2.5 shrink-0 self-start sm:self-center"
       >
         Sign in
       </Button>

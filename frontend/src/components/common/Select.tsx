@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useId } from 'react';
-import { Popover, PopoverTrigger, PopoverContent, Spinner } from '@heroui/react';
-import { ChevronDown, Search, X, Check, AlertCircle } from 'lucide-react';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { ChevronDown, Search, X, Check, AlertCircle, Loader2 } from 'lucide-react';
 
 export interface SelectOption {
   value: string;
@@ -131,9 +131,9 @@ export const Select: React.FC<SelectProps> = ({
       } ${className}`}
       onKeyDown={handleKeyDown}
     >
-      <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
         {/* Trigger Button - Vercel / Linear Minimal Style */}
-        <PopoverTrigger>
+        <PopoverTrigger asChild>
           <div
             role="combobox"
             aria-expanded={isOpen}
@@ -172,7 +172,7 @@ export const Select: React.FC<SelectProps> = ({
 
             {/* Actions */}
             <div className="flex items-center gap-1.5 shrink-0">
-              {loading && <Spinner size="sm" />}
+              {loading && <Loader2 className="w-4 h-4 animate-spin text-[#0065eb]" />}
 
               {clearable && value && !loading && (
                 <button
@@ -194,7 +194,7 @@ export const Select: React.FC<SelectProps> = ({
         </PopoverTrigger>
 
         {/* Dropdown Menu Popover Window - Modern Soft Shadow & High Whitespace */}
-        <PopoverContent className="w-full min-w-[220px] max-w-[340px] bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-[0_12px_32px_rgba(0,0,0,0.12)] p-1.5 overflow-hidden font-sans z-50 animate-in fade-in zoom-in-95 duration-150">
+        <PopoverContent align="start" className="w-full min-w-[220px] max-w-[340px] bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-[0_12px_32px_rgba(0,0,0,0.12)] p-1.5 overflow-hidden font-sans z-50 animate-in fade-in zoom-in-95 duration-150">
           <div className="flex flex-col max-h-72">
             
             {/* Sticky Modern Search Bar (Height: 40px) */}

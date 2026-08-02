@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Popover, PopoverTrigger, PopoverContent } from '@heroui/react';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { ChevronDown } from 'lucide-react';
 
 export interface SelectOption {
@@ -28,8 +28,8 @@ export const SelectInputDropdown: React.FC<SelectInputDropdownProps> = ({
   const selectedOption = options.find((o) => o.key === value) || options[0];
 
   return (
-    <Popover isOpen={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
         <button
           className={`flex flex-col text-left bg-transparent border rounded-xl px-3 py-1.5 ${minWidth} h-[48px] justify-center cursor-pointer transition-colors outline-none select-none ${
             isOpen ? 'border-[#0065eb] border-2 shadow-xs' : 'border-[#707994] hover:border-slate-800'
@@ -45,7 +45,7 @@ export const SelectInputDropdown: React.FC<SelectInputDropdownProps> = ({
         </button>
       </PopoverTrigger>
 
-      <PopoverContent className="min-w-[180px] bg-white rounded-lg border border-gray-400 p-0 shadow-xl overflow-hidden font-sans">
+      <PopoverContent align="start" className="min-w-[180px] bg-white rounded-lg border border-gray-400 p-0 shadow-xl overflow-hidden font-sans">
         <div className="flex flex-col divide-y divide-gray-100">
           {options.map((opt) => {
             const isSelected = opt.key === selectedOption?.key;

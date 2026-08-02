@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  Button, 
-  Card, 
-  Checkbox, 
-  Input, 
-  Popover, 
-  PopoverTrigger, 
-  PopoverContent
-} from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { 
   MapPin, 
   Calendar as CalendarIcon, 
@@ -117,8 +113,8 @@ export const BookingSearchCard: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full lg:flex-1 relative">
             
             {/* Leaving from Popover */}
-            <Popover isOpen={leavingOpen} onOpenChange={setLeavingOpen}>
-              <PopoverTrigger className="w-full">
+            <Popover open={leavingOpen} onOpenChange={setLeavingOpen}>
+              <PopoverTrigger asChild className="w-full">
                 <div className="w-full border border-gray-400 rounded-xl px-3 py-2 flex items-center gap-2.5 bg-white hover:border-gray-600 cursor-pointer min-h-[56px]">
                   <MapPin className="w-5 h-5 text-gray-600 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
@@ -170,9 +166,8 @@ export const BookingSearchCard: React.FC = () => {
 
             {/* Swap Button */}
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={handleSwap}
               className="w-8 h-8 rounded-full border border-gray-300 bg-white shadow-sm flex items-center justify-center shrink-0 hover:bg-gray-50 transition-colors sm:-mx-3 z-10 cursor-pointer min-w-0 p-0"
               aria-label="Swap departure and destination"
@@ -181,8 +176,8 @@ export const BookingSearchCard: React.FC = () => {
             </Button>
 
             {/* Going to Popover */}
-            <Popover isOpen={goingOpen} onOpenChange={setGoingOpen}>
-              <PopoverTrigger className="w-full">
+            <Popover open={goingOpen} onOpenChange={setGoingOpen}>
+              <PopoverTrigger asChild className="w-full">
                 <div className="w-full border border-gray-400 rounded-xl px-3 py-2 flex items-center gap-2.5 bg-white hover:border-gray-600 cursor-pointer min-h-[56px]">
                   <MapPin className="w-5 h-5 text-gray-600 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
@@ -229,8 +224,8 @@ export const BookingSearchCard: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full lg:w-auto">
             
             {/* Dates Popover */}
-            <Popover isOpen={dateOpen} onOpenChange={setDateOpen}>
-              <PopoverTrigger className="w-full sm:w-52">
+            <Popover open={dateOpen} onOpenChange={setDateOpen}>
+              <PopoverTrigger asChild className="w-full sm:w-52">
                 <div className="w-full border border-gray-400 rounded-xl px-3 py-2 flex items-center gap-2.5 bg-white hover:border-gray-600 cursor-pointer min-h-[56px]">
                   <CalendarIcon className="w-5 h-5 text-gray-600 shrink-0" />
                   <div className="flex flex-col text-left">
@@ -254,7 +249,7 @@ export const BookingSearchCard: React.FC = () => {
                   {/* August 2026 */}
                   <div>
                     <div className="flex items-center justify-between font-bold text-xs sm:text-sm text-gray-800 mb-3">
-                      <Button isIconOnly variant="ghost" size="sm" className="p-1 rounded-full"><ChevronLeft className="w-4 h-4 text-blue-600" /></Button>
+                      <Button variant="ghost" size="icon" className="w-7 h-7 p-1 rounded-full"><ChevronLeft className="w-4 h-4 text-blue-600" /></Button>
                       <span>August 2026</span>
                       <div className="w-4" />
                     </div>
@@ -294,7 +289,7 @@ export const BookingSearchCard: React.FC = () => {
                     <div className="flex items-center justify-between font-bold text-xs sm:text-sm text-gray-800 mb-3">
                       <div className="w-4" />
                       <span>September 2026</span>
-                      <Button isIconOnly variant="ghost" size="sm" className="p-1 rounded-full"><ChevronRight className="w-4 h-4 text-blue-600" /></Button>
+                      <Button variant="ghost" size="icon" className="w-7 h-7 p-1 rounded-full"><ChevronRight className="w-4 h-4 text-blue-600" /></Button>
                     </div>
                     <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-gray-500 mb-2">
                       <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
@@ -316,7 +311,6 @@ export const BookingSearchCard: React.FC = () => {
                 <div className="flex justify-end mt-4 pt-3 border-t border-gray-100">
                   <Button 
                     onClick={() => setDateOpen(false)}
-                    variant="primary"
                     className="bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-full"
                   >
                     Done
@@ -326,8 +320,8 @@ export const BookingSearchCard: React.FC = () => {
             </Popover>
 
             {/* Travelers & Cabin Class Popover */}
-            <Popover isOpen={travelersOpen} onOpenChange={setTravelersOpen}>
-              <PopoverTrigger className="w-full sm:w-56">
+            <Popover open={travelersOpen} onOpenChange={setTravelersOpen}>
+              <PopoverTrigger asChild className="w-full sm:w-56">
                 <div className="w-full border border-gray-400 rounded-xl px-3 py-2 flex items-center gap-2.5 bg-white hover:border-gray-600 cursor-pointer min-h-[56px]">
                   <User className="w-5 h-5 text-gray-600 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
@@ -348,10 +342,9 @@ export const BookingSearchCard: React.FC = () => {
                   <span className="text-xs sm:text-sm font-medium text-gray-900">Adults</span>
                   <div className="flex items-center gap-3">
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
-                      isDisabled={adults <= 1}
+                      size="icon"
+                      disabled={adults <= 1}
                       onClick={() => setAdults(Math.max(1, adults - 1))}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
                     >
@@ -359,9 +352,8 @@ export const BookingSearchCard: React.FC = () => {
                     </Button>
                     <span className="text-xs font-semibold w-3 text-center">{adults}</span>
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
+                      size="icon"
                       onClick={() => setAdults(adults + 1)}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
                     >
@@ -378,10 +370,9 @@ export const BookingSearchCard: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
-                      isDisabled={childrenCount <= 0}
+                      size="icon"
+                      disabled={childrenCount <= 0}
                       onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
                     >
@@ -389,9 +380,8 @@ export const BookingSearchCard: React.FC = () => {
                     </Button>
                     <span className="text-xs font-semibold w-3 text-center">{childrenCount}</span>
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
+                      size="icon"
                       onClick={() => setChildrenCount(childrenCount + 1)}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
                     >
@@ -408,10 +398,9 @@ export const BookingSearchCard: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
-                      isDisabled={infantsLap <= 0}
+                      size="icon"
+                      disabled={infantsLap <= 0}
                       onClick={() => setInfantsLap(Math.max(0, infantsLap - 1))}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
                     >
@@ -419,9 +408,8 @@ export const BookingSearchCard: React.FC = () => {
                     </Button>
                     <span className="text-xs font-semibold w-3 text-center">{infantsLap}</span>
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
+                      size="icon"
                       onClick={() => setInfantsLap(infantsLap + 1)}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
                     >
@@ -438,10 +426,9 @@ export const BookingSearchCard: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-3">
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
-                      isDisabled={infantsSeat <= 0}
+                      size="icon"
+                      disabled={infantsSeat <= 0}
                       onClick={() => setInfantsSeat(Math.max(0, infantsSeat - 1))}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
                     >
@@ -449,9 +436,8 @@ export const BookingSearchCard: React.FC = () => {
                     </Button>
                     <span className="text-xs font-semibold w-3 text-center">{infantsSeat}</span>
                     <Button 
-                      isIconOnly
                       variant="outline"
-                      size="sm"
+                      size="icon"
                       onClick={() => setInfantsSeat(infantsSeat + 1)}
                       className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
                     >
@@ -482,7 +468,6 @@ export const BookingSearchCard: React.FC = () => {
                 <div className="flex justify-end pt-2">
                   <Button 
                     onClick={() => setTravelersOpen(false)}
-                    variant="primary"
                     className="bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-full"
                   >
                     Done
@@ -496,7 +481,6 @@ export const BookingSearchCard: React.FC = () => {
           {/* Search Button */}
           <div className="w-full lg:w-auto mt-2 lg:mt-0">
             <Button 
-              variant="primary"
               className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-semibold rounded-full px-8 py-3 h-[56px] text-sm shadow-md transition-colors"
             >
               Search
@@ -504,11 +488,12 @@ export const BookingSearchCard: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Checkbox using HeroUI Checkbox component */}
+        {/* Bottom Checkbox using shadcn Checkbox component */}
         <div className="flex items-center gap-2 mt-5">
-          <Checkbox defaultSelected id="bundleSave" className="text-xs sm:text-sm text-gray-700 font-medium select-none">
+          <Checkbox defaultChecked id="bundleSave" />
+          <label htmlFor="bundleSave" className="text-xs sm:text-sm text-gray-700 font-medium select-none cursor-pointer">
             Add a stay to Bundle & Save*
-          </Checkbox>
+          </label>
         </div>
 
       </Card>

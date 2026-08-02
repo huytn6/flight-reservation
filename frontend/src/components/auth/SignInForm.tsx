@@ -29,7 +29,6 @@ export const SignInForm: React.FC<SignInFormProps> = ({ onSubmitEmail }) => {
       
       <Button
         type="submit"
-        variant="primary"
         className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-bold text-sm py-3 rounded-full shadow-md transition-colors"
       >
         Continue

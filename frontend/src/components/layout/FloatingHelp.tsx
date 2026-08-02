@@ -1,6 +1,6 @@
 import React from 'react';
 import { MessageSquare } from 'lucide-react';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 
 interface FloatingHelpProps {
   label?: string;

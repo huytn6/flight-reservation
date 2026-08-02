@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Popover, PopoverTrigger, PopoverContent, Input } from '@heroui/react';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
 import { MapPin, Calendar as CalendarIcon, User, ArrowLeftRight, Building2 } from 'lucide-react';
 import { MOCK_AIRPORTS } from '@/constants/mockAirports';
 import { useFlightSearch } from '@/hooks/use-flight-search';
@@ -61,33 +63,32 @@ export const CompactTopSearchBar: React.FC = () => {
           </button>
         </div>
 
-        {/* Single Row Inputs Layout */}
+        {/* Compact Form Inputs Row */}
         <div className="flex flex-col lg:flex-row items-center gap-2">
           
-          {/* Leaving from & Going to Pair */}
+          {/* Origin & Destination pair */}
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full lg:flex-[2] relative">
             
             {/* Leaving from Popover */}
-            <Popover isOpen={leavingOpen} onOpenChange={setLeavingOpen}>
-              <PopoverTrigger className="w-full flex-1">
+            <Popover open={leavingOpen} onOpenChange={setLeavingOpen}>
+              <PopoverTrigger asChild className="w-full flex-1">
                 <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-transparent hover:border-gray-600 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
                     <span className="text-[10px] font-medium text-gray-500 leading-tight">Leaving from</span>
                     <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
-                      {leavingFrom.city} ({leavingFrom.code}-Tan So...
+                      {leavingFrom ? `${leavingFrom.city} (${leavingFrom.code}-Tan Son Nhat Intl.)` : 'Ho Chi Minh City (SGN-Tan Son Nhat Intl.)'}
                     </span>
                   </div>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden">
+              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
                 <div className="p-2 border-b border-gray-100 bg-gray-50/50">
                   <Input 
                     placeholder="Search airport..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full text-xs"
-                    autoFocus
                   />
                 </div>
                 <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
@@ -113,9 +114,8 @@ export const CompactTopSearchBar: React.FC = () => {
 
             {/* Swap Button */}
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={handleSwap}
               className="w-7 h-7 rounded-full border border-gray-300 bg-white shadow-xs flex items-center justify-center shrink-0 hover:bg-gray-50 transition-colors sm:-mx-3 z-10 cursor-pointer min-w-0 p-0"
             >
@@ -123,8 +123,8 @@ export const CompactTopSearchBar: React.FC = () => {
             </Button>
 
             {/* Going to Popover */}
-            <Popover isOpen={goingOpen} onOpenChange={setGoingOpen}>
-              <PopoverTrigger className="w-full flex-1">
+            <Popover open={goingOpen} onOpenChange={setGoingOpen}>
+              <PopoverTrigger asChild className="w-full flex-1">
                 <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-transparent hover:border-gray-600 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
@@ -135,7 +135,7 @@ export const CompactTopSearchBar: React.FC = () => {
                   </div>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden">
+              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
                 <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
                   {MOCK_AIRPORTS.map((ap) => (
                     <button
@@ -188,7 +188,6 @@ export const CompactTopSearchBar: React.FC = () => {
           {/* Search Button */}
           <div className="w-full lg:w-auto shrink-0">
             <Button
-              variant="primary"
               className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-bold rounded-full px-7 h-[48px] text-xs sm:text-sm shadow-xs transition-colors cursor-pointer"
             >
               Search

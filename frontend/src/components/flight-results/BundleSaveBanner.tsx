@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { Briefcase, Info } from 'lucide-react';
 
 export const BundleSaveBanner: React.FC = () => {
@@ -26,8 +26,7 @@ export const BundleSaveBanner: React.FC = () => {
       </div>
 
       <Button
-        variant="primary"
-        className="bg-[#0065eb] hover:bg-blue-700 text-white font-bold text-xs rounded-full px-5 py-2.5 shrink-0 self-start sm:self-center"
+        className="w-full sm:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-bold rounded-full px-5 py-2.5 text-xs sm:text-sm shadow-xs transition-colors shrink-0 cursor-pointer"
       >
         Shop flight + stay
       </Button>

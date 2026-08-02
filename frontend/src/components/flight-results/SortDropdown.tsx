@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, type SelectOption } from '@/components/ui/Select';
+import { Select, type SelectOption } from '@/components/common/Select';
 
 export const SORT_OPTIONS: SelectOption[] = [
   { value: 'Recommended', label: 'Recommended' },

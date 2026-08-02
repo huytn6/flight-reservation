@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { Search, Edit3 } from 'lucide-react';
 
 interface FlightSearchHeaderProps {

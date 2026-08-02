@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Checkbox } from '@heroui/react';
-import { Lock, Sun, Sunset, Moon, Sunrise, Check } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Lock, Sun, Sunset, Moon, Sunrise } from 'lucide-react';
 
 export const FlightFilterSidebar: React.FC = () => {
   const [nonstopChecked, setNonstopChecked] = useState(false);
@@ -28,21 +28,14 @@ export const FlightFilterSidebar: React.FC = () => {
           <span>From</span>
         </div>
         <div className="flex items-center justify-between py-0.5">
-          <Checkbox 
-            isSelected={nonstopChecked}
-            onChange={() => setNonstopChecked(!nonstopChecked)}
-          >
-            {({ isSelected }) => (
-              <div className="flex items-center gap-2 cursor-pointer">
-                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                  isSelected ? 'bg-[#0065eb] border-[#0065eb] text-white' : 'border-slate-400 bg-transparent hover:border-slate-600'
-                }`}>
-                  {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                </div>
-                <span className="text-xs text-[#141d38] font-normal">Nonstop (40)</span>
-              </div>
-            )}
-          </Checkbox>
+          <div className="flex items-center gap-2 cursor-pointer">
+            <Checkbox 
+              id="nonstop"
+              checked={nonstopChecked}
+              onCheckedChange={(c) => setNonstopChecked(!!c)}
+            />
+            <label htmlFor="nonstop" className="text-xs text-[#141d38] font-normal cursor-pointer">Nonstop (40)</label>
+          </div>
           <span className="text-xs font-bold text-[#141d38]">$156</span>
         </div>
       </div>
@@ -55,40 +48,26 @@ export const FlightFilterSidebar: React.FC = () => {
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between py-0.5">
-            <Checkbox 
-              isSelected={vnAirChecked}
-              onChange={() => setVnAirChecked(!vnAirChecked)}
-            >
-              {({ isSelected }) => (
-                <div className="flex items-center gap-2 cursor-pointer">
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                    isSelected ? 'bg-[#0065eb] border-[#0065eb] text-white' : 'border-slate-400 bg-transparent hover:border-slate-600'
-                  }`}>
-                    {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                  </div>
-                  <span className="text-xs text-[#141d38] font-normal">Vietnam Airlines (22)</span>
-                </div>
-              )}
-            </Checkbox>
+            <div className="flex items-center gap-2 cursor-pointer">
+              <Checkbox 
+                id="vnAir"
+                checked={vnAirChecked}
+                onCheckedChange={(c) => setVnAirChecked(!!c)}
+              />
+              <label htmlFor="vnAir" className="text-xs text-[#141d38] font-normal cursor-pointer">Vietnam Airlines (22)</label>
+            </div>
             <span className="text-xs font-bold text-[#141d38]">$187</span>
           </div>
 
           <div className="flex items-center justify-between py-0.5">
-            <Checkbox 
-              isSelected={vjAirChecked}
-              onChange={() => setVjAirChecked(!vjAirChecked)}
-            >
-              {({ isSelected }) => (
-                <div className="flex items-center gap-2 cursor-pointer">
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                    isSelected ? 'bg-[#0065eb] border-[#0065eb] text-white' : 'border-slate-400 bg-transparent hover:border-slate-600'
-                  }`}>
-                    {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                  </div>
-                  <span className="text-xs text-[#141d38] font-normal">Vietjet Air (18)</span>
-                </div>
-              )}
-            </Checkbox>
+            <div className="flex items-center gap-2 cursor-pointer">
+              <Checkbox 
+                id="vjAir"
+                checked={vjAirChecked}
+                onCheckedChange={(c) => setVjAirChecked(!!c)}
+              />
+              <label htmlFor="vjAir" className="text-xs text-[#141d38] font-normal cursor-pointer">Vietjet Air (18)</label>
+            </div>
             <span className="text-xs font-bold text-[#141d38]">$156</span>
           </div>
         </div>
@@ -101,21 +80,14 @@ export const FlightFilterSidebar: React.FC = () => {
           <span>From</span>
         </div>
         <div className="flex items-center justify-between py-0.5">
-          <Checkbox 
-            isSelected={basicEcoChecked}
-            onChange={() => setBasicEcoChecked(!basicEcoChecked)}
-          >
-            {({ isSelected }) => (
-              <div className="flex items-center gap-2 cursor-pointer">
-                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                  isSelected ? 'bg-[#0065eb] border-[#0065eb] text-white' : 'border-slate-400 bg-transparent hover:border-slate-600'
-                }`}>
-                  {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                </div>
-                <span className="text-xs text-[#141d38] font-normal">Basic economy (40)</span>
-              </div>
-            )}
-          </Checkbox>
+          <div className="flex items-center gap-2 cursor-pointer">
+            <Checkbox 
+              id="basicEco"
+              checked={basicEcoChecked}
+              onCheckedChange={(c) => setBasicEcoChecked(!!c)}
+            />
+            <label htmlFor="basicEco" className="text-xs text-[#141d38] font-normal cursor-pointer">Basic economy (40)</label>
+          </div>
           <span className="text-xs font-bold text-[#141d38]">$156</span>
         </div>
         <span className="text-[11px] text-[#526077] font-normal ml-6 leading-tight">

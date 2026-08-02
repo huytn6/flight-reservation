@@ -38,7 +38,6 @@ export const Header: React.FC<HeaderProps> = ({
           <Button
             onClick={onSignInClick}
             size="sm"
-            variant="primary"
             className="bg-[#0065eb] hover:bg-blue-700 text-white font-bold transition-all rounded-full px-5 py-2"
           >
             <User className="w-3.5 h-3.5 mr-1" />

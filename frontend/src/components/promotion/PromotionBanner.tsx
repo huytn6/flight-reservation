@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { Tag } from 'lucide-react';
 import type { PromotionItem } from '../../types/promotion';
 
