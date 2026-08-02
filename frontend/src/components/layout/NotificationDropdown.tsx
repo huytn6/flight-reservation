@@ -70,17 +70,17 @@ export const NotificationDropdown: React.FC = () => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 bg-white border border-slate-200 shadow-xl rounded-2xl p-2">
-        <div className="flex items-center justify-between px-3 py-2 border-b">
-          <span className="font-bold text-sm text-slate-900">Notifications</span>
+      <DropdownMenuContent align="end" className="w-80 bg-white border border-slate-200 shadow-none rounded-xl p-2">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
+          <span className="font-semibold text-sm text-slate-800">Notifications</span>
           {unreadCount > 0 && (
-            <button onClick={handleMarkAllRead} className="text-[11px] font-semibold text-blue-600 hover:underline flex items-center gap-1">
+            <button onClick={handleMarkAllRead} className="text-[11px] font-normal text-blue-600 hover:underline flex items-center gap-1">
               <CheckCheck className="w-3.5 h-3.5" /> Mark all read
             </button>
           )}
         </div>
 
-        <div className="divide-y max-h-72 overflow-y-auto my-1">
+        <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto my-1">
           {notifications.length === 0 ? (
             <div className="p-4 text-xs text-slate-400 text-center">No notifications</div>
           ) : (
@@ -88,11 +88,11 @@ export const NotificationDropdown: React.FC = () => {
               <DropdownMenuItem
                 key={n.id}
                 className={`p-3 text-xs flex flex-col items-start gap-1 cursor-pointer hover:bg-slate-50 ${
-                  !n.is_read ? 'bg-blue-50/50 font-semibold' : ''
+                  !n.is_read ? 'bg-blue-50/40 font-medium' : ''
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="font-bold text-slate-900">{n.title}</span>
+                  <span className="font-medium text-slate-800">{n.title}</span>
                   {!n.is_read && (
                     <button onClick={(e) => handleMarkRead(n.id, e)} className="text-blue-600 hover:text-blue-800">
                       <Check className="w-3.5 h-3.5" />
