@@ -20,9 +20,15 @@ Monorepo layout for the flight booking project.
 │   ├── index.html
 │   └── package.json
 ├── BACKEND_API_REFERENCE.md # Backend API functions and endpoint reference
+├── flight-booking-api.postman_collection.json # Postman collection for API testing
 ├── docker-compose.yml       # MySQL and Flyway
 └── start.sh                 # Starts the backend API
 ```
+
+## API Documentation
+
+- `BACKEND_API_REFERENCE.md`: backend API feature and endpoint reference.
+- `flight-booking-api.postman_collection.json`: Postman collection for importing and testing backend APIs.
 
 ## Run Backend
 
