@@ -3,6 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { queryClient } from '@/lib/react-query';
 import { useAuthStore } from '@/store/use-auth';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 interface AppProviderProps {
   children: React.ReactNode;
@@ -17,8 +18,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
-      <Toaster position="top-right" richColors closeButton />
+      <TooltipProvider>
+        {children}
+        <Toaster position="top-right" richColors closeButton />
+      </TooltipProvider>
     </QueryClientProvider>
   );
 };

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { adminService } from '@/services/admin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -142,12 +144,12 @@ export const AdminCatalog: React.FC = () => {
           <p className="text-xs text-slate-500">Configure airports, airlines, aircraft models, flights, and fare inventory.</p>
         </div>
 
-        <div className="flex bg-white p-1 rounded-xl border gap-1 text-xs font-semibold">
+        <div className="flex bg-white p-1 rounded-xl border border-slate-200 gap-1 text-xs font-semibold">
           {['AIRPORTS', 'AIRLINES', 'AIRCRAFT', 'FLIGHTS'].map((t) => (
             <button
               key={t}
               onClick={() => setSubTab(t as any)}
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
+              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
                 subTab === t ? 'bg-emerald-600 text-white font-bold' : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
@@ -159,7 +161,7 @@ export const AdminCatalog: React.FC = () => {
 
       {/* Forms based on active subTab */}
       {subTab === 'AIRPORTS' && (
-        <form onSubmit={handleCreateAirport} className="bg-white p-5 rounded-2xl border shadow-xs flex flex-col gap-3 max-w-2xl">
+        <form onSubmit={handleCreateAirport} className="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col gap-3 max-w-2xl">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Plus className="w-4 h-4 text-emerald-600" /> Create New Airport
           </h2>
@@ -168,12 +170,12 @@ export const AdminCatalog: React.FC = () => {
             <Input placeholder="Airport Name" value={apName} onChange={(e) => setApName(e.target.value)} required className="text-xs" />
             <Input placeholder="City" value={apCity} onChange={(e) => setApCity(e.target.value)} required className="text-xs" />
           </div>
-          <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl w-fit px-5">Create Airport</Button>
+          <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl w-fit px-5 cursor-pointer">Create Airport</Button>
         </form>
       )}
 
       {subTab === 'AIRLINES' && (
-        <form onSubmit={handleCreateAirline} className="bg-white p-5 rounded-2xl border shadow-xs flex flex-col gap-3 max-w-md">
+        <form onSubmit={handleCreateAirline} className="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col gap-3 max-w-md">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Plus className="w-4 h-4 text-emerald-600" /> Create New Airline
           </h2>
@@ -181,12 +183,12 @@ export const AdminCatalog: React.FC = () => {
             <Input placeholder="IATA (VN)" value={alIata} onChange={(e) => setAlIata(e.target.value)} required className="text-xs uppercase font-mono w-24" />
             <Input placeholder="Airline Name" value={alName} onChange={(e) => setAlName(e.target.value)} required className="text-xs flex-1" />
           </div>
-          <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl w-fit px-5">Create Airline</Button>
+          <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl w-fit px-5 cursor-pointer">Create Airline</Button>
         </form>
       )}
 
       {subTab === 'FLIGHTS' && (
-        <form onSubmit={handleCreateFlight} className="bg-white p-5 rounded-2xl border shadow-xs flex flex-col gap-3 max-w-2xl">
+        <form onSubmit={handleCreateFlight} className="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col gap-3 max-w-2xl">
           <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
             <Plus className="w-4 h-4 text-emerald-600" /> Create Flight Schedule
           </h2>
@@ -195,115 +197,105 @@ export const AdminCatalog: React.FC = () => {
             <Input type="datetime-local" value={flDepTime} onChange={(e) => setFlDepTime(e.target.value)} required className="text-xs" />
             <Input type="datetime-local" value={flArrTime} onChange={(e) => setFlArrTime(e.target.value)} required className="text-xs" />
           </div>
-          <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl w-fit px-5">Create Flight</Button>
+          <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl w-fit px-5 cursor-pointer">Create Flight</Button>
         </form>
       )}
 
-      {/* Main Table */}
-      <div className="bg-white p-6 rounded-2xl border shadow-xs">
-        <h2 className="text-base font-bold text-slate-900 border-b pb-3 mb-3">{subTab} Catalog List</h2>
+      {/* Main Table using Official shadcn Table */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200">
+        <h2 className="text-base font-bold text-slate-900 border-b border-slate-200 pb-3 mb-3">{subTab} Catalog List</h2>
         {loading ? (
           <p className="text-xs text-slate-500">Loading catalog...</p>
         ) : (
-          <div className="overflow-x-auto">
-            {subTab === 'AIRPORTS' && (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="pb-2">IATA</th>
-                    <th className="pb-2">Name</th>
-                    <th className="pb-2">City</th>
-                    <th className="pb-2">Country</th>
-                    <th className="pb-2 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {airports.map((ap) => (
-                    <tr key={ap.id} className="hover:bg-slate-50">
-                      <td className="py-2.5 font-bold font-mono text-emerald-700">{ap.iata_code}</td>
-                      <td className="py-2.5 font-semibold text-slate-900">{ap.name}</td>
-                      <td className="py-2.5 text-slate-600">{ap.city}</td>
-                      <td className="py-2.5 text-slate-500">{ap.country}</td>
-                      <td className="py-2.5 text-right">
-                        <button onClick={() => handleDeleteAirport(ap.id)} className="text-slate-400 hover:text-red-600 p-1">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-slate-200 text-slate-500 uppercase text-[10px] font-bold">
+                {subTab === 'AIRPORTS' && (
+                  <>
+                    <TableHead>IATA</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>City</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </>
+                )}
+                {subTab === 'AIRLINES' && (
+                  <>
+                    <TableHead>IATA</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </>
+                )}
+                {subTab === 'AIRCRAFT' && (
+                  <>
+                    <TableHead>Model</TableHead>
+                    <TableHead>Manufacturer</TableHead>
+                    <TableHead>Total Seats</TableHead>
+                  </>
+                )}
+                {subTab === 'FLIGHTS' && (
+                  <>
+                    <TableHead>Flight No</TableHead>
+                    <TableHead>Departure</TableHead>
+                    <TableHead>Arrival</TableHead>
+                    <TableHead>Status</TableHead>
+                  </>
+                )}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {subTab === 'AIRPORTS' &&
+                airports.map((ap) => (
+                  <TableRow key={ap.id} className="hover:bg-slate-50 text-xs border-b border-slate-100">
+                    <TableCell className="font-bold font-mono text-emerald-700">{ap.iata_code}</TableCell>
+                    <TableCell className="font-semibold text-slate-900">{ap.name}</TableCell>
+                    <TableCell className="text-slate-600">{ap.city}</TableCell>
+                    <TableCell className="text-slate-500">{ap.country}</TableCell>
+                    <TableCell className="text-right">
+                      <button onClick={() => handleDeleteAirport(ap.id)} className="text-slate-400 hover:text-red-600 p-1 cursor-pointer">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
 
-            {subTab === 'AIRLINES' && (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="pb-2">IATA</th>
-                    <th className="pb-2">Name</th>
-                    <th className="pb-2 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {airlines.map((al) => (
-                    <tr key={al.id} className="hover:bg-slate-50">
-                      <td className="py-2.5 font-bold font-mono text-emerald-700">{al.iata_code}</td>
-                      <td className="py-2.5 font-semibold text-slate-900">{al.name}</td>
-                      <td className="py-2.5 text-right">
-                        <button onClick={() => handleDeleteAirline(al.id)} className="text-slate-400 hover:text-red-600 p-1">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+              {subTab === 'AIRLINES' &&
+                airlines.map((al) => (
+                  <TableRow key={al.id} className="hover:bg-slate-50 text-xs border-b border-slate-100">
+                    <TableCell className="font-bold font-mono text-emerald-700">{al.iata_code}</TableCell>
+                    <TableCell className="font-semibold text-slate-900">{al.name}</TableCell>
+                    <TableCell className="text-right">
+                      <button onClick={() => handleDeleteAirline(al.id)} className="text-slate-400 hover:text-red-600 p-1 cursor-pointer">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))}
 
-            {subTab === 'AIRCRAFT' && (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="pb-2">Model</th>
-                    <th className="pb-2">Manufacturer</th>
-                    <th className="pb-2">Seats</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {aircraftTypes.map((at) => (
-                    <tr key={at.id} className="hover:bg-slate-50">
-                      <td className="py-2.5 font-bold text-slate-900">{at.model}</td>
-                      <td className="py-2.5 text-slate-700">{at.manufacturer}</td>
-                      <td className="py-2.5 font-bold text-emerald-700">{at.total_seats}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+              {subTab === 'AIRCRAFT' &&
+                aircraftTypes.map((at) => (
+                  <TableRow key={at.id} className="hover:bg-slate-50 text-xs border-b border-slate-100">
+                    <TableCell className="font-bold text-slate-900">{at.model}</TableCell>
+                    <TableCell className="text-slate-700">{at.manufacturer}</TableCell>
+                    <TableCell className="font-bold text-emerald-700">{at.total_seats}</TableCell>
+                  </TableRow>
+                ))}
 
-            {subTab === 'FLIGHTS' && (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b text-slate-500 font-bold uppercase text-[10px]">
-                    <th className="pb-2">Flight No</th>
-                    <th className="pb-2">Departure</th>
-                    <th className="pb-2">Arrival</th>
-                    <th className="pb-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {flights.map((fl) => (
-                    <tr key={fl.id} className="hover:bg-slate-50">
-                      <td className="py-2.5 font-bold font-mono text-emerald-700">{fl.flight_number}</td>
-                      <td className="py-2.5 text-slate-800">{fl.departure_time}</td>
-                      <td className="py-2.5 text-slate-800">{fl.arrival_time}</td>
-                      <td className="py-2.5 font-bold text-blue-600">{fl.status}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+              {subTab === 'FLIGHTS' &&
+                flights.map((fl) => (
+                  <TableRow key={fl.id} className="hover:bg-slate-50 text-xs border-b border-slate-100">
+                    <TableCell className="font-bold font-mono text-emerald-700">{fl.flight_number}</TableCell>
+                    <TableCell className="text-slate-800">{fl.departure_time}</TableCell>
+                    <TableCell className="text-slate-800">{fl.arrival_time}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 font-bold">
+                        {fl.status}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { paymentService, type Payment, type PaymentTransaction } from '@/services/payment';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { CreditCard, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
 
@@ -93,21 +94,25 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl flex flex-col gap-5 border">
-        
-        <div className="flex items-center justify-between border-b pb-3">
-          <div className="flex items-center gap-2 text-slate-900 font-bold text-lg">
-            <CreditCard className="w-5 h-5 text-blue-600" /> Payment Simulation
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-2xl rounded-2xl p-6">
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-slate-900">
+              <CreditCard className="w-5 h-5 text-blue-600" /> Payment Processing
+            </DialogTitle>
+            <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
+              {amount.toLocaleString()} VND
+            </span>
           </div>
-          <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
-            {amount.toLocaleString()} VND
-          </span>
-        </div>
+          <DialogDescription className="text-xs text-slate-500 mt-1">
+            Complete your booking payment via supported gateways.
+          </DialogDescription>
+        </DialogHeader>
 
         {!payment ? (
-          <div className="flex flex-col gap-4">
-            <p className="text-xs text-slate-600">Select payment method for your booking:</p>
+          <div className="flex flex-col gap-4 mt-2">
+            <p className="text-xs font-medium text-slate-700">Select payment method:</p>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { code: 'CARD', label: 'Credit Card', icon: '💳' },
@@ -117,8 +122,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <button
                   key={m.code}
                   onClick={() => setMethod(m.code as any)}
-                  className={`p-3 rounded-2xl border text-center flex flex-col items-center gap-1 transition-all ${
-                    method === m.code ? 'border-blue-600 bg-blue-50/80 text-blue-900 font-bold shadow-xs' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                  className={`p-3 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                    method === m.code ? 'border-blue-600 bg-blue-50/80 text-blue-900 font-bold' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <span className="text-xl">{m.icon}</span>
@@ -130,14 +135,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <Button
               onClick={handleInitPayment}
               disabled={loading}
-              className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-bold py-3 rounded-full shadow-md mt-2"
+              className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-bold py-2.5 rounded-full mt-2"
             >
               {loading ? 'Initiating...' : 'Proceed to Payment'}
             </Button>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
-            <div className="p-4 rounded-2xl bg-slate-50 border flex items-center justify-between">
+          <div className="flex flex-col gap-4 mt-2">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-500">Payment ID: <span className="font-mono text-slate-800">{payment.id.substring(0, 8)}...</span></p>
                 <p className="text-xs text-slate-500">Method: <span className="font-bold text-slate-800">{payment.payment_method}</span></p>
@@ -150,8 +155,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
 
             {payment.status === 'PENDING' && (
-              <div className="flex flex-col gap-2.5">
-                <p className="text-xs font-bold text-slate-700 text-center">Simulate Payment Gateway Outcome:</p>
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-bold text-slate-700 text-center">Simulate Payment Gateway Response:</p>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     onClick={handleSimulateSuccess}
@@ -183,7 +188,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             )}
 
             {transactions.length > 0 && (
-              <div className="border-t pt-3">
+              <div className="border-t border-slate-200 pt-3">
                 <p className="text-xs font-bold text-slate-700 mb-2">Transaction History:</p>
                 <div className="max-h-32 overflow-y-auto space-y-1 text-[11px]">
                   {transactions.map((tx) => (
@@ -197,13 +202,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             )}
           </div>
         )}
-
-        <div className="flex justify-end border-t pt-3">
-          <Button variant="ghost" onClick={onClose} size="sm" className="text-slate-500">
-            Cancel / Close
-          </Button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

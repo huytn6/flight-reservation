@@ -1,5 +1,6 @@
 import React from 'react';
 import type { FlightType } from '../../types/flight';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface FlightTypeTabsProps {
   selectedType: FlightType;
@@ -10,31 +11,19 @@ export const FlightTypeTabs: React.FC<FlightTypeTabsProps> = ({
   selectedType, 
   onChange 
 }) => {
-  const tabs: { id: FlightType; label: string }[] = [
-    { id: 'roundtrip', label: 'Roundtrip' },
-    { id: 'one-way', label: 'One-way' },
-    { id: 'multi-city', label: 'Multi-city' },
-  ];
-
   return (
-    <div className="flex items-center gap-6 mb-5 border-b border-gray-100 pb-2 text-xs sm:text-sm">
-      {tabs.map((type) => {
-        const isSelected = selectedType === type.id;
-        return (
-          <button
-            key={type.id}
-            onClick={() => onChange(type.id)}
-            className={`pb-1.5 transition-colors font-medium relative cursor-pointer ${
-              isSelected ? 'text-[#0065eb] font-semibold' : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {type.label}
-            {isSelected && (
-              <div className="absolute bottom-[-9px] left-0 right-0 h-[2px] bg-[#0065eb]" />
-            )}
-          </button>
-        );
-      })}
-    </div>
+    <Tabs value={selectedType} onValueChange={(v) => onChange(v as FlightType)} className="mb-4">
+      <TabsList className="bg-slate-100/80 p-1 rounded-xl">
+        <TabsTrigger value="roundtrip" className="rounded-lg text-xs sm:text-sm font-bold">
+          Roundtrip
+        </TabsTrigger>
+        <TabsTrigger value="one-way" className="rounded-lg text-xs sm:text-sm font-bold">
+          One-way
+        </TabsTrigger>
+        <TabsTrigger value="multi-city" className="rounded-lg text-xs sm:text-sm font-bold">
+          Multi-city
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 };
