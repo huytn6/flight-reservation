@@ -181,7 +181,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Card 1: Total Revenue */}
-        <Card className="p-4 bg-white border border-slate-200/80 rounded-lg shadow-none flex flex-col justify-between gap-3 relative">
+        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3 relative">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Net Revenue</span>
@@ -189,7 +189,7 @@ export const AdminDashboard: React.FC = () => {
                 {summary?.total_revenue?.toLocaleString()} <span className="text-xs font-normal text-slate-500">{summary?.currency || 'VND'}</span>
               </span>
             </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200/60 text-slate-700 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
@@ -203,7 +203,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
 
         {/* Card 2: Total Bookings */}
-        <Card className="p-4 bg-white border border-slate-200/80 rounded-lg shadow-none flex flex-col justify-between gap-3">
+        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Flight Bookings</span>
@@ -211,7 +211,7 @@ export const AdminDashboard: React.FC = () => {
                 {summary?.total_bookings} <span className="text-xs font-normal text-slate-500">tickets</span>
               </span>
             </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200/60 text-slate-700 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
               <Ticket className="w-4 h-4" />
             </div>
           </div>
@@ -225,7 +225,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
 
         {/* Card 3: Active Customers */}
-        <Card className="p-4 bg-white border border-slate-200/80 rounded-lg shadow-none flex flex-col justify-between gap-3">
+        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Registered Accounts</span>
@@ -233,7 +233,7 @@ export const AdminDashboard: React.FC = () => {
                 {summary?.total_customers} <span className="text-xs font-normal text-slate-500">users</span>
               </span>
             </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200/60 text-slate-700 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
               <Users className="w-4 h-4" />
             </div>
           </div>
@@ -247,7 +247,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
 
         {/* Card 4: Flight Operations Status */}
-        <Card className="p-4 bg-white border border-slate-200/80 rounded-lg shadow-none flex flex-col justify-between gap-3">
+        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
               <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Active Fleet Metrics</span>
@@ -255,7 +255,7 @@ export const AdminDashboard: React.FC = () => {
                 {flightMetrics.reduce((acc, curr) => acc + (curr.count || 0), 0) || 48} <span className="text-xs font-normal text-slate-500">flights</span>
               </span>
             </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 border border-slate-200/60 text-slate-700 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
               <Plane className="w-4 h-4" />
             </div>
           </div>
@@ -271,7 +271,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* Left: Interactive Area Chart for Revenue Trend (7/12 cols) */}
-        <Card className="lg:col-span-7 bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-4">
+        <Card className="lg:col-span-7 bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-4">
           <CardHeader className="p-0 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
@@ -326,7 +326,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
 
         {/* Right: Daily Ticket Volume Bar Chart (5/12 cols) */}
-        <Card className="lg:col-span-5 bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-4">
+        <Card className="lg:col-span-5 bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-4">
           <CardHeader className="p-0 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
@@ -408,7 +408,7 @@ export const AdminDashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Node Health Status */}
-        <Card className="bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
+        <Card className="bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
           <CardHeader className="p-0">
             <CardTitle className="text-xs font-semibold text-slate-900 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
@@ -424,7 +424,7 @@ export const AdminDashboard: React.FC = () => {
             {systemHealthNodes.map((node, i) => {
               const Icon = node.icon;
               return (
-                <div key={i} className="p-2.5 bg-slate-50/70 border border-slate-100 rounded-md flex items-center justify-between text-xs">
+                <div key={i} className="p-2.5 bg-slate-50/70 border-0 rounded-md flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2.5">
                     <Icon className="w-4 h-4 text-slate-500" />
                     <div>
@@ -444,7 +444,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
 
         {/* Live System Audit Feed */}
-        <Card className="bg-white border border-slate-200/80 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
+        <Card className="bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
           <CardHeader className="p-0 flex flex-row items-center justify-between">
             <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-slate-700" /> Live Audit Trail Feed

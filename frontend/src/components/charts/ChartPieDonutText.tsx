@@ -87,7 +87,7 @@ export const ChartPieDonutText: React.FC<ChartPieDonutTextProps> = ({
   }, [data, dataKey])
 
   return (
-    <Card className={`flex flex-col bg-white border border-slate-200/80 rounded-lg shadow-none ${className}`}>
+    <Card className={`flex flex-col bg-white border-0 shadow-none ${className}`}>
       <CardHeader className="items-center pb-0 pt-4">
         <CardTitle className="text-xs font-semibold text-slate-900">{title}</CardTitle>
         <CardDescription className="text-[11px] text-slate-500">{description}</CardDescription>
