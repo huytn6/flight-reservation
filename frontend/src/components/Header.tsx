@@ -1,22 +1,36 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   DropdownMenu, 
   DropdownMenuTrigger, 
   DropdownMenuContent, 
-  DropdownMenuItem 
+  DropdownMenuItem,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, MessageSquare, User } from 'lucide-react';
+import { ChevronDown, User, LogOut, Ticket, Bell, Shield, LifeBuoy, Heart, Search } from 'lucide-react';
+import { useAuthStore } from '@/store/use-auth';
+import { useEffect } from 'react';
 
 export const Header = () => {
+  const { isAuthenticated, user, logout, checkAuth } = useAuthStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/signin');
+  };
+
   return (
     <header className="bg-white/90 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-xs">
       <div className="max-w-[1280px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
         
-        {/* Left Side Logo & Shop Travel Dropdown */}
+        {/* Left Side Logo & Navigation */}
         <div className="flex items-center gap-6">
-          {/* Expedia Logo -> Navigate Home / */}
           <Link to="/" className="flex items-center gap-2 group focus:outline-none cursor-pointer">
             <div className="w-7 h-7 bg-[#ffdb00] flex items-center justify-center rounded-lg shadow-xs font-bold text-slate-900 group-hover:scale-105 transition-transform">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -27,7 +41,6 @@ export const Header = () => {
             <span className="text-xl font-black tracking-tight text-slate-900 font-sans">Expedia</span>
           </Link>
 
-          {/* Shop travel Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
@@ -40,55 +53,103 @@ export const Header = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-white border border-slate-200 shadow-xl rounded-2xl p-1">
-              <DropdownMenuItem key="flights" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">✈️ Flights</DropdownMenuItem>
-              <DropdownMenuItem key="hotels" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🏨 Stays & Hotels</DropdownMenuItem>
-              <DropdownMenuItem key="cars" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🚗 Car Rentals</DropdownMenuItem>
-              <DropdownMenuItem key="packages" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🎒 Vacation Packages</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/flights/search')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">✈️ Search Flights</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/booking-lookup')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🔍 Lookup Booking (PNR)</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/price-alerts')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🔔 Price Alerts</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/saved-flights')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">❤️ Saved Flights</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
 
-        {/* Right Side Nav Links */}
+        {/* Right Side Nav Links & User Menu */}
         <div className="flex items-center gap-3.5 text-xs sm:text-sm font-semibold text-slate-800">
           
-          {/* Currency Chip */}
           <Badge 
             variant="secondary" 
             className="hidden sm:flex bg-slate-100 text-slate-800 font-bold border border-slate-200/60 cursor-pointer hover:bg-slate-200/60 transition-colors px-2.5 py-1 rounded-full"
           >
-            USD 🇺🇸
+            VND 🇻🇳
           </Badge>
 
-          <a href="#" className="hidden md:block hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60">
-            List your property
-          </a>
+          <Link to="/booking-lookup" className="hidden md:flex items-center gap-1 hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60">
+            <Search className="w-3.5 h-3.5" /> PNR Lookup
+          </Link>
 
-          <a href="#" className="hidden sm:block hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60">
-            Support
-          </a>
+          <Link to="/support" className="hidden sm:flex items-center gap-1 hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60">
+            <LifeBuoy className="w-3.5 h-3.5" /> Support
+          </Link>
 
-          <a href="#" className="hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60">
-            Trips
-          </a>
+          <Link to="/my-bookings" className="hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60 flex items-center gap-1">
+            <Ticket className="w-3.5 h-3.5" /> My Trips
+          </Link>
 
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="w-8 h-8 rounded-full border-none text-slate-700 hover:text-[#0065eb] hover:bg-slate-100"
-            aria-label="Messages"
-          >
-            <MessageSquare className="w-4 h-4" />
-          </Button>
+          {isAuthenticated && user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="bg-blue-50 text-[#0065eb] font-bold hover:bg-blue-100 transition-all rounded-full px-3.5 py-1.5 flex items-center gap-2"
+                >
+                  <div className="w-5 h-5 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center">
+                    {user.full_name?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <span className="max-w-[100px] truncate">{user.full_name}</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-white border border-slate-200 shadow-xl rounded-2xl p-1">
+                <div className="px-3 py-2 border-b mb-1">
+                  <p className="font-bold text-sm text-slate-900 truncate">{user.full_name}</p>
+                  <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                  <span className="inline-block mt-1 text-[10px] font-bold uppercase px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">{user.role}</span>
+                </div>
 
-          {/* Sign in Button */}
-          <Button
-            size="sm"
-            variant="secondary"
-            className="bg-blue-50 text-[#0065eb] font-bold hover:bg-blue-100 transition-all rounded-full px-4"
-          >
-            <User className="w-3.5 h-3.5 mr-1" />
-            <span>Sign in</span>
-          </Button>
+                <DropdownMenuItem onClick={() => navigate('/profile')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">
+                  <User className="w-4 h-4 mr-2 text-slate-600" /> Account Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/my-bookings')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">
+                  <Ticket className="w-4 h-4 mr-2 text-slate-600" /> My Bookings
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/price-alerts')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">
+                  <Bell className="w-4 h-4 mr-2 text-slate-600" /> Price Alerts
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/saved-flights')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">
+                  <Heart className="w-4 h-4 mr-2 text-slate-600" /> Saved Flights
+                </DropdownMenuItem>
+
+                {(user.role === 'STAFF' || user.role === 'ADMIN') && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/staff')} className="px-3 py-2 text-xs font-semibold hover:bg-purple-50 text-purple-700 rounded-xl cursor-pointer">
+                      <Shield className="w-4 h-4 mr-2 text-purple-600" /> Staff Portal
+                    </DropdownMenuItem>
+                  </>
+                )}
+
+                {user.role === 'ADMIN' && (
+                  <DropdownMenuItem onClick={() => navigate('/admin')} className="px-3 py-2 text-xs font-semibold hover:bg-emerald-50 text-emerald-700 rounded-xl cursor-pointer">
+                    <Shield className="w-4 h-4 mr-2 text-emerald-600" /> Admin Portal
+                  </DropdownMenuItem>
+                )}
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="px-3 py-2 text-xs font-semibold hover:bg-red-50 text-red-600 rounded-xl cursor-pointer">
+                  <LogOut className="w-4 h-4 mr-2 text-red-600" /> Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              onClick={() => navigate('/signin')}
+              size="sm"
+              variant="secondary"
+              className="bg-blue-50 text-[#0065eb] font-bold hover:bg-blue-100 transition-all rounded-full px-4"
+            >
+              <User className="w-3.5 h-3.5 mr-1" />
+              <span>Sign in</span>
+            </Button>
+          )}
 
         </div>
       </div>
