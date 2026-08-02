@@ -33,7 +33,6 @@ import {
   Bell,
   Ticket,
   Heart,
-  Tag,
   HelpCircle,
   TrendingDown,
   Plus,
@@ -41,7 +40,7 @@ import {
   CalendarIcon
 } from 'lucide-react';
 
-type TabType = 'PROFILE' | 'COMMUNICATIONS' | 'MY_TRIPS' | 'SAVED_FLIGHTS' | 'COUPONS' | 'PASSENGERS' | 'SECURITY' | 'SUPPORT';
+type TabType = 'PROFILE' | 'COMMUNICATIONS' | 'MY_TRIPS' | 'SAVED_FLIGHTS' | 'PASSENGERS' | 'SECURITY' | 'SUPPORT';
 
 export const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -402,23 +401,6 @@ export const Profile: React.FC = () => {
               <div>
                 <p className="text-xs font-semibold text-slate-900">Saved Flights</p>
                 <p className="text-[10px] text-slate-500">View your saved flight offers and favorites</p>
-              </div>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-          </button>
-
-          {/* 5. Coupons & Offers */}
-          <button
-            onClick={() => setActiveTab('COUPONS')}
-            className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
-              activeTab === 'COUPONS' ? 'bg-white border-[#0065eb]' : 'bg-white border-slate-200 hover:bg-slate-50/80'
-            }`}
-          >
-            <div className="flex items-start gap-2.5">
-              <Tag className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-semibold text-slate-900">Coupons & Offers</p>
-                <p className="text-[10px] text-slate-500">View your available discount coupons</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
@@ -820,42 +802,6 @@ export const Profile: React.FC = () => {
                   ))}
                 </div>
               )}
-            </div>
-          )}
-
-          {/* TAB 5: COUPONS & OFFERS */}
-          {activeTab === 'COUPONS' && (
-            <div className="flex flex-col gap-4">
-              <div className="border-b border-slate-100 pb-2.5">
-                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <Tag className="w-5 h-5 text-slate-600" /> Coupons & Offers
-                </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">Available discount promo codes for your bookings.</p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl flex flex-col gap-1">
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-600 text-white rounded-md w-fit uppercase">
-                    WELCOME100
-                  </span>
-                  <p className="text-sm font-semibold text-slate-900 mt-1">Get 100,000 VND Off</p>
-                  <p className="text-[11px] text-slate-600">Valid on all domestic flights in Vietnam.</p>
-                  <Button onClick={() => navigate('/flights/search')} size="sm" className="bg-blue-600 text-white rounded-full text-xs w-fit mt-2 h-7 px-4 cursor-pointer">
-                    Apply on Search
-                  </Button>
-                </div>
-
-                <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl flex flex-col gap-1">
-                  <span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-600 text-white rounded-md w-fit uppercase">
-                    SUMMER2026
-                  </span>
-                  <p className="text-sm font-semibold text-slate-900 mt-1">15% Special Summer Discount</p>
-                  <p className="text-[11px] text-slate-600">Applicable for return flight itineraries.</p>
-                  <Button onClick={() => navigate('/flights/search')} size="sm" className="bg-emerald-600 text-white rounded-full text-xs w-fit mt-2 h-7 px-4 cursor-pointer">
-                    Apply on Search
-                  </Button>
-                </div>
-              </div>
             </div>
           )}
 

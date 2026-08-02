@@ -33,6 +33,18 @@ export interface PaymentMethodConfig {
   description: string;
 }
 
+export interface Coupon {
+  id: string;
+  code: string;
+  discount_type?: string;
+  discount_value?: number;
+  min_order_amount?: number;
+  max_discount_amount?: number;
+  description?: string;
+  valid_until?: string;
+  status?: string;
+}
+
 export const catalogService = {
   getAirports: async (q = '', page = 1, size = 20): Promise<{ items: Airport[]; total: number }> => {
     return $api.get('/airports', { params: { q, page, size } });
@@ -73,5 +85,17 @@ export const catalogService = {
 
   getPaymentMethods: async (): Promise<PaymentMethodConfig[]> => {
     return $api.get('/config/payment-methods');
+  },
+
+  getCoupons: async (role?: string): Promise<Coupon[]> => {
+    if (role === 'ADMIN' || role === 'STAFF') {
+      try {
+        const res: any = await $api.get('/admin/coupons');
+        return Array.isArray(res) ? res : res?.items || [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
   },
 };
