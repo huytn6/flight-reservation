@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
-  Button, 
-  Chip, 
-  Dropdown, 
-  DropdownTrigger, 
   DropdownMenu, 
-  DropdownItem 
-} from '@heroui/react';
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem 
+} from '@/components/ui/dropdown-menu';
 import { ChevronDown, MessageSquare, User } from 'lucide-react';
 
 export const Header = () => {
@@ -28,8 +28,8 @@ export const Header = () => {
           </Link>
 
           {/* Shop travel Dropdown */}
-          <Dropdown>
-            <DropdownTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -38,27 +38,26 @@ export const Header = () => {
                 <span>Shop travel</span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-500 ml-1" />
               </Button>
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Travel categories" className="w-48 bg-white border border-slate-200 shadow-xl rounded-2xl p-1">
-              <DropdownItem key="flights" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">✈️ Flights</DropdownItem>
-              <DropdownItem key="hotels" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🏨 Stays & Hotels</DropdownItem>
-              <DropdownItem key="cars" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🚗 Car Rentals</DropdownItem>
-              <DropdownItem key="packages" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🎒 Vacation Packages</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48 bg-white border border-slate-200 shadow-xl rounded-2xl p-1">
+              <DropdownMenuItem key="flights" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">✈️ Flights</DropdownMenuItem>
+              <DropdownMenuItem key="hotels" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🏨 Stays & Hotels</DropdownMenuItem>
+              <DropdownMenuItem key="cars" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🚗 Car Rentals</DropdownMenuItem>
+              <DropdownMenuItem key="packages" className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🎒 Vacation Packages</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Right Side Nav Links */}
         <div className="flex items-center gap-3.5 text-xs sm:text-sm font-semibold text-slate-800">
           
           {/* Currency Chip */}
-          <Chip 
-            variant="soft" 
-            size="sm" 
+          <Badge 
+            variant="secondary" 
             className="hidden sm:flex bg-slate-100 text-slate-800 font-bold border border-slate-200/60 cursor-pointer hover:bg-slate-200/60 transition-colors px-2.5 py-1 rounded-full"
           >
             USD 🇺🇸
-          </Chip>
+          </Badge>
 
           <a href="#" className="hidden md:block hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60">
             List your property
@@ -74,8 +73,8 @@ export const Header = () => {
 
           <Button 
             variant="ghost" 
-            size="sm" 
-            className="w-8 h-8 min-w-0 p-0 rounded-full border-none text-slate-700 hover:text-[#0065eb] hover:bg-slate-100"
+            size="icon" 
+            className="w-8 h-8 rounded-full border-none text-slate-700 hover:text-[#0065eb] hover:bg-slate-100"
             aria-label="Messages"
           >
             <MessageSquare className="w-4 h-4" />

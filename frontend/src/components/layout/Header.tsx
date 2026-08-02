@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
 import type { HeaderProps } from '../../types/navigation';
 

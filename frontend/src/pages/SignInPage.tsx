@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { Button } from '@heroui/react';
+import { Button } from '@/components/ui/button';
 import { SignInForm } from '@/components/auth/SignInForm';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 import { BrandFooterLogos } from '@/components/auth/BrandFooterLogos';
@@ -20,8 +20,8 @@ export const SignInPage: React.FC = () => {
       {/* Top Header Bar with Back Arrow and Logo */}
       <div className="w-full max-w-[1240px] flex items-center justify-between py-2">
         <Button
-          isIconOnly
           variant="ghost"
+          size="icon"
           onClick={() => navigate(-1)}
           className="w-10 h-10 rounded-full hover:bg-slate-100 transition-colors text-slate-700"
           aria-label="Go back"

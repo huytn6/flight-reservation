@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Card, Button, Checkbox } from '@heroui/react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeftRight } from 'lucide-react';
 import type { Airport } from '../../types/airport';
 import { MOCK_AIRPORTS } from '../../constants/mockAirports';
@@ -110,9 +112,8 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
 
             {/* Swap Button */}
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={handleSwap}
               className="w-8 h-8 rounded-full border border-gray-300 bg-white shadow-sm flex items-center justify-center shrink-0 hover:bg-gray-50 transition-colors sm:-mx-3 z-10 cursor-pointer min-w-0 p-0"
               aria-label="Swap departure and destination"
@@ -163,7 +164,6 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
           <div className="w-full lg:w-auto mt-2 lg:mt-0">
             <Button 
               onClick={handleSearchSubmit}
-              variant="primary"
               className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-semibold rounded-full px-8 py-3 h-[56px] text-sm shadow-md transition-colors"
             >
               Search
@@ -174,13 +174,13 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
         {/* Bottom Checkbox */}
         <div className="flex items-center gap-2 mt-5">
           <Checkbox 
-            isSelected={bundleStay}
-            onChange={() => setBundleStay(!bundleStay)}
+            checked={bundleStay}
+            onCheckedChange={(checked) => setBundleStay(!!checked)}
             id="bundleSave" 
-            className="text-xs sm:text-sm text-gray-700 font-medium select-none"
-          >
+          />
+          <label htmlFor="bundleSave" className="text-xs sm:text-sm text-gray-700 font-medium select-none cursor-pointer">
             Add a stay to Bundle & Save*
-          </Checkbox>
+          </label>
         </div>
 
       </Card>

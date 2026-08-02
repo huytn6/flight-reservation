@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Info } from 'lucide-react';
-import { Spinner, Button } from '@heroui/react';
+import { Info, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { CompactTopSearchBar } from '@/components/flight-results/CompactTopSearchBar';
 import { FlightFilterSidebar } from '@/components/flight-results/FlightFilterSidebar';
 import { DatePriceMatrix } from '@/components/flight-results/DatePriceMatrix';
@@ -459,16 +459,16 @@ export const FlightResultsPage: React.FC = () => {
               ))}
             </div>
 
-            {/* Show More Button with HeroUI Spinner Loading */}
+            {/* Show More Button with Loader2 Loading */}
             {hasMore && (
               <div className="flex flex-col items-center justify-center mt-6">
                 <Button
-                  isDisabled={isLoadingMore}
+                  disabled={isLoadingMore}
                   onClick={handleShowMore}
                   variant="outline"
                   className="bg-transparent border border-slate-400 hover:border-slate-600 text-[#0065eb] hover:bg-blue-50/10 font-normal text-sm sm:text-base rounded-full py-2 px-6.5 transition-all cursor-pointer shadow-none flex items-center justify-center gap-2"
                 >
-                  {isLoadingMore && <Spinner size="sm" color="accent" />}
+                  {isLoadingMore && <Loader2 className="w-4 h-4 animate-spin text-[#0065eb]" />}
                   <span>{isLoadingMore ? 'Loading...' : 'Show More'}</span>
                 </Button>
               </div>

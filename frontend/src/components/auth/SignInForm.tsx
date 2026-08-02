@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Button } from '@heroui/react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface SignInFormProps {
   onSubmitEmail?: (email: string) => void;

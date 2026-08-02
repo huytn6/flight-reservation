@@ -1,5 +1,6 @@
 import React from 'react';
-import { Popover, PopoverTrigger, PopoverContent, Button } from '@heroui/react';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 import { User, ChevronDown, Plus, Minus } from 'lucide-react';
 import type { PassengerState } from '../../types/flight';
 
@@ -27,8 +28,8 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
   const totalTravelers = passengers.adults + passengers.children + passengers.infantsLap + passengers.infantsSeat;
 
   return (
-    <Popover isOpen={isOpen} onOpenChange={onOpenChange}>
-      <PopoverTrigger className="w-full">
+    <Popover open={isOpen} onOpenChange={onOpenChange}>
+      <PopoverTrigger asChild className="w-full">
         <div className="w-full border border-gray-400 rounded-xl px-3 py-2 flex items-center gap-2.5 bg-white hover:border-gray-600 cursor-pointer h-[56px]">
           <User className="w-5 h-5 text-gray-600 shrink-0" />
           <div className="flex flex-col text-left overflow-hidden">
@@ -39,7 +40,7 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
           </div>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 flex flex-col gap-4">
+      <PopoverContent className="w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 flex flex-col gap-4" align="start">
         <div className="text-xs font-bold text-gray-700">
           Travelers and Cabin class
         </div>
@@ -49,10 +50,9 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
           <span className="text-xs sm:text-sm font-medium text-gray-900">Adults</span>
           <div className="flex items-center gap-3">
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
-              isDisabled={passengers.adults <= 1}
+              size="icon"
+              disabled={passengers.adults <= 1}
               onClick={() => onUpdateAdults(-1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
             >
@@ -60,9 +60,8 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
             </Button>
             <span className="text-xs font-semibold w-3 text-center">{passengers.adults}</span>
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={() => onUpdateAdults(1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
             >
@@ -79,10 +78,9 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
           </div>
           <div className="flex items-center gap-3">
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
-              isDisabled={passengers.children <= 0}
+              size="icon"
+              disabled={passengers.children <= 0}
               onClick={() => onUpdateChildren(-1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
             >
@@ -90,9 +88,8 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
             </Button>
             <span className="text-xs font-semibold w-3 text-center">{passengers.children}</span>
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={() => onUpdateChildren(1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
             >
@@ -109,10 +106,9 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
           </div>
           <div className="flex items-center gap-3">
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
-              isDisabled={passengers.infantsLap <= 0}
+              size="icon"
+              disabled={passengers.infantsLap <= 0}
               onClick={() => onUpdateInfantsLap(-1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
             >
@@ -120,9 +116,8 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
             </Button>
             <span className="text-xs font-semibold w-3 text-center">{passengers.infantsLap}</span>
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={() => onUpdateInfantsLap(1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
             >
@@ -139,10 +134,9 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
           </div>
           <div className="flex items-center gap-3">
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
-              isDisabled={passengers.infantsSeat <= 0}
+              size="icon"
+              disabled={passengers.infantsSeat <= 0}
               onClick={() => onUpdateInfantsSeat(-1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600 disabled:opacity-30"
             >
@@ -150,9 +144,8 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
             </Button>
             <span className="text-xs font-semibold w-3 text-center">{passengers.infantsSeat}</span>
             <Button 
-              isIconOnly
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={() => onUpdateInfantsSeat(1)}
               className="w-7 h-7 min-w-0 p-0 rounded-full border-gray-300 text-gray-600"
             >
@@ -183,7 +176,6 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
         <div className="flex justify-end pt-2">
           <Button 
             onClick={() => onOpenChange(false)}
-            variant="primary"
             className="bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-full"
           >
             Done
