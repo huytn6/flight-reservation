@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { MapPin, Building2, Search } from 'lucide-react';
 import type { Airport } from '../../types/airport';
+import { catalogService } from '@/services/catalog';
 
 interface AirportSelectorPopoverProps {
   label: string;
   placeholder: string;
   selectedAirport: Airport | null;
-  airports: Airport[];
+  airports?: Airport[];
   onSelect: (airport: Airport) => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -18,17 +19,58 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
   label,
   placeholder,
   selectedAirport,
-  airports,
+  airports: initialAirports,
   onSelect,
   isOpen,
   onOpenChange,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [airports, setAirports] = useState<Airport[]>(initialAirports || []);
 
-  const filteredAirports = airports.filter(a => 
-    a.city.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    a.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    a.name.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    if (isOpen) {
+      loadAirports();
+    }
+  }, [isOpen, searchQuery]);
+
+  const loadAirports = async () => {
+    try {
+      if (searchQuery.trim()) {
+        const autocompletes = await catalogService.autocompleteAirports(searchQuery);
+        if (autocompletes && autocompletes.length > 0) {
+          setAirports(
+            autocompletes.map((ap: any) => ({
+              code: ap.code || ap.iata_code,
+              city: ap.city,
+              name: ap.name,
+              sublabel: `${ap.name}, ${ap.country || ''}`,
+            }))
+          );
+          return;
+        }
+      }
+      const res = await catalogService.getAirports(searchQuery);
+      const items = res.items || (Array.isArray(res) ? res : []);
+      if (items.length > 0) {
+        setAirports(
+          items.map((ap: any) => ({
+            code: ap.code || ap.iata_code,
+            city: ap.city,
+            name: ap.name,
+            sublabel: `${ap.name}, ${ap.country || ''}`,
+          }))
+        );
+      }
+    } catch {
+      // Keep initial fallback
+    }
+  };
+
+  const filteredAirports = airports.filter(
+    (a) =>
+      a.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -38,7 +80,11 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
           <MapPin className="w-5 h-5 text-gray-600 shrink-0" />
           <div className="flex flex-col text-left overflow-hidden">
             <span className="text-[11px] font-medium text-gray-500 leading-tight">{label}</span>
-            <span className={`text-xs sm:text-sm truncate whitespace-nowrap ${selectedAirport ? 'font-semibold text-gray-900' : 'text-gray-400'}`}>
+            <span
+              className={`text-xs sm:text-sm truncate whitespace-nowrap ${
+                selectedAirport ? 'font-semibold text-gray-900' : 'text-gray-400'
+              }`}
+            >
               {selectedAirport ? `${selectedAirport.city} (${selectedAirport.code})` : placeholder}
             </span>
           </div>
@@ -46,7 +92,7 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
       </PopoverTrigger>
       <PopoverContent className="w-full sm:w-[380px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
         <div className="p-2.5 border-b border-gray-100 bg-gray-50/50">
-          <Input 
+          <Input
             placeholder="Search airport or city..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -69,9 +115,7 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
                 <span className="text-xs sm:text-sm font-bold text-gray-900">
                   {ap.city} ({ap.code} - {ap.name})
                 </span>
-                <span className="text-[11px] text-gray-500">
-                  {ap.sublabel}
-                </span>
+                <span className="text-[11px] text-gray-500">{ap.sublabel}</span>
               </div>
             </button>
           ))}

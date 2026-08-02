@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { MapPin, Calendar as CalendarIcon, User, ArrowLeftRight, Building2 } from 'lucide-react';
-import { MOCK_AIRPORTS } from '@/constants/mockAirports';
 import { useFlightSearch } from '@/hooks/use-flight-search';
+import { catalogService } from '@/services/catalog';
+import type { Airport } from '@/types/airport';
 
 export const CompactTopSearchBar: React.FC = () => {
   const {
@@ -22,8 +23,31 @@ export const CompactTopSearchBar: React.FC = () => {
   const [leavingOpen, setLeavingOpen] = useState(false);
   const [goingOpen, setGoingOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [airports, setAirports] = useState<Airport[]>([]);
+
+  useEffect(() => {
+    catalogService.getAirports().then((res) => {
+      const items = res.items || (Array.isArray(res) ? res : []);
+      if (items.length > 0) {
+        setAirports(
+          items.map((ap: any) => ({
+            code: ap.code || ap.iata_code,
+            city: ap.city,
+            name: ap.name,
+            sublabel: `${ap.name}, ${ap.country || ''}`,
+          }))
+        );
+      }
+    }).catch(() => {});
+  }, []);
 
   const totalTravelers = passengers.adults + passengers.children + passengers.infantsLap + passengers.infantsSeat;
+
+  const filteredAirports = airports.filter(
+    (a) =>
+      a.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      a.code.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="bg-slate-50 pt-4 pb-2 font-sans">
@@ -77,7 +101,7 @@ export const CompactTopSearchBar: React.FC = () => {
                   <div className="flex flex-col text-left overflow-hidden">
                     <span className="text-[10px] font-medium text-gray-500 leading-tight">Leaving from</span>
                     <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
-                      {leavingFrom ? `${leavingFrom.city} (${leavingFrom.code}-Tan Son Nhat Intl.)` : 'Ho Chi Minh City (SGN-Tan Son Nhat Intl.)'}
+                      {leavingFrom ? `${leavingFrom.city} (${leavingFrom.code})` : 'Ho Chi Minh City (SGN)'}
                     </span>
                   </div>
                 </div>
@@ -92,7 +116,7 @@ export const CompactTopSearchBar: React.FC = () => {
                   />
                 </div>
                 <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
-                  {MOCK_AIRPORTS.map((ap) => (
+                  {filteredAirports.map((ap) => (
                     <button
                       key={ap.code}
                       onClick={() => {
@@ -130,14 +154,14 @@ export const CompactTopSearchBar: React.FC = () => {
                   <div className="flex flex-col text-left overflow-hidden">
                     <span className="text-[10px] font-medium text-gray-500 leading-tight">Going to</span>
                     <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
-                      {goingTo ? `${goingTo.city} (${goingTo.code}-Noi Bai Intl.)` : 'Hanoi (HAN-Noi Bai Intl.)'}
+                      {goingTo ? `${goingTo.city} (${goingTo.code})` : 'Hanoi (HAN)'}
                     </span>
                   </div>
                 </div>
               </PopoverTrigger>
               <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
                 <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
-                  {MOCK_AIRPORTS.map((ap) => (
+                  {filteredAirports.map((ap) => (
                     <button
                       key={ap.code}
                       onClick={() => {
