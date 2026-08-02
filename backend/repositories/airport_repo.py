@@ -1,0 +1,129 @@
+import uuid
+from utils.date_utils import utcnow_iso
+
+
+# ── Airports ──────────────────────────────────────────────────────────────────
+
+def list_airports(db, q=''):
+    if q:
+        return db.execute(
+            "SELECT * FROM airports WHERE iata_code LIKE ? OR name LIKE ? OR city LIKE ? ORDER BY city",
+            (f'%{q}%', f'%{q}%', f'%{q}%')
+        ).fetchall()
+    return db.execute("SELECT * FROM airports ORDER BY city").fetchall()
+
+
+def autocomplete_airports(db, q, limit=10):
+    return db.execute(
+        "SELECT iata_code, name, city, country, country_code, timezone FROM airports "
+        "WHERE iata_code LIKE ? OR name LIKE ? OR city LIKE ? ORDER BY city LIMIT ?",
+        (f'{q}%', f'%{q}%', f'%{q}%', limit)
+    ).fetchall()
+
+
+def find_airport(db, id_or_iata):
+    return db.execute(
+        "SELECT * FROM airports WHERE id=? OR iata_code=?",
+        (id_or_iata, id_or_iata.upper())
+    ).fetchone()
+
+
+def find_airport_by_iata(db, iata):
+    return db.execute(
+        "SELECT * FROM airports WHERE iata_code=?", (iata.upper(),)
+    ).fetchone()
+
+
+def all_airports(db):
+    return db.execute("SELECT * FROM airports").fetchall()
+
+
+def create_airport(db, aid, data: dict):
+    now = utcnow_iso()
+    db.execute(
+        "INSERT INTO airports(id,iata_code,icao_code,name,city,country,country_code,timezone,"
+        "latitude,longitude,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+        (aid, data['iata_code'].upper(), data.get('icao_code'), data['name'], data['city'],
+         data['country'], data['country_code'].upper(), data['timezone'],
+         data.get('latitude'), data.get('longitude'), now, now)
+    )
+
+
+def update_airport(db, airport_id, updates: dict):
+    now = utcnow_iso()
+    updates = dict(updates)
+    updates['updated_at'] = now
+    set_clause = ', '.join(f'{k}=?' for k in updates)
+    db.execute(f"UPDATE airports SET {set_clause} WHERE id=?", (*updates.values(), airport_id))
+
+
+def delete_airport(db, airport_id):
+    db.execute("DELETE FROM airports WHERE id=?", (airport_id,))
+
+
+# ── Airlines ──────────────────────────────────────────────────────────────────
+
+def list_airlines(db):
+    return db.execute("SELECT * FROM airlines ORDER BY name").fetchall()
+
+
+def find_airline(db, id_or_iata):
+    return db.execute(
+        "SELECT * FROM airlines WHERE id=? OR iata_code=?",
+        (id_or_iata, id_or_iata.upper())
+    ).fetchone()
+
+
+def create_airline(db, alid, data: dict):
+    now = utcnow_iso()
+    db.execute(
+        "INSERT INTO airlines(id,iata_code,icao_code,name,country,logo_url,created_at,updated_at) "
+        "VALUES(?,?,?,?,?,?,?,?)",
+        (alid, data['iata_code'].upper(), data.get('icao_code'), data['name'],
+         data.get('country'), data.get('logo_url'), now, now)
+    )
+
+
+def update_airline(db, airline_id, updates: dict):
+    now = utcnow_iso()
+    updates = dict(updates)
+    updates['updated_at'] = now
+    set_clause = ', '.join(f'{k}=?' for k in updates)
+    db.execute(f"UPDATE airlines SET {set_clause} WHERE id=?", (*updates.values(), airline_id))
+
+
+def delete_airline(db, airline_id):
+    db.execute("DELETE FROM airlines WHERE id=?", (airline_id,))
+
+
+# ── Aircraft types ────────────────────────────────────────────────────────────
+
+def list_aircraft_types(db):
+    return db.execute("SELECT * FROM aircraft_types ORDER BY name").fetchall()
+
+
+def create_aircraft_type(db, atid, data: dict):
+    now = utcnow_iso()
+    db.execute(
+        "INSERT INTO aircraft_types(id,iata_code,name,manufacturer,seat_capacity,created_at,updated_at) "
+        "VALUES(?,?,?,?,?,?,?)",
+        (atid, data['iata_code'], data['name'], data.get('manufacturer'), data.get('seat_capacity'), now, now)
+    )
+
+
+def update_aircraft_type(db, at_id, updates: dict):
+    now = utcnow_iso()
+    updates = dict(updates)
+    updates['updated_at'] = now
+    set_clause = ', '.join(f'{k}=?' for k in updates)
+    db.execute(f"UPDATE aircraft_types SET {set_clause} WHERE id=?", (*updates.values(), at_id))
+
+
+def delete_aircraft_type(db, at_id):
+    db.execute("DELETE FROM aircraft_types WHERE id=?", (at_id,))
+
+
+# ── Cabin classes ─────────────────────────────────────────────────────────────
+
+def list_cabin_classes(db):
+    return db.execute("SELECT * FROM cabin_classes ORDER BY id").fetchall()

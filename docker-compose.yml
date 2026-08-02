@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: flight_booking_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: flight_booking
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  flyway:
+    image: flyway/flyway:10
+    container_name: flight_booking_flyway
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./backend/database/migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: "jdbc:mysql://mysql:3306/flight_booking?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      FLYWAY_USER: root
+      FLYWAY_PASSWORD: root
+      FLYWAY_SCHEMAS: flight_booking
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+    command: repair migrate
+
+volumes:
+  mysql_data:

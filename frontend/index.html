@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flight Booking</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Flight Booking</p>
+          <h1>Airport Directory</h1>
+        </div>
+        <div class="status" id="api-status">Checking API</div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Airports</h2>
+              <p id="summary">Loading airport data</p>
+            </div>
+            <button id="refresh-button" type="button">Refresh</button>
+          </div>
+          <div class="airport-grid" id="airport-grid" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
