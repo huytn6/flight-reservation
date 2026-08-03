@@ -60,7 +60,7 @@ export const BookingDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="max-w-5xl space-y-6 pb-12">
       <div className="flex items-center justify-between">
         <Button
           variant="outline"

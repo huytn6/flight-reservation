@@ -33,7 +33,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
   const defaultSubmitText = mode === 'create' ? 'Create Record' : 'Save Changes';
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-20">
+    <div className="max-w-4xl space-y-6 pb-20">
       {/* Top Bar with Back Button */}
       <div className="flex items-center justify-between">
         <Button

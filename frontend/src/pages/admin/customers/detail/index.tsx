@@ -46,7 +46,7 @@ export const CustomerDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-12">
+    <div className="max-w-4xl space-y-6 pb-12">
       <Button
         variant="outline"
         size="sm"
