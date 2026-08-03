@@ -5,7 +5,6 @@ import { BookingStatusEnum } from '@/types/enums';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import {
   Ticket,
@@ -15,13 +14,11 @@ import {
   CreditCard,
   UserCheck,
   Calendar,
-  CheckCircle2,
-  Clock,
-  XCircle,
   FileText,
 } from 'lucide-react';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingState } from '@/components/common/LoadingState';
+import { StatusBadge } from '@/components/common/StatusBadge';
 
 export const MyBookings: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -46,47 +43,6 @@ export const MyBookings: React.FC = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case BookingStatusEnum.CONFIRMED:
-      case 'CONFIRMED':
-        return (
-          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200/80 hover:bg-emerald-50 font-medium text-[11px] gap-1 px-2.5 py-0.5 shadow-none">
-            <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Đã Xác Nhận (Hiệu lực)
-          </Badge>
-        );
-      case BookingStatusEnum.PAYMENT_PROCESSING:
-      case BookingStatusEnum.PENDING_PAYMENT:
-      case 'PENDING_PAYMENT':
-      case 'PENDING':
-        return (
-          <Badge className="bg-amber-50 text-amber-700 border-amber-200/80 hover:bg-amber-50 font-medium text-[11px] gap-1 px-2.5 py-0.5 shadow-none">
-            <Clock className="w-3 h-3 text-amber-600" /> Chờ Thanh Toán
-          </Badge>
-        );
-      case BookingStatusEnum.PAYMENT_FAILED:
-      case 'PAYMENT_FAILED':
-        return (
-          <Badge className="bg-rose-50 text-rose-700 border-rose-200/80 hover:bg-rose-50 font-medium text-[11px] gap-1 px-2.5 py-0.5 shadow-none">
-            <XCircle className="w-3 h-3 text-rose-600" /> Thanh Toán Lỗi
-          </Badge>
-        );
-      case BookingStatusEnum.CANCELLED:
-      case 'CANCELLED':
-        return (
-          <Badge className="bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-100 font-medium text-[11px] gap-1 px-2.5 py-0.5 shadow-none">
-            <XCircle className="w-3 h-3 text-slate-500" /> Đã Hủy
-          </Badge>
-        );
-      default:
-        return (
-          <Badge className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-50 font-medium text-[11px] gap-1 px-2.5 py-0.5 shadow-none">
-            {status}
-          </Badge>
-        );
-    }
-  };
-
   const filteredBookings = bookings.filter((b) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -98,11 +54,10 @@ export const MyBookings: React.FC = () => {
     );
   });
 
-  const confirmedCount = bookings.filter((b) => b.status === 'CONFIRMED' || b.status === BookingStatusEnum.CONFIRMED).length;
+  const confirmedCount = bookings.filter((b) => b.status === BookingStatusEnum.CONFIRMED).length;
   const pendingCount = bookings.filter(
     (b) =>
-      b.status === 'PENDING' ||
-      b.status === 'PENDING_PAYMENT' ||
+      b.status === BookingStatusEnum.PENDING ||
       b.status === BookingStatusEnum.PENDING_PAYMENT ||
       b.status === BookingStatusEnum.PAYMENT_PROCESSING
   ).length;
@@ -148,9 +103,9 @@ export const MyBookings: React.FC = () => {
           <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl overflow-x-auto">
             {[
               { key: '', label: 'Tất Cả' },
-              { key: 'CONFIRMED', label: 'Đã Xác Nhận' },
-              { key: 'PENDING_PAYMENT', label: 'Chờ Thanh Toán' },
-              { key: 'CANCELLED', label: 'Đã Hủy' },
+              { key: BookingStatusEnum.CONFIRMED, label: 'Đã Xác Nhận' },
+              { key: BookingStatusEnum.PENDING_PAYMENT, label: 'Chờ Thanh Toán' },
+              { key: BookingStatusEnum.CANCELLED, label: 'Đã Hủy' },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -197,13 +152,11 @@ export const MyBookings: React.FC = () => {
           <div className="flex flex-col gap-4">
             {filteredBookings.map((booking) => {
               const isPending =
-                booking.status === 'PENDING' ||
-                booking.status === 'PENDING_PAYMENT' ||
+                booking.status === BookingStatusEnum.PENDING ||
                 booking.status === BookingStatusEnum.PENDING_PAYMENT ||
                 booking.status === BookingStatusEnum.PAYMENT_PROCESSING;
 
-              const isConfirmed =
-                booking.status === 'CONFIRMED' || booking.status === BookingStatusEnum.CONFIRMED;
+              const isConfirmed = booking.status === BookingStatusEnum.CONFIRMED;
 
               return (
                 <Card
@@ -223,7 +176,7 @@ export const MyBookings: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      {getStatusBadge(booking.status)}
+                      <StatusBadge type="booking" value={booking.status} />
                     </div>
                   </div>
 

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Search, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { StatusBadge } from '@/components/common/StatusBadge';
 
 export const BookingLookup: React.FC = () => {
   const [pnr, setPnr] = useState('');
@@ -81,9 +82,7 @@ export const BookingLookup: React.FC = () => {
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               <span className="font-black text-lg text-slate-900 font-mono">PNR: {result.booking.pnr}</span>
             </div>
-            <span className="text-xs font-bold px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">
-              {result.booking.status}
-            </span>
+            <StatusBadge type="booking" value={result.booking.status} />
           </div>
 
           <div className="text-xs text-slate-600 space-y-1">

@@ -1,13 +1,15 @@
-export type UserRole = 'CUSTOMER' | 'STAFF' | 'ADMIN';
-export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'BANNED';
+import type { UserRoleEnum, UserStatusEnum } from '@/types/enums';
+
+export type UserRole = UserRoleEnum;
+export type UserStatus = UserStatusEnum;
 
 export interface AuthUser {
   id: string;
   email: string;
   full_name: string;
   phone?: string;
-  role: UserRole;
-  status?: UserStatus;
+  role: UserRoleEnum;
+  status?: UserStatusEnum;
   created_at?: string;
 }
 
@@ -27,7 +29,6 @@ export interface LoginPayload {
   email: string;
   password: string;
 }
-
 
 export interface ChangePasswordPayload {
   old_password: string;

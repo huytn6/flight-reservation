@@ -1,4 +1,5 @@
 import { $api } from '@/utils/$api';
+import type { CabinClassEnum, FlightStatusEnum } from '@/types/enums';
 
 export interface SearchFlightPayload {
   trip_type?: 'ONE_WAY' | 'ROUND_TRIP' | 'MULTI_CITY';
@@ -7,7 +8,7 @@ export interface SearchFlightPayload {
   departure_date?: string;
   return_date?: string;
   passengers?: number;
-  cabin_class?: string;
+  cabin_class?: CabinClassEnum | string;
   min_price?: number;
   max_price?: number;
   airlines?: string[];
@@ -59,7 +60,7 @@ export interface FlightOffer {
   departure_time: string;
   arrival_time: string;
   duration_minutes: number;
-  status: string;
+  status: FlightStatusEnum;
   stops: number;
   fares: FareOption[];
   cheapest_total: number;

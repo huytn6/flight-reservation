@@ -7,6 +7,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -78,6 +79,11 @@ export const CouponsListPage: React.FC = () => {
             : `${Number(row.original.discount_value).toLocaleString('vi-VN')} VND`}
         </span>
       ),
+    },
+    {
+      accessorKey: 'status',
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái" />,
+      cell: ({ row }) => <StatusBadge type="coupon" value={row.original.status || 'ACTIVE'} />,
     },
     {
       id: 'validity',

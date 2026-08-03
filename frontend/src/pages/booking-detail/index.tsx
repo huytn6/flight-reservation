@@ -5,6 +5,7 @@ import { paymentService } from '@/services/payment';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import { 
   Printer, 
   Mail, 
@@ -124,17 +125,7 @@ export const BookingDetail: React.FC = () => {
   const basePrice = totalAmount - taxFee;
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'CONFIRMED':
-        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">Đã xác nhận (Thành công)</span>;
-      case 'PENDING':
-      case 'PENDING_PAYMENT':
-        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60">Chờ thanh toán</span>;
-      case 'CANCELLED':
-        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200/60">Đã hủy chuyến</span>;
-      default:
-        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">{status}</span>;
-    }
+    return <StatusBadge type="booking" value={status} />;
   };
 
   return (

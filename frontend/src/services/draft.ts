@@ -1,9 +1,10 @@
 import { $api } from '@/utils/$api';
+import type { DraftStatusEnum, PassengerTypeEnum, SeatStatusEnum } from '@/types/enums';
 
 export interface BookingDraft {
   id: string;
   user_id?: string;
-  status?: string;
+  status?: DraftStatusEnum;
   expires_at: string;
   flight_offer_json?: string;
 }
@@ -16,7 +17,7 @@ export interface DraftContact {
 
 export interface DraftPassenger {
   passenger_index: number;
-  passenger_type: 'ADULT' | 'CHILD' | 'INFANT';
+  passenger_type: PassengerTypeEnum;
   full_name: string;
   date_of_birth?: string;
   nationality?: string;
@@ -29,7 +30,7 @@ export interface SeatMapSeat {
   seat_number: string;
   seat_type: string;
   extra_fee: number;
-  status: 'AVAILABLE' | 'HELD' | 'BOOKED' | 'BLOCKED';
+  status: SeatStatusEnum;
   held_by_me?: boolean;
 }
 

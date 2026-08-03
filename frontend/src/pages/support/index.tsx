@@ -15,11 +15,11 @@ import {
   User,
   Headphones,
   CheckCircle2,
-  Clock,
-  XCircle,
   Tag,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { StatusBadge } from '@/components/common/StatusBadge';
+import { getTicketCategoryLabel } from '@/constants/status-mappings';
 
 export const Support: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -115,32 +115,8 @@ export const Support: React.FC = () => {
     }
   };
 
-  const getCategoryLabel = (cat?: string) => {
-    switch (cat) {
-      case 'BOOKING':
-        return 'Đặt vé & Lịch trình';
-      case 'REFUND':
-        return 'Hoàn vé & Thanh toán';
-      case 'BAGGAGE':
-        return 'Hành lý & Dịch vụ';
-      default:
-        return 'Câu hỏi khác';
-    }
-  };
-
   const getStatusBadge = (status: string) => {
-    if (status === 'CLOSED') {
-      return (
-        <Badge variant="secondary" className="bg-slate-100 text-slate-600 border-slate-200 text-[10px] gap-1 shadow-none font-normal">
-          <XCircle className="w-3 h-3 text-slate-400" /> Đã Đóng
-        </Badge>
-      );
-    }
-    return (
-      <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] gap-1 shadow-none font-medium">
-        <Clock className="w-3 h-3 text-emerald-600" /> Đang Xử Lý
-      </Badge>
-    );
+    return <StatusBadge type="ticket" value={status} />;
   };
 
   return (
@@ -215,7 +191,7 @@ export const Support: React.FC = () => {
 
                         <div className="flex items-center justify-between text-[11px] text-slate-500">
                           <span className="flex items-center gap-1 font-medium text-slate-600">
-                            <Tag className="w-3 h-3 text-slate-400" /> {getCategoryLabel(t.category)}
+                            <Tag className="w-3 h-3 text-slate-400" /> {getTicketCategoryLabel(t.category)}
                           </span>
                           <span>{new Date(t.created_at).toLocaleDateString('vi-VN')}</span>
                         </div>
@@ -243,7 +219,7 @@ export const Support: React.FC = () => {
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <Badge variant="outline" className="text-[10px] font-mono border-blue-200 text-[#0065eb] bg-blue-50">
-                          {getCategoryLabel(activeTicketDetail.ticket.category)}
+                          {getTicketCategoryLabel(activeTicketDetail.ticket.category)}
                         </Badge>
                         {getStatusBadge(activeTicketDetail.ticket.status)}
                       </div>

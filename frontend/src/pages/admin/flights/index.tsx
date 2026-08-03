@@ -6,6 +6,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit2, Trash2, Eye, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -48,25 +49,6 @@ export const FlightsListPage: React.FC = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status?.toUpperCase()) {
-      case 'SCHEDULED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />Đã lên lịch</span>;
-      case 'BOARDING':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60"><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />Đang lên máy bay</span>;
-      case 'DEPARTED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />Đang bay</span>;
-      case 'ARRIVED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60"><span className="w-1.5 h-1.5 rounded-full bg-slate-400" />Đã hạ cánh</span>;
-      case 'CANCELLED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60"><span className="w-1.5 h-1.5 rounded-full bg-red-600" />Đã hủy</span>;
-      case 'DELAYED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded-md border border-amber-200/60"><span className="w-1.5 h-1.5 rounded-full bg-amber-600" />Bị trễ</span>;
-      default:
-        return <span className="text-xs text-slate-600">{status || 'Đã lên lịch'}</span>;
-    }
-  };
-
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: 'flight_number',
@@ -101,15 +83,15 @@ export const FlightsListPage: React.FC = () => {
       accessorKey: 'departure_time',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Giờ Khởi Hành" />,
       cell: ({ row }) => (
-        <span className="font-mono text-[11px] text-slate-600">
-          {row.original.departure_time ? new Date(row.original.departure_time).toLocaleString() : 'N/A'}
+        <span className="font-mono text-[11px] text-slate-500">
+          {row.original.departure_time ? new Date(row.original.departure_time).toLocaleString('vi-VN') : 'N/A'}
         </span>
       ),
     },
     {
       accessorKey: 'status',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái" />,
-      cell: ({ row }) => getStatusBadge(row.original.status),
+      cell: ({ row }) => <StatusBadge type="flight" value={row.original.status} />,
     },
     {
       id: 'actions',

@@ -2,10 +2,12 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminService } from '@/services/admin';
 import type { AuthUser } from '@/types/auth';
+import { UserStatusEnum } from '@/types/enums';
 import { Button } from '@/components/ui/button';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Eye } from 'lucide-react';
 import { toast } from 'sonner';
@@ -32,10 +34,10 @@ export const CustomersListPage: React.FC = () => {
   };
 
   const handleToggleStatus = async (user: AuthUser) => {
-    const nextStatus = user.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+    const nextStatus = user.status === UserStatusEnum.ACTIVE ? UserStatusEnum.SUSPENDED : UserStatusEnum.ACTIVE;
     try {
       await adminService.updateCustomerStatus(user.id, nextStatus);
-      toast.success(`Đã cập nhật trạng thái khách hàng thành ${nextStatus === 'ACTIVE' ? 'Hoạt động' : 'Tạm khóa'}`);
+      toast.success(`Đã cập nhật trạng thái khách hàng thành ${nextStatus === UserStatusEnum.ACTIVE ? 'Hoạt động' : 'Tạm khóa'}`);
       loadCustomers();
     } catch (err: any) {
       toast.error(err.message || 'Không thể cập nhật trạng thái khách hàng');
@@ -56,24 +58,14 @@ export const CustomersListPage: React.FC = () => {
     {
       accessorKey: 'status',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái Tài Khoản" />,
-      cell: ({ row }) => (
-        row.original.status === 'ACTIVE' ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Hoạt động
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-600" /> Tạm khóa
-          </span>
-        )
-      ),
+      cell: ({ row }) => <StatusBadge type="user" value={row.original.status} />,
     },
     {
       accessorKey: 'created_at',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Ngày Đăng Ký" />,
       cell: ({ row }) => (
         <span className="font-mono text-[11px] text-slate-500">
-          {row.original.created_at ? new Date(row.original.created_at).toLocaleDateString() : 'N/A'}
+          {row.original.created_at ? new Date(row.original.created_at).toLocaleDateString('vi-VN') : 'N/A'}
         </span>
       ),
     },
@@ -95,12 +87,12 @@ export const CustomersListPage: React.FC = () => {
             size="sm"
             onClick={() => handleToggleStatus(row.original)}
             className={`h-7 text-[11px] font-medium px-2.5 cursor-pointer ${
-              row.original.status === 'ACTIVE'
+              row.original.status === UserStatusEnum.ACTIVE
                 ? 'text-red-600 hover:bg-red-50 border-red-200'
                 : 'text-emerald-600 hover:bg-emerald-50 border-emerald-200'
             }`}
           >
-            {row.original.status === 'ACTIVE' ? 'Tạm khóa' : 'Kích hoạt'}
+            {row.original.status === UserStatusEnum.ACTIVE ? 'Tạm khóa' : 'Kích hoạt'}
           </Button>
         </div>
       ),

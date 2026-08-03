@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Eye } from 'lucide-react';
 import { toast } from 'sonner';
@@ -27,21 +28,6 @@ export const BookingsListPage: React.FC = () => {
       toast.error(err.message || 'Không thể tải danh sách đơn đặt vé');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status?.toUpperCase()) {
-      case 'CONFIRMED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60"><span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />Đã xác nhận</span>;
-      case 'PENDING':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded-md border border-amber-200/60"><span className="w-1.5 h-1.5 rounded-full bg-amber-600" />Chờ thanh toán</span>;
-      case 'CANCELLED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60"><span className="w-1.5 h-1.5 rounded-full bg-red-600" />Đã hủy</span>;
-      case 'REFUNDED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60"><span className="w-1.5 h-1.5 rounded-full bg-slate-500" />Đã hoàn tiền</span>;
-      default:
-        return <span className="text-xs text-slate-600">{status}</span>;
     }
   };
 
@@ -77,14 +63,14 @@ export const BookingsListPage: React.FC = () => {
     {
       accessorKey: 'status',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái Đơn Vé" />,
-      cell: ({ row }) => getStatusBadge(row.original.status),
+      cell: ({ row }) => <StatusBadge type="booking" value={row.original.status} />,
     },
     {
       accessorKey: 'created_at',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Ngày Đặt" />,
       cell: ({ row }) => (
         <span className="font-mono text-[11px] text-slate-500">
-          {row.original.created_at ? new Date(row.original.created_at).toLocaleString() : 'N/A'}
+          {row.original.created_at ? new Date(row.original.created_at).toLocaleString('vi-VN') : 'N/A'}
         </span>
       ),
     },

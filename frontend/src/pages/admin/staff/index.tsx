@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -45,13 +46,7 @@ export const StaffListPage: React.FC = () => {
     {
       accessorKey: 'role',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Vai Trò Quyền Hạn" />,
-      cell: ({ row }) => (
-        row.original.role === 'ADMIN' ? (
-          <span className="font-mono text-[11px] font-semibold text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded border border-blue-200/60">QUẢN TRỊ VIÊN (ADMIN)</span>
-        ) : (
-          <span className="font-mono text-[11px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/60">NHÂN VIÊN (STAFF)</span>
-        )
-      ),
+      cell: ({ row }) => <StatusBadge type="role" value={row.original.role} />,
     },
     {
       id: 'actions',

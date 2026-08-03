@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { Send, MessageSquare, UserCheck, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { StatusBadge } from '@/components/common/StatusBadge';
+import { TicketStatusEnum } from '@/types/enums';
 
 export const StaffTickets: React.FC = () => {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
@@ -80,23 +82,6 @@ export const StaffTickets: React.FC = () => {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'OPEN':
-        return 'Mới tạo';
-      case 'IN_PROGRESS':
-        return 'Đang xử lý';
-      case 'WAITING_CUSTOMER':
-        return 'Chờ khách phản hồi';
-      case 'RESOLVED':
-        return 'Đã giải quyết';
-      case 'CLOSED':
-        return 'Đã đóng';
-      default:
-        return status;
-    }
-  };
-
   return (
     <div className="w-full space-y-4 font-sans relative pb-12">
       {/* Enterprise Page Header */}
@@ -112,10 +97,10 @@ export const StaffTickets: React.FC = () => {
       <div className="flex bg-white p-1 rounded-lg border border-slate-200/60 w-fit gap-1 text-xs">
         {[
           { key: '', label: 'Tất cả' },
-          { key: 'OPEN', label: 'Mới tạo' },
-          { key: 'IN_PROGRESS', label: 'Đang xử lý' },
-          { key: 'WAITING_CUSTOMER', label: 'Chờ phản hồi' },
-          { key: 'RESOLVED', label: 'Đã giải quyết' },
+          { key: TicketStatusEnum.OPEN, label: 'Mới tạo' },
+          { key: TicketStatusEnum.IN_PROGRESS, label: 'Đang xử lý' },
+          { key: TicketStatusEnum.WAITING_CUSTOMER, label: 'Chờ phản hồi' },
+          { key: TicketStatusEnum.RESOLVED, label: 'Đã giải quyết' },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -161,9 +146,7 @@ export const StaffTickets: React.FC = () => {
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-semibold text-slate-900 truncate">{t.subject}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-700 shrink-0">
-                          {getStatusLabel(t.status)}
-                        </span>
+                        <StatusBadge type="ticket" value={t.status} />
                       </div>
                       <div className="flex items-center gap-1 text-[11px] text-slate-400">
                         <Clock className="w-3 h-3" />
@@ -217,11 +200,11 @@ export const StaffTickets: React.FC = () => {
                       onChange={(e) => handleStatusChange(e.target.value)}
                       className="text-xs font-medium p-1.5 border border-blue-200 rounded-md bg-blue-50 text-[#0065eb] cursor-pointer focus:outline-none"
                     >
-                      <option value="OPEN">Mới tạo (OPEN)</option>
-                      <option value="IN_PROGRESS">Đang xử lý (IN_PROGRESS)</option>
-                      <option value="WAITING_CUSTOMER">Chờ khách phản hồi (WAITING)</option>
-                      <option value="RESOLVED">Đã giải quyết (RESOLVED)</option>
-                      <option value="CLOSED">Đã đóng (CLOSED)</option>
+                      <option value={TicketStatusEnum.OPEN}>Mới khởi tạo</option>
+                      <option value={TicketStatusEnum.IN_PROGRESS}>Đang xử lý</option>
+                      <option value={TicketStatusEnum.WAITING_CUSTOMER}>Chờ khách phản hồi</option>
+                      <option value={TicketStatusEnum.RESOLVED}>Đã giải quyết</option>
+                      <option value={TicketStatusEnum.CLOSED}>Đã đóng</option>
                     </select>
                   </div>
                 </div>

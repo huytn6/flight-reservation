@@ -1,0 +1,323 @@
+import {
+  BookingStatusEnum,
+  PaymentStatusEnum,
+  PaymentMethodEnum,
+  FlightStatusEnum,
+  UserStatusEnum,
+  UserRoleEnum,
+  TicketStatusEnum,
+  TicketCategoryEnum,
+  SeatStatusEnum,
+  DraftStatusEnum,
+  CabinClassEnum,
+  GenderEnum,
+  CouponStatusEnum,
+} from '@/types/enums';
+
+export interface StatusConfig {
+  label: string;
+  className: string;
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline';
+}
+
+// 1. Booking Status Config
+export const BOOKING_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [BookingStatusEnum.CONFIRMED]: {
+    label: 'Đã xác nhận',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    variant: 'secondary',
+  },
+  [BookingStatusEnum.PENDING]: {
+    label: 'Chờ thanh toán',
+    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
+    variant: 'secondary',
+  },
+  [BookingStatusEnum.PENDING_PAYMENT]: {
+    label: 'Chờ thanh toán',
+    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
+    variant: 'secondary',
+  },
+  [BookingStatusEnum.PAYMENT_PROCESSING]: {
+    label: 'Đang xử lý thanh toán',
+    className: 'bg-blue-50 text-blue-700 border-blue-200/80',
+    variant: 'secondary',
+  },
+  [BookingStatusEnum.PAYMENT_FAILED]: {
+    label: 'Thanh toán thất bại',
+    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
+    variant: 'secondary',
+  },
+  [BookingStatusEnum.CANCELLED]: {
+    label: 'Đã hủy',
+    className: 'bg-slate-100 text-slate-600 border-slate-200',
+    variant: 'outline',
+  },
+  [BookingStatusEnum.COMPLETED]: {
+    label: 'Hoàn thành',
+    className: 'bg-sky-50 text-sky-700 border-sky-200/80',
+    variant: 'secondary',
+  },
+};
+
+export const getBookingStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Không rõ', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return BOOKING_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
+
+// 2. Payment Status Config
+export const PAYMENT_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [PaymentStatusEnum.SUCCESS]: {
+    label: 'Thành công',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+  },
+  [PaymentStatusEnum.PENDING]: {
+    label: 'Đang chờ',
+    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
+  },
+  [PaymentStatusEnum.PROCESSING]: {
+    label: 'Đang xử lý',
+    className: 'bg-blue-50 text-blue-700 border-blue-200/80',
+  },
+  [PaymentStatusEnum.FAILED]: {
+    label: 'Thất bại',
+    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
+  },
+  [PaymentStatusEnum.REFUNDED]: {
+    label: 'Đã hoàn tiền',
+    className: 'bg-purple-50 text-purple-700 border-purple-200/80',
+  },
+};
+
+export const getPaymentStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Chưa thanh toán', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return PAYMENT_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
+
+// 3. Flight Status Config
+export const FLIGHT_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [FlightStatusEnum.SCHEDULED]: {
+    label: 'Đúng lịch khởi hành',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+  },
+  [FlightStatusEnum.DELAYED]: {
+    label: 'Bị hoãn chuyến',
+    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
+  },
+  [FlightStatusEnum.CANCELLED]: {
+    label: 'Hủy chuyến',
+    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
+  },
+  [FlightStatusEnum.IN_FLIGHT]: {
+    label: 'Đang trên không',
+    className: 'bg-blue-50 text-blue-700 border-blue-200/80',
+  },
+  [FlightStatusEnum.LANDED]: {
+    label: 'Đã hạ cánh',
+    className: 'bg-sky-50 text-sky-700 border-sky-200/80',
+  },
+  [FlightStatusEnum.COMPLETED]: {
+    label: 'Hoàn tất lịch trình',
+    className: 'bg-slate-100 text-slate-700 border-slate-200',
+  },
+};
+
+export const getFlightStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Đang cập nhật', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return FLIGHT_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
+
+// 4. User Status Config
+export const USER_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [UserStatusEnum.ACTIVE]: {
+    label: 'Đang hoạt động',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+  },
+  [UserStatusEnum.INACTIVE]: {
+    label: 'Ngừng hoạt động',
+    className: 'bg-slate-100 text-slate-600 border-slate-200',
+  },
+  [UserStatusEnum.BANNED]: {
+    label: 'Đã bị khóa',
+    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
+  },
+  [UserStatusEnum.BLOCKED]: {
+    label: 'Đã chặn',
+    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
+  },
+  [UserStatusEnum.SUSPENDED]: {
+    label: 'Tạm đình chỉ',
+    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
+  },
+};
+
+export const getUserStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Không rõ', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return USER_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
+
+// 5. User Role Config
+export const USER_ROLE_CONFIG: Record<string, StatusConfig> = {
+  [UserRoleEnum.ADMIN]: {
+    label: 'Quản trị viên (Admin)',
+    className: 'bg-purple-50 text-purple-700 border-purple-200/80',
+  },
+  [UserRoleEnum.STAFF]: {
+    label: 'Nhân viên dịch vụ',
+    className: 'bg-blue-50 text-blue-700 border-blue-200/80',
+  },
+  [UserRoleEnum.CUSTOMER]: {
+    label: 'Khách hàng',
+    className: 'bg-slate-100 text-slate-700 border-slate-200',
+  },
+};
+
+export const getUserRoleConfig = (role?: string | null): StatusConfig => {
+  if (!role) return { label: 'Khách', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return USER_ROLE_CONFIG[role] || { label: role, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
+
+// 6. Support Ticket Status Config
+export const TICKET_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [TicketStatusEnum.OPEN]: {
+    label: 'Mới khởi tạo',
+    className: 'bg-blue-50 text-blue-700 border-blue-200/80',
+  },
+  [TicketStatusEnum.IN_PROGRESS]: {
+    label: 'Đang xử lý',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+  },
+  [TicketStatusEnum.WAITING_CUSTOMER]: {
+    label: 'Chờ khách phản hồi',
+    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
+  },
+  [TicketStatusEnum.RESOLVED]: {
+    label: 'Đã giải quyết',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+  },
+  [TicketStatusEnum.CLOSED]: {
+    label: 'Đã đóng',
+    className: 'bg-slate-100 text-slate-600 border-slate-200',
+  },
+};
+
+export const getTicketStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Không rõ', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return TICKET_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
+
+// 7. Ticket Category Labels
+export const getTicketCategoryLabel = (category?: string | null): string => {
+  switch (category) {
+    case TicketCategoryEnum.BOOKING: return 'Đặt vé & Lịch trình';
+    case TicketCategoryEnum.REFUND: return 'Hoàn vé & Thanh toán';
+    case TicketCategoryEnum.BAGGAGE: return 'Hành lý & Dịch vụ';
+    default: return 'Khác';
+  }
+};
+
+// 8. Payment Method Labels
+export const getPaymentMethodLabel = (method?: string | null): string => {
+  switch (method) {
+    case PaymentMethodEnum.CARD: return 'Thẻ quốc tế (Visa / Mastercard)';
+    case PaymentMethodEnum.MOMO: return 'Ví MoMo';
+    case PaymentMethodEnum.BANK_TRANSFER: return 'Chuyển khoản ngân hàng (VietQR)';
+    case PaymentMethodEnum.VNPAY: return 'Cổng VNPAY QR';
+    case PaymentMethodEnum.PAYPAL: return 'Ví PayPal';
+    default: return method || 'Chưa chọn';
+  }
+};
+
+// 9. Cabin Class Labels
+export const getCabinClassLabel = (cabin?: string | null): string => {
+  switch (cabin) {
+    case CabinClassEnum.ECONOMY: return 'Phổ thông (Economy)';
+    case CabinClassEnum.PREMIUM_ECONOMY: return 'Phổ thông đặc biệt (Premium Economy)';
+    case CabinClassEnum.BUSINESS: return 'Thương gia (Business)';
+    case CabinClassEnum.FIRST: return 'Hạng nhất (First Class)';
+    default: return cabin || 'Phổ thông';
+  }
+};
+
+// 10. Gender Labels
+export const getGenderLabel = (gender?: string | null): string => {
+  switch (gender) {
+    case GenderEnum.MALE: return 'Nam';
+    case GenderEnum.FEMALE: return 'Nữ';
+    default: return 'Khác';
+  }
+};
+
+// 11. Seat Status Config
+export const SEAT_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [SeatStatusEnum.AVAILABLE]: {
+    label: 'Còn trống',
+    className: 'bg-slate-100 text-slate-700 border-slate-300',
+  },
+  [SeatStatusEnum.HELD]: {
+    label: 'Đang giữ chỗ',
+    className: 'bg-amber-50 text-amber-700 border-amber-300',
+  },
+  [SeatStatusEnum.BOOKED]: {
+    label: 'Đã đặt',
+    className: 'bg-rose-50 text-rose-700 border-rose-200',
+  },
+  [SeatStatusEnum.BLOCKED]: {
+    label: 'Khóa ghế',
+    className: 'bg-slate-200 text-slate-500 border-slate-300',
+  },
+  [SeatStatusEnum.SELECTED]: {
+    label: 'Ghế bạn chọn',
+    className: 'bg-blue-600 text-white border-blue-600',
+  },
+};
+
+export const getSeatStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Còn trống', className: 'bg-slate-100 text-slate-700 border-slate-300' };
+  return SEAT_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-300' };
+};
+
+// 12. Draft Status Config
+export const DRAFT_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [DraftStatusEnum.ACTIVE]: {
+    label: 'Đang giữ chỗ',
+    className: 'bg-amber-50 text-amber-700 border-amber-200',
+  },
+  [DraftStatusEnum.CONVERTED]: {
+    label: 'Đã tạo vé thành công',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  },
+  [DraftStatusEnum.EXPIRED]: {
+    label: 'Hết hạn giữ chỗ',
+    className: 'bg-rose-50 text-rose-700 border-rose-200',
+  },
+  [DraftStatusEnum.CANCELLED]: {
+    label: 'Đã hủy',
+    className: 'bg-slate-100 text-slate-600 border-slate-200',
+  },
+};
+
+export const getDraftStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Không rõ', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return DRAFT_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
+
+// 13. Coupon Status Config
+export const COUPON_STATUS_CONFIG: Record<string, StatusConfig> = {
+  [CouponStatusEnum.ACTIVE]: {
+    label: 'Đang áp dụng',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  },
+  [CouponStatusEnum.INACTIVE]: {
+    label: 'Tạm ngừng',
+    className: 'bg-slate-100 text-slate-600 border-slate-200',
+  },
+  [CouponStatusEnum.EXPIRED]: {
+    label: 'Hết hạn sử dụng',
+    className: 'bg-rose-50 text-rose-700 border-rose-200',
+  },
+};
+
+export const getCouponStatusConfig = (status?: string | null): StatusConfig => {
+  if (!status) return { label: 'Không rõ', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  return COUPON_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
