@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { StaffLayout } from '@/layouts/StaffLayout';
@@ -23,12 +23,44 @@ import { Support } from '@/pages/support';
 import { StaffBookings } from '@/pages/staff/bookings';
 import { StaffTickets } from '@/pages/staff/tickets';
 
+// Admin Modules
 import { AdminDashboard } from '@/pages/admin/dashboard';
-import { AdminUsers } from '@/pages/admin/users';
-import { AdminCatalog } from '@/pages/admin/catalog';
-import { AdminFinance } from '@/pages/admin/finance';
-import { AdminCoupons } from '@/pages/admin/coupons';
 import { AdminAudit } from '@/pages/admin/audit';
+
+import { FlightsListPage } from '@/pages/admin/flights';
+import { FlightCreatePage } from '@/pages/admin/flights/new';
+import { FlightDetailPage } from '@/pages/admin/flights/detail';
+import { FlightEditPage } from '@/pages/admin/flights/edit';
+
+import { AirportsListPage } from '@/pages/admin/airports';
+import { AirportCreatePage } from '@/pages/admin/airports/new';
+import { AirportEditPage } from '@/pages/admin/airports/edit';
+
+import { AirlinesListPage } from '@/pages/admin/airlines';
+import { AirlineCreatePage } from '@/pages/admin/airlines/new';
+import { AirlineEditPage } from '@/pages/admin/airlines/edit';
+
+import { AircraftListPage } from '@/pages/admin/aircraft';
+import { AircraftCreatePage } from '@/pages/admin/aircraft/new';
+import { AircraftEditPage } from '@/pages/admin/aircraft/edit';
+
+import { CouponsListPage } from '@/pages/admin/coupons';
+import { CouponCreatePage } from '@/pages/admin/coupons/new';
+import { CouponEditPage } from '@/pages/admin/coupons/edit';
+
+import { CmsListPage } from '@/pages/admin/cms';
+import { CmsCreatePage } from '@/pages/admin/cms/new';
+import { CmsEditPage } from '@/pages/admin/cms/edit';
+
+import { CustomersListPage } from '@/pages/admin/customers';
+import { CustomerDetailPage } from '@/pages/admin/customers/detail';
+
+import { StaffListPage } from '@/pages/admin/staff';
+import { StaffCreatePage } from '@/pages/admin/staff/new';
+import { StaffEditPage } from '@/pages/admin/staff/edit';
+
+import { BookingsListPage } from '@/pages/admin/bookings';
+import { BookingDetailPage } from '@/pages/admin/bookings/detail';
 
 import { Forbidden } from '@/pages/forbidden';
 import { NotFound } from '@/pages/not-found';
@@ -58,7 +90,6 @@ export const router = createBrowserRouter([
         path: 'booking-lookup',
         element: <BookingLookup />,
       },
-      // Protected Customer Routes
       {
         path: 'checkout',
         element: (
@@ -125,7 +156,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // Staff Portal Protected Routes (Staff & Admin)
   {
     path: '/staff',
     element: (
@@ -144,7 +174,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // Admin Portal Protected Routes (Admin only)
+  // Enterprise Admin Portal Protected Routes
   {
     path: '/admin',
     element: (
@@ -157,29 +187,58 @@ export const router = createBrowserRouter([
         index: true,
         element: <AdminDashboard />,
       },
-      {
-        path: 'users',
-        element: <AdminUsers />,
-      },
-      {
-        path: 'catalog',
-        element: <AdminCatalog />,
-      },
-      {
-        path: 'finance',
-        element: <AdminFinance />,
-      },
-      {
-        path: 'cms',
-        element: <AdminCoupons />,
-      },
-      {
-        path: 'audit',
-        element: <AdminAudit />,
-      },
+      // Flights
+      { path: 'flights', element: <FlightsListPage /> },
+      { path: 'flights/new', element: <FlightCreatePage /> },
+      { path: 'flights/:id', element: <FlightDetailPage /> },
+      { path: 'flights/:id/edit', element: <FlightEditPage /> },
+
+      // Airports
+      { path: 'airports', element: <AirportsListPage /> },
+      { path: 'airports/new', element: <AirportCreatePage /> },
+      { path: 'airports/:id/edit', element: <AirportEditPage /> },
+
+      // Airlines
+      { path: 'airlines', element: <AirlinesListPage /> },
+      { path: 'airlines/new', element: <AirlineCreatePage /> },
+      { path: 'airlines/:id/edit', element: <AirlineEditPage /> },
+
+      // Aircraft
+      { path: 'aircraft', element: <AircraftListPage /> },
+      { path: 'aircraft/new', element: <AircraftCreatePage /> },
+      { path: 'aircraft/:id/edit', element: <AircraftEditPage /> },
+
+      // Coupons & Marketing
+      { path: 'coupons', element: <CouponsListPage /> },
+      { path: 'coupons/new', element: <CouponCreatePage /> },
+      { path: 'coupons/:id/edit', element: <CouponEditPage /> },
+
+      // CMS Pages
+      { path: 'cms', element: <CmsListPage /> },
+      { path: 'cms/new', element: <CmsCreatePage /> },
+      { path: 'cms/:id/edit', element: <CmsEditPage /> },
+
+      // Customers & Staff
+      { path: 'customers', element: <CustomersListPage /> },
+      { path: 'customers/:id', element: <CustomerDetailPage /> },
+
+      { path: 'staff', element: <StaffListPage /> },
+      { path: 'staff/new', element: <StaffCreatePage /> },
+      { path: 'staff/:id/edit', element: <StaffEditPage /> },
+
+      // Bookings & Financial
+      { path: 'bookings', element: <BookingsListPage /> },
+      { path: 'bookings/:id', element: <BookingDetailPage /> },
+
+      // Audit Logs
+      { path: 'audit', element: <AdminAudit /> },
+
+      // Legacy Aliases
+      { path: 'catalog', element: <Navigate to="/admin/flights" replace /> },
+      { path: 'users', element: <Navigate to="/admin/customers" replace /> },
+      { path: 'finance', element: <Navigate to="/admin/bookings" replace /> },
     ],
   },
-  // Guest Routes (Already logged-in users redirected to /)
   {
     element: <AuthLayout />,
     children: [
@@ -193,7 +252,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-  // System Status Routes
   {
     path: '/403',
     element: <Forbidden />,

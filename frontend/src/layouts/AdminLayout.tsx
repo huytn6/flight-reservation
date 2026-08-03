@@ -5,6 +5,8 @@ import {
   LayoutDashboard, 
   Users, 
   Plane, 
+  Building2,
+  PlaneTakeoff,
   CreditCard, 
   Tag, 
   FileText, 
@@ -13,7 +15,8 @@ import {
   User as UserIcon,
   Search,
   Plus,
-  ExternalLink
+  ExternalLink,
+  UserCheck
 } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
 import { Button } from '@/components/ui/button';
@@ -56,28 +59,33 @@ export const AdminLayout: React.FC = () => {
   // Grouped Nav Items for Enterprise SaaS / ERP Hierarchy
   const navGroups = [
     {
-      group: 'ANALYTICS & OPERATIONAL',
+      group: 'ANALYTICS & OVERVIEW',
       items: [
         { path: '/admin', label: 'Dashboard Overview', icon: LayoutDashboard, badge: null },
       ],
     },
     {
-      group: 'FLIGHTS & FLEET',
+      group: 'FLIGHTS & FLEET CATALOG',
       items: [
-        { path: '/admin/catalog', label: 'Flight Catalog & Seats', icon: Plane, badge: 'Live' },
+        { path: '/admin/flights', label: 'Flights & Schedules', icon: Plane, badge: 'Live' },
+        { path: '/admin/airports', label: 'Airports Catalog', icon: Building2, badge: null },
+        { path: '/admin/airlines', label: 'Airlines Catalog', icon: PlaneTakeoff, badge: null },
+        { path: '/admin/aircraft', label: 'Aircraft Fleet', icon: Plane, badge: null },
       ],
     },
     {
-      group: 'BUSINESS & FINANCE',
+      group: 'BUSINESS & REVENUE',
       items: [
-        { path: '/admin/finance', label: 'Bookings & Refunds', icon: CreditCard, badge: null },
-        { path: '/admin/cms', label: 'Coupons & CMS', icon: Tag, badge: null },
+        { path: '/admin/bookings', label: 'Bookings & Fares', icon: CreditCard, badge: null },
+        { path: '/admin/coupons', label: 'Coupons & Promos', icon: Tag, badge: null },
+        { path: '/admin/cms', label: 'CMS Content Pages', icon: FileText, badge: null },
       ],
     },
     {
       group: 'IDENTITY & SECURITY',
       items: [
-        { path: '/admin/users', label: 'Customers & Staff', icon: Users, badge: null },
+        { path: '/admin/customers', label: 'Customers', icon: Users, badge: null },
+        { path: '/admin/staff', label: 'Staff Accounts', icon: UserCheck, badge: null },
         { path: '/admin/audit', label: 'System Audit Logs', icon: FileText, badge: 'Sec' },
       ],
     },
@@ -248,17 +256,17 @@ export const AdminLayout: React.FC = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-white rounded-xl border border-slate-200 shadow-md p-1 text-xs">
-                  <DropdownMenuItem onClick={() => navigate('/admin/catalog')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate('/admin/flights/new')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <Plane className="w-3.5 h-3.5 mr-2 text-[#0065eb]" />
                     <span>Create New Flight</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/admin/users')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
-                    <Users className="w-3.5 h-3.5 mr-2 text-blue-600" />
+                  <DropdownMenuItem onClick={() => navigate('/admin/staff/new')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                    <UserCheck className="w-3.5 h-3.5 mr-2 text-blue-600" />
                     <span>Add Staff Account</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/admin/finance')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate('/admin/bookings')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <CreditCard className="w-3.5 h-3.5 mr-2 text-purple-600" />
-                    <span>Review Refunds</span>
+                    <span>View Bookings</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
