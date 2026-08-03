@@ -7,7 +7,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2, Tag, Calendar } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CouponsListPage: React.FC = () => {
@@ -53,7 +53,7 @@ export const CouponsListPage: React.FC = () => {
       accessorKey: 'code',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Promo Code" />,
       cell: ({ row }) => (
-        <Badge className="font-mono text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5">
+        <Badge className="font-mono text-xs font-bold bg-blue-50 text-[#0065eb] border border-blue-200 px-2 py-0.5">
           {row.original.code}
         </Badge>
       ),
@@ -82,10 +82,9 @@ export const CouponsListPage: React.FC = () => {
       id: 'validity',
       header: 'Valid Period',
       cell: ({ row }) => (
-        <div className="flex items-center gap-1 text-[11px] text-slate-500 font-mono">
-          <Calendar className="w-3 h-3 text-slate-400" />
+        <div className="text-[11px] text-slate-500 font-mono">
           <span>{row.original.valid_from?.substring(0, 10)}</span>
-          <span>→</span>
+          <span className="mx-1.5">→</span>
           <span>{row.original.valid_until?.substring(0, 10)}</span>
         </div>
       ),
@@ -99,7 +98,7 @@ export const CouponsListPage: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/admin/coupons/${row.original.id}/edit`)}
-            className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </Button>
@@ -121,8 +120,7 @@ export const CouponsListPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Tag className="w-5 h-5 text-amber-600" />
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             Coupons & Promotions
           </h1>
           <p className="text-xs text-slate-500 mt-1">

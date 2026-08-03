@@ -7,7 +7,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2, Eye, Plane, ArrowRight } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const FlightsListPage: React.FC = () => {
@@ -51,11 +51,11 @@ export const FlightsListPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status?.toUpperCase()) {
       case 'SCHEDULED':
-        return <Badge className="bg-blue-50 text-blue-700 border border-blue-200">Scheduled</Badge>;
+        return <Badge className="bg-blue-50 text-[#0065eb] border border-blue-200">Scheduled</Badge>;
       case 'BOARDING':
         return <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">Boarding</Badge>;
       case 'DEPARTED':
-        return <Badge className="bg-indigo-50 text-indigo-700 border border-indigo-200">In Flight</Badge>;
+        return <Badge className="bg-blue-50 text-blue-700 border border-blue-200">In Flight</Badge>;
       case 'ARRIVED':
         return <Badge className="bg-slate-100 text-slate-700 border border-slate-200">Arrived</Badge>;
       case 'CANCELLED':
@@ -120,7 +120,7 @@ export const FlightsListPage: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/admin/flights/${row.original.id}`)}
-            className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
           </Button>
@@ -128,7 +128,7 @@ export const FlightsListPage: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/admin/flights/${row.original.id}/edit`)}
-            className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </Button>
@@ -150,8 +150,7 @@ export const FlightsListPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Plane className="w-5 h-5 text-[#0065eb]" />
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             Flights Catalog & Schedules
           </h1>
           <p className="text-xs text-slate-500 mt-1">

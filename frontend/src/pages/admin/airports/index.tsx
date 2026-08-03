@@ -7,7 +7,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2, MapPin, Building2 } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AirportsListPage: React.FC = () => {
@@ -71,9 +71,8 @@ export const AirportsListPage: React.FC = () => {
       accessorKey: 'city',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Location" />,
       cell: ({ row }) => (
-        <div className="flex items-center gap-1.5 text-slate-600 text-xs">
-          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span>{row.original.city}, {row.original.country}</span>
+        <div className="text-slate-600 text-xs">
+          {row.original.city}, {row.original.country}
         </div>
       ),
     },
@@ -95,7 +94,7 @@ export const AirportsListPage: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/admin/airports/${row.original.id}/edit`)}
-            className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </Button>
@@ -117,8 +116,7 @@ export const AirportsListPage: React.FC = () => {
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-[#0065eb]" />
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             Airports Management
           </h1>
           <p className="text-xs text-slate-500 mt-1">

@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Users, Eye, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CustomersListPage: React.FC = () => {
@@ -82,7 +82,7 @@ export const CustomersListPage: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/admin/customers/${row.original.id}`)}
-            className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
           </Button>
@@ -96,11 +96,7 @@ export const CustomersListPage: React.FC = () => {
                 : 'text-emerald-600 hover:bg-emerald-50 border-emerald-200'
             }`}
           >
-            {row.original.status === 'ACTIVE' ? (
-              <span className="flex items-center gap-1"><ShieldAlert className="w-3 h-3" /> Suspend</span>
-            ) : (
-              <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" /> Activate</span>
-            )}
+            {row.original.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
           </Button>
         </div>
       ),
@@ -112,8 +108,7 @@ export const CustomersListPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             Registered Customers
           </h1>
           <p className="text-xs text-slate-500 mt-1">

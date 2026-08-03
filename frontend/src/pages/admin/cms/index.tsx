@@ -7,7 +7,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2, FileText, CheckCircle2, XCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CmsListPage: React.FC = () => {
@@ -53,7 +53,7 @@ export const CmsListPage: React.FC = () => {
       accessorKey: 'key',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Slug Key" />,
       cell: ({ row }) => (
-        <Badge className="font-mono text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5">
+        <Badge className="font-mono text-xs font-bold bg-blue-50 text-[#0065eb] border border-blue-200 px-2 py-0.5">
           {row.original.key}
         </Badge>
       ),
@@ -72,13 +72,13 @@ export const CmsListPage: React.FC = () => {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Publish Status" />,
       cell: ({ row }) => (
         row.original.is_published ? (
-          <span className="flex items-center gap-1 text-xs text-emerald-600 font-semibold">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Published
-          </span>
+          <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
+            Published
+          </Badge>
         ) : (
-          <span className="flex items-center gap-1 text-xs text-slate-400 font-medium">
-            <XCircle className="w-3.5 h-3.5" /> Draft
-          </span>
+          <Badge variant="outline" className="text-slate-500 text-xs">
+            Draft
+          </Badge>
         )
       ),
     },
@@ -91,7 +91,7 @@ export const CmsListPage: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/admin/cms/${row.original.id}/edit`)}
-            className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </Button>
@@ -113,8 +113,7 @@ export const CmsListPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <FileText className="w-5 h-5 text-purple-600" />
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             CMS Content & Pages
           </h1>
           <p className="text-xs text-slate-500 mt-1">

@@ -7,7 +7,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2, Plane } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AircraftListPage: React.FC = () => {
@@ -53,7 +53,7 @@ export const AircraftListPage: React.FC = () => {
       accessorKey: 'code',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Type Code" />,
       cell: ({ row }) => (
-        <Badge className="font-mono text-xs font-bold bg-sky-50 text-sky-600 border border-sky-200 px-2 py-0.5">
+        <Badge className="font-mono text-xs font-bold bg-blue-50 text-[#0065eb] border border-blue-200 px-2 py-0.5">
           {row.original.code}
         </Badge>
       ),
@@ -92,7 +92,7 @@ export const AircraftListPage: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => navigate(`/admin/aircraft/${row.original.id}/edit`)}
-            className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
           >
             <Edit2 className="w-3.5 h-3.5" />
           </Button>
@@ -114,8 +114,7 @@ export const AircraftListPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Plane className="w-5 h-5 text-sky-600" />
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             Aircraft Fleet Management
           </h1>
           <p className="text-xs text-slate-500 mt-1">
