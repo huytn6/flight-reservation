@@ -27,7 +27,7 @@ export const AirportsListPage: React.FC = () => {
       const res = await adminService.getAirports();
       setAirports(res || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load airports');
+      toast.error(err.message || 'Không thể tải danh sách sân bay');
     } finally {
       setLoading(false);
     }
@@ -38,11 +38,11 @@ export const AirportsListPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminService.deleteAirport(deleteId);
-      toast.success('Airport deleted successfully');
+      toast.success('Đã xóa sân bay thành công');
       setDeleteId(null);
       loadAirports();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to delete airport');
+      toast.error(err.message || 'Không thể xóa sân bay');
     } finally {
       setDeleting(false);
     }
@@ -51,7 +51,7 @@ export const AirportsListPage: React.FC = () => {
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: 'iata_code',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="IATA Code" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Mã IATA" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.iata_code}
@@ -60,7 +60,7 @@ export const AirportsListPage: React.FC = () => {
     },
     {
       accessorKey: 'name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Airport Name" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Tên Sân Bay" />,
       cell: ({ row }) => (
         <div className="font-medium text-slate-900 text-xs">
           {row.original.name}
@@ -69,7 +69,7 @@ export const AirportsListPage: React.FC = () => {
     },
     {
       accessorKey: 'city',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Location" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Địa Điểm / Thành Phố" />,
       cell: ({ row }) => (
         <div className="text-slate-600 text-xs">
           {row.original.city}, {row.original.country}
@@ -78,7 +78,7 @@ export const AirportsListPage: React.FC = () => {
     },
     {
       accessorKey: 'timezone',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Timezone" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Múi Giờ" />,
       cell: ({ row }) => (
         <span className="font-mono text-[11px] text-slate-500">
           {row.original.timezone || 'UTC'}
@@ -87,7 +87,7 @@ export const AirportsListPage: React.FC = () => {
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <div className="flex items-center gap-1">
           <Button
@@ -115,11 +115,11 @@ export const AirportsListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Airports Catalog"
-        description="Manage global airport location codes, city destinations, and timezones."
-        breadcrumbs={[{ label: 'Airports Catalog' }]}
+        title="Danh mục Sân bay"
+        description="Quản lý danh mục mã sân bay IATA toàn cầu, thành phố điểm đến, quốc gia và múi giờ."
+        breadcrumbs={[{ label: 'Danh mục Sân bay' }]}
         primaryAction={{
-          label: 'Add New Airport',
+          label: 'Thêm Sân Bay Mới',
           onClick: () => navigate('/admin/airports/new'),
         }}
       />
@@ -129,7 +129,7 @@ export const AirportsListPage: React.FC = () => {
         columns={columns}
         data={airports}
         loading={loading}
-        searchPlaceholder="Search airport name, IATA code, city..."
+        searchPlaceholder="Tìm tên sân bay, mã IATA, thành phố..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadAirports}
@@ -141,8 +141,8 @@ export const AirportsListPage: React.FC = () => {
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        title="Delete Airport"
-        description="Are you sure you want to delete this airport? This may affect flights associated with this airport."
+        title="Xóa Sân Bay"
+        description="Bạn có chắc chắn muốn xóa sân bay này không? Thao tác này có thể ảnh hưởng đến các chuyến bay gắn với sân bay này."
       />
     </div>
   );

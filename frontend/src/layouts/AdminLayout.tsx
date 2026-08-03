@@ -59,35 +59,35 @@ export const AdminLayout: React.FC = () => {
   // Grouped Nav Items for Enterprise SaaS / ERP Hierarchy
   const navGroups = [
     {
-      group: 'ANALYTICS & OVERVIEW',
+      group: 'THỐNG KÊ & TỔNG QUAN',
       items: [
-        { path: '/admin', label: 'Dashboard Overview', icon: LayoutDashboard, badge: null },
+        { path: '/admin', label: 'Tổng quan Dashboard', icon: LayoutDashboard, badge: null },
       ],
     },
     {
-      group: 'FLIGHTS & FLEET CATALOG',
+      group: 'CHUYẾN BAY & ĐỘI BAY',
       items: [
-        { path: '/admin/flights', label: 'Flights & Schedules', icon: Plane, badge: null },
-        { path: '/admin/airports', label: 'Airports Catalog', icon: Building2, badge: null },
-        { path: '/admin/airlines', label: 'Airlines Catalog', icon: PlaneTakeoff, badge: null },
-        { path: '/admin/aircraft', label: 'Aircraft Fleet', icon: Plane, badge: null },
+        { path: '/admin/flights', label: 'Quản lý Chuyến bay', icon: Plane, badge: null },
+        { path: '/admin/airports', label: 'Danh mục Sân bay', icon: Building2, badge: null },
+        { path: '/admin/airlines', label: 'Danh mục Hãng bay', icon: PlaneTakeoff, badge: null },
+        { path: '/admin/aircraft', label: 'Đội tàu bay', icon: Plane, badge: null },
       ],
     },
     {
-      group: 'BUSINESS & REVENUE',
+      group: 'KINH DOANH & DOANH THU',
       items: [
-        { path: '/admin/bookings', label: 'Bookings & Fares', icon: CreditCard, badge: null },
-        { path: '/admin/tickets', label: 'Support Desk Tickets', icon: LifeBuoy, badge: null },
-        { path: '/admin/coupons', label: 'Coupons & Promos', icon: Tag, badge: null },
-        { path: '/admin/cms', label: 'CMS Content Pages', icon: FileText, badge: null },
+        { path: '/admin/bookings', label: 'Quản lý Đặt vé', icon: CreditCard, badge: null },
+        { path: '/admin/tickets', label: 'Hỗ trợ khách hàng', icon: LifeBuoy, badge: null },
+        { path: '/admin/coupons', label: 'Mã giảm giá', icon: Tag, badge: null },
+        { path: '/admin/cms', label: 'Quản lý Nội dung CMS', icon: FileText, badge: null },
       ],
     },
     {
-      group: 'IDENTITY & SECURITY',
+      group: 'TÀI KHOẢN & BẢO MẬT',
       items: [
-        { path: '/admin/customers', label: 'Customers', icon: Users, badge: null },
-        { path: '/admin/staff', label: 'Staff Accounts', icon: UserCheck, badge: null },
-        { path: '/admin/audit', label: 'System Audit Logs', icon: FileText, badge: null },
+        { path: '/admin/customers', label: 'Tài khoản Khách hàng', icon: Users, badge: null },
+        { path: '/admin/staff', label: 'Tài khoản Nhân viên', icon: UserCheck, badge: null },
+        { path: '/admin/audit', label: 'Nhật ký Hệ thống', icon: FileText, badge: null },
       ],
     },
   ];
@@ -118,7 +118,7 @@ export const AdminLayout: React.FC = () => {
                   Expedia ERP
                   <span className="text-[8px] bg-blue-50 text-[#0065eb] border border-blue-200 px-1 py-0.2 rounded font-semibold">PROD</span>
                 </span>
-                <span className="text-[10px] text-slate-500 font-normal mt-0.5">Enterprise Admin Suite</span>
+                <span className="text-[10px] text-slate-500 font-normal mt-0.5">Hệ thống Quản trị Bay</span>
               </div>
             </div>
           </SidebarHeader>
@@ -188,7 +188,7 @@ export const AdminLayout: React.FC = () => {
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right" className="text-xs bg-slate-900 text-white border-slate-800">
-                    Log out admin
+                    Đăng xuất
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -207,7 +207,7 @@ export const AdminLayout: React.FC = () => {
               <SidebarTrigger className="text-slate-700 hover:bg-slate-100 cursor-pointer" />
               <Separator orientation="vertical" className="h-4 bg-slate-200" />
               <div className="flex items-center gap-1.5 text-xs">
-                <span className="text-slate-400 font-medium">Admin Portal</span>
+                <span className="text-slate-400 font-medium">Trang Quản Trị</span>
                 <span className="text-slate-300">/</span>
                 <span className="font-semibold text-slate-900">{currentNav.label}</span>
               </div>
@@ -218,7 +218,7 @@ export const AdminLayout: React.FC = () => {
               <Search className="w-3.5 h-3.5 absolute left-2.5 text-slate-400" />
               <Input
                 type="text"
-                placeholder="Search flights, bookings, users..."
+                placeholder="Tìm chuyến bay, mã đặt chỗ, người dùng..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8 pr-12 h-8 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-lg focus:border-[#0065eb] transition-all"
@@ -234,21 +234,21 @@ export const AdminLayout: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                   <Button size="sm" className="bg-[#0065eb] hover:bg-blue-700 text-white h-8 text-xs font-medium px-3 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs">
                     <Plus className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Quick Action</span>
+                    <span className="hidden sm:inline">Tạo Nhanh</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-white rounded-xl border border-slate-200 shadow-md p-1 text-xs">
                   <DropdownMenuItem onClick={() => navigate('/admin/flights/new')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <Plane className="w-3.5 h-3.5 mr-2 text-[#0065eb]" />
-                    <span>Create New Flight</span>
+                    <span>Tạo chuyến bay mới</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/admin/staff/new')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <UserCheck className="w-3.5 h-3.5 mr-2 text-blue-600" />
-                    <span>Add Staff Account</span>
+                    <span>Thêm tài khoản nhân viên</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/admin/bookings')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <CreditCard className="w-3.5 h-3.5 mr-2 text-purple-600" />
-                    <span>View Bookings</span>
+                    <span>Xem danh sách đặt vé</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -266,7 +266,7 @@ export const AdminLayout: React.FC = () => {
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent className="text-xs bg-slate-900 text-white">
-                    Open Customer Storefront
+                    Xem giao diện khách hàng
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -287,21 +287,21 @@ export const AdminLayout: React.FC = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52 bg-white rounded-xl border border-slate-200 shadow-md p-1 text-xs">
                   <DropdownMenuLabel className="text-xs font-semibold text-slate-900 px-2.5 py-1.5">
-                    Admin Credentials
+                    Tài Khoản Quản Trị
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-slate-100" />
                   <DropdownMenuItem onClick={() => navigate('/profile')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <UserIcon className="w-3.5 h-3.5 mr-2 text-slate-500" />
-                    <span>My Profile</span>
+                    <span>Hồ sơ cá nhân</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <ArrowLeft className="w-3.5 h-3.5 mr-2 text-slate-500" />
-                    <span>Storefront Home</span>
+                    <span>Trang đặt vé khách hàng</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-slate-100" />
                   <DropdownMenuItem onClick={handleLogout} className="px-2.5 py-1.5 rounded-lg text-xs text-red-600 hover:bg-red-50 cursor-pointer">
                     <LogOut className="w-3.5 h-3.5 mr-2 text-red-600" />
-                    <span>Sign out</span>
+                    <span>Đăng xuất</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

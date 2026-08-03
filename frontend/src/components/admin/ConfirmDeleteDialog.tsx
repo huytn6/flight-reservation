@@ -23,14 +23,14 @@ interface ConfirmDeleteDialogProps {
 export const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   open,
   onOpenChange,
-  title = 'Are you absolutely sure?',
-  description = 'This action cannot be undone. This will permanently delete the selected item from the system.',
+  title = 'Bạn có chắc chắn muốn xóa không?',
+  description = 'Hành động này không thể hoàn tác. Thao tác này sẽ xóa vĩnh viễn dữ liệu đã chọn khỏi hệ thống.',
   onConfirm,
   loading = false,
 }) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="bg-white border-slate-200 shadow-lg rounded-xl max-w-md">
+      <AlertDialogContent className="bg-white border-slate-200 shadow-lg rounded-xl max-w-md font-sans">
         <AlertDialogHeader>
           <div className="w-10 h-10 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-2">
             <Trash2 className="w-5 h-5" />
@@ -45,9 +45,9 @@ export const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
         <AlertDialogFooter className="mt-4 flex items-center gap-2">
           <AlertDialogCancel
             disabled={loading}
-            className="text-xs font-medium text-slate-600 hover:bg-slate-100 border-slate-200"
+            className="text-xs font-medium text-slate-600 hover:bg-slate-100 border-slate-200 cursor-pointer"
           >
-            Cancel
+            Hủy bỏ
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
@@ -55,9 +55,9 @@ export const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
               onConfirm();
             }}
             disabled={loading}
-            className="text-xs font-semibold bg-red-600 hover:bg-red-700 text-white border-0 shadow-xs"
+            className="text-xs font-semibold bg-red-600 hover:bg-red-700 text-white border-0 shadow-xs cursor-pointer"
           >
-            {loading ? 'Deleting...' : 'Delete Permanently'}
+            {loading ? 'Đang xóa...' : 'Xác nhận xóa'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -36,12 +36,12 @@ export function DataTableViewOptions<TData>({
           className="h-8 text-xs font-normal border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer rounded-md flex items-center gap-1.5"
         >
           <SlidersHorizontal className="h-3.5 w-3.5 text-slate-500" />
-          <span>Columns</span>
+          <span>Cột hiển thị</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[180px] bg-white border-slate-200 rounded-md shadow-sm p-1 text-xs">
+      <DropdownMenuContent align="end" className="w-[180px] bg-white border-slate-200 rounded-md shadow-sm p-1 text-xs font-sans">
         <DropdownMenuLabel className="text-xs font-semibold text-slate-700 px-2 py-1">
-          Toggle columns
+          Ẩn / hiện cột
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-slate-100" />
         {columns.map((column) => {

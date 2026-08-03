@@ -75,7 +75,7 @@ export function DataTable<TData, TValue>({
   rowSelection: userRowSelection,
   onRowSelectionChange,
 
-  searchPlaceholder = "Filter data...",
+  searchPlaceholder = "Tìm kiếm dữ liệu...",
   facetedFilters = [],
   bulkActions = [],
   enableColumnVisibility = true,
@@ -84,8 +84,8 @@ export function DataTable<TData, TValue>({
   stickyHeader = true,
   pageSizeOptions = [10, 20, 30, 50, 100],
 
-  emptyTitle = "No records found",
-  emptyDescription = "There are no entries matching your current filters.",
+  emptyTitle = "Không tìm thấy dữ liệu",
+  emptyDescription = "Không có bản ghi nào phù hợp với từ khóa hoặc bộ lọc tìm kiếm hiện tại.",
   className,
   onRowClick,
 }: DataTableProps<TData, TValue>) {
@@ -291,7 +291,7 @@ export function DataTable<TData, TValue>({
               }}
               className="h-9 text-xs font-medium text-slate-500 hover:text-slate-800 px-2.5 cursor-pointer"
             >
-              Reset Filters
+              Xóa bộ lọc
               <X className="ml-1.5 h-3.5 w-3.5" />
             </Button>
           )}
@@ -307,7 +307,7 @@ export function DataTable<TData, TValue>({
               className="h-9 text-xs font-medium border-slate-200 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer rounded-lg shadow-2xs"
             >
               <RefreshCw className={cn("h-3.5 w-3.5 text-slate-500", loading && "animate-spin")} />
-              <span className="hidden sm:inline ml-1.5">Refresh</span>
+              <span className="hidden sm:inline ml-1.5">Làm mới</span>
             </Button>
           )}
 

@@ -41,13 +41,13 @@ export function DataTablePagination<TData>({
       <div className="flex-1 text-xs text-slate-500">
         {table.getFilteredSelectedRowModel().rows.length > 0 ? (
           <span className="font-medium text-[#0065eb]">
-            {table.getFilteredSelectedRowModel().rows.length} of {filteredRowsCount} row(s) selected.
+            Đã chọn {table.getFilteredSelectedRowModel().rows.length} trên {filteredRowsCount} hàng.
           </span>
         ) : (
           <span>
-            Showing <strong className="font-semibold text-slate-700">{fromItem}</strong> to{" "}
-            <strong className="font-semibold text-slate-700">{toItem}</strong> of{" "}
-            <strong className="font-semibold text-slate-700">{filteredRowsCount}</strong> entries
+            Hiển thị <strong className="font-semibold text-slate-700">{fromItem}</strong> -{" "}
+            <strong className="font-semibold text-slate-700">{toItem}</strong> trong tổng số{" "}
+            <strong className="font-semibold text-slate-700">{filteredRowsCount}</strong> mục
           </span>
         )}
       </div>
@@ -56,14 +56,14 @@ export function DataTablePagination<TData>({
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         {/* Page Size Selector */}
         <div className="flex items-center space-x-2">
-          <p className="text-xs text-slate-500 font-medium">Rows per page</p>
+          <p className="text-xs text-slate-500 font-medium">Dòng / trang</p>
           <Select
             value={`${pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value))
             }}
           >
-            <SelectTrigger className="h-8 w-[70px] bg-slate-50 border-slate-200 text-xs rounded-md">
+            <SelectTrigger className="h-8 w-[70px] bg-slate-50 border-slate-200 text-xs rounded-md cursor-pointer">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top" className="bg-white border-slate-200 text-xs rounded-md">
@@ -78,7 +78,7 @@ export function DataTablePagination<TData>({
 
         {/* Current Page Label */}
         <div className="flex w-[100px] items-center justify-center text-xs font-medium text-slate-600">
-          Page {pageIndex + 1} of {Math.max(1, pageCount)}
+          Trang {pageIndex + 1} / {Math.max(1, pageCount)}
         </div>
 
         {/* Navigation Buttons */}
@@ -90,7 +90,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">Trang đầu</span>
             <ChevronsLeft className="h-4 w-4" />
           </Button>
           <Button
@@ -100,7 +100,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to previous page</span>
+            <span className="sr-only">Trang trước</span>
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button
@@ -110,7 +110,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
+            <span className="sr-only">Trang kế</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
           <Button
@@ -120,7 +120,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.setPageIndex(pageCount - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to last page</span>
+            <span className="sr-only">Trang cuối</span>
             <ChevronsRight className="h-4 w-4" />
           </Button>
         </div>

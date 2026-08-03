@@ -27,7 +27,7 @@ export const AirlinesListPage: React.FC = () => {
       const res = await adminService.getAirlines();
       setAirlines(res || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load airlines');
+      toast.error(err.message || 'Không thể tải danh sách hãng bay');
     } finally {
       setLoading(false);
     }
@@ -38,11 +38,11 @@ export const AirlinesListPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminService.deleteAirline(deleteId);
-      toast.success('Airline deleted successfully');
+      toast.success('Đã xóa hãng bay thành công');
       setDeleteId(null);
       loadAirlines();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to delete airline');
+      toast.error(err.message || 'Không thể xóa hãng bay');
     } finally {
       setDeleting(false);
     }
@@ -51,7 +51,7 @@ export const AirlinesListPage: React.FC = () => {
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: 'iata_code',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="IATA Code" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Mã IATA" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.iata_code}
@@ -60,7 +60,7 @@ export const AirlinesListPage: React.FC = () => {
     },
     {
       accessorKey: 'name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Airline Name" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Tên Hãng Bay" />,
       cell: ({ row }) => (
         <div className="font-medium text-slate-900 text-xs">
           {row.original.name}
@@ -69,7 +69,7 @@ export const AirlinesListPage: React.FC = () => {
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <div className="flex items-center gap-1">
           <Button
@@ -97,11 +97,11 @@ export const AirlinesListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Airlines Catalog"
-        description="Manage partner carrier airlines, logos, and 2-letter IATA prefixes."
-        breadcrumbs={[{ label: 'Airlines Catalog' }]}
+        title="Danh mục Hãng bay"
+        description="Quản lý danh sách hãng hàng không đối tác, logo đại diện và mã tiền tố 2 ký tự IATA."
+        breadcrumbs={[{ label: 'Danh mục Hãng bay' }]}
         primaryAction={{
-          label: 'Add New Airline',
+          label: 'Thêm Hãng Bay Mới',
           onClick: () => navigate('/admin/airlines/new'),
         }}
       />
@@ -110,7 +110,7 @@ export const AirlinesListPage: React.FC = () => {
         columns={columns}
         data={airlines}
         loading={loading}
-        searchPlaceholder="Search airline name or IATA code..."
+        searchPlaceholder="Tìm tên hãng bay hoặc mã IATA..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadAirlines}
@@ -121,8 +121,8 @@ export const AirlinesListPage: React.FC = () => {
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        title="Delete Airline"
-        description="Are you sure you want to delete this airline from the system catalog?"
+        title="Xóa Hãng Bay"
+        description="Bạn có chắc chắn muốn xóa hãng bay này khỏi danh mục hệ thống không?"
       />
     </div>
   );

@@ -27,7 +27,7 @@ export const AircraftListPage: React.FC = () => {
       const res = await adminService.getAircraftTypes();
       setAircraft(res || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load aircraft types');
+      toast.error(err.message || 'Không thể tải danh sách loại máy bay');
     } finally {
       setLoading(false);
     }
@@ -38,11 +38,11 @@ export const AircraftListPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminService.deleteAircraftType(deleteId);
-      toast.success('Aircraft type deleted successfully');
+      toast.success('Đã xóa loại máy bay thành công');
       setDeleteId(null);
       loadAircraft();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to delete aircraft type');
+      toast.error(err.message || 'Không thể xóa loại máy bay');
     } finally {
       setDeleting(false);
     }
@@ -51,7 +51,7 @@ export const AircraftListPage: React.FC = () => {
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: 'code',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Type Code" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Mã Loại" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.code}
@@ -60,7 +60,7 @@ export const AircraftListPage: React.FC = () => {
     },
     {
       accessorKey: 'model',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Model" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Dòng Máy Bay" />,
       cell: ({ row }) => (
         <div className="font-medium text-slate-900 text-xs">
           {row.original.model}
@@ -69,23 +69,23 @@ export const AircraftListPage: React.FC = () => {
     },
     {
       accessorKey: 'manufacturer',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Manufacturer" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Nhà Sản Xuất" />,
       cell: ({ row }) => (
         <span className="text-slate-600 text-xs">{row.original.manufacturer}</span>
       ),
     },
     {
       accessorKey: 'capacity',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Seat Capacity" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Số Lượng Ghế" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-700">
-          {row.original.capacity} seats
+          {row.original.capacity} ghế
         </span>
       ),
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <div className="flex items-center gap-1">
           <Button
@@ -113,11 +113,11 @@ export const AircraftListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Aircraft Fleet"
-        description="Manage fleet models, passenger seating capacities, and manufacturer specifications."
-        breadcrumbs={[{ label: 'Aircraft Fleet' }]}
+        title="Quản lý Đội tàu bay"
+        description="Quản lý thông tin dòng máy bay, sơ đồ sức chứa ghế hành khách và thông số nhà sản xuất."
+        breadcrumbs={[{ label: 'Đội tàu bay' }]}
         primaryAction={{
-          label: 'Add Aircraft Type',
+          label: 'Thêm Loại Máy Bay',
           onClick: () => navigate('/admin/aircraft/new'),
         }}
       />
@@ -126,7 +126,7 @@ export const AircraftListPage: React.FC = () => {
         columns={columns}
         data={aircraft}
         loading={loading}
-        searchPlaceholder="Search model, code, manufacturer..."
+        searchPlaceholder="Tìm dòng máy bay, mã loại, nhà sản xuất..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadAircraft}
@@ -137,8 +137,8 @@ export const AircraftListPage: React.FC = () => {
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        title="Delete Aircraft Type"
-        description="Are you sure you want to delete this aircraft type?"
+        title="Xóa Loại Máy Bay"
+        description="Bạn có chắc chắn muốn xóa dòng máy bay này khỏi đội tàu bay không?"
       />
     </div>
   );

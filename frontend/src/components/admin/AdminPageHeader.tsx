@@ -35,7 +35,7 @@ export const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
       {breadcrumbs.length > 0 && (
         <nav className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
           <Link to="/admin" className="hover:text-slate-900 transition-colors">
-            Dashboard
+            Trang chủ
           </Link>
           {breadcrumbs.map((item, index) => (
             <React.Fragment key={index}>

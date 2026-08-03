@@ -25,7 +25,7 @@ export const CustomersListPage: React.FC = () => {
       const res = await adminService.getCustomers('');
       setCustomers(res.items || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load customers');
+      toast.error(err.message || 'Không thể tải danh sách khách hàng');
     } finally {
       setLoading(false);
     }
@@ -35,17 +35,17 @@ export const CustomersListPage: React.FC = () => {
     const nextStatus = user.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
     try {
       await adminService.updateCustomerStatus(user.id, nextStatus);
-      toast.success(`Customer status updated to ${nextStatus}`);
+      toast.success(`Đã cập nhật trạng thái khách hàng thành ${nextStatus === 'ACTIVE' ? 'Hoạt động' : 'Tạm khóa'}`);
       loadCustomers();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update customer status');
+      toast.error(err.message || 'Không thể cập nhật trạng thái khách hàng');
     }
   };
 
   const columns: ColumnDef<AuthUser>[] = useMemo(() => [
     {
       accessorKey: 'full_name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Customer Name" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Họ và Tên Khách Hàng" />,
       cell: ({ row }) => (
         <div>
           <p className="font-semibold text-slate-900 text-xs">{row.original.full_name}</p>
@@ -55,22 +55,22 @@ export const CustomersListPage: React.FC = () => {
     },
     {
       accessorKey: 'status',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Account Status" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái Tài Khoản" />,
       cell: ({ row }) => (
         row.original.status === 'ACTIVE' ? (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Active
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Hoạt động
           </span>
         ) : (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-600" /> Suspended
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600" /> Tạm khóa
           </span>
         )
       ),
     },
     {
       accessorKey: 'created_at',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Registered On" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Ngày Đăng Ký" />,
       cell: ({ row }) => (
         <span className="font-mono text-[11px] text-slate-500">
           {row.original.created_at ? new Date(row.original.created_at).toLocaleDateString() : 'N/A'}
@@ -79,7 +79,7 @@ export const CustomersListPage: React.FC = () => {
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <Button
@@ -100,7 +100,7 @@ export const CustomersListPage: React.FC = () => {
                 : 'text-emerald-600 hover:bg-emerald-50 border-emerald-200'
             }`}
           >
-            {row.original.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+            {row.original.status === 'ACTIVE' ? 'Tạm khóa' : 'Kích hoạt'}
           </Button>
         </div>
       ),
@@ -111,16 +111,16 @@ export const CustomersListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Registered Customers"
-        description="View registered traveler profiles, booking histories, and account status controls."
-        breadcrumbs={[{ label: 'Customers' }]}
+        title="Tài khoản Khách hàng"
+        description="Quản lý danh sách tài khoản khách hàng, lịch sử chuyến bay đã đặt và quyền hoạt động."
+        breadcrumbs={[{ label: 'Tài khoản Khách hàng' }]}
       />
 
       <EnterpriseDataTable
         columns={columns}
         data={customers}
         loading={loading}
-        searchPlaceholder="Search customer name or email..."
+        searchPlaceholder="Tìm tên khách hàng hoặc email..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadCustomers}

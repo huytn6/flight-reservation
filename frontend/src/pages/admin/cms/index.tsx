@@ -28,7 +28,7 @@ export const CmsListPage: React.FC = () => {
       const res = await adminService.getContents();
       setContents(res || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load CMS contents');
+      toast.error(err.message || 'Không thể tải danh sách trang CMS');
     } finally {
       setLoading(false);
     }
@@ -39,11 +39,11 @@ export const CmsListPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminService.deleteContent(deleteId);
-      toast.success('CMS article deleted successfully');
+      toast.success('Đã xóa bài viết CMS thành công');
       setDeleteId(null);
       loadContents();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to delete CMS content');
+      toast.error(err.message || 'Không thể xóa bài viết CMS');
     } finally {
       setDeleting(false);
     }
@@ -52,7 +52,7 @@ export const CmsListPage: React.FC = () => {
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: 'key',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Slug Key" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Đường Dẫn (Slug)" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.key}
@@ -61,7 +61,7 @@ export const CmsListPage: React.FC = () => {
     },
     {
       accessorKey: 'title',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu Đề Trang" />,
       cell: ({ row }) => (
         <div className="font-semibold text-slate-900 text-xs">
           {row.original.title}
@@ -70,22 +70,22 @@ export const CmsListPage: React.FC = () => {
     },
     {
       accessorKey: 'is_published',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Publish Status" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái Đăng" />,
       cell: ({ row }) => (
         row.original.is_published ? (
           <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Published
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Đã xuất bản
           </span>
         ) : (
           <Badge variant="outline" className="text-slate-500 text-xs font-normal">
-            Draft
+            Bản nháp
           </Badge>
         )
       ),
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <div className="flex items-center gap-1">
           <Button
@@ -113,11 +113,11 @@ export const CmsListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="CMS Content & Pages"
-        description="Manage storefront articles, terms of service, support guides, and dynamic copy."
-        breadcrumbs={[{ label: 'CMS Content Pages' }]}
+        title="Quản lý Nội dung CMS & Trang tĩnh"
+        description="Quản lý các bài viết tin tức, điều khoản dịch vụ, hướng dẫn đặt vé và trang tĩnh."
+        breadcrumbs={[{ label: 'Quản lý Nội dung CMS' }]}
         primaryAction={{
-          label: 'Create CMS Page',
+          label: 'Tạo Trang CMS Mới',
           onClick: () => navigate('/admin/cms/new'),
         }}
       />
@@ -126,7 +126,7 @@ export const CmsListPage: React.FC = () => {
         columns={columns}
         data={contents}
         loading={loading}
-        searchPlaceholder="Search article title or key..."
+        searchPlaceholder="Tìm tiêu đề trang hoặc slug đường dẫn..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadContents}
@@ -137,8 +137,8 @@ export const CmsListPage: React.FC = () => {
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        title="Delete CMS Article"
-        description="Are you sure you want to delete this CMS content page?"
+        title="Xóa Bài Viết CMS"
+        description="Bạn có chắc chắn muốn xóa trang nội dung CMS này không?"
       />
     </div>
   );

@@ -32,7 +32,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
   children,
 }) => {
   const navigate = useNavigate();
-  const defaultSubmitText = mode === 'create' ? 'Create Record' : 'Save Changes';
+  const defaultSubmitText = mode === 'create' ? 'Tạo mới' : 'Lưu thay đổi';
 
   return (
     <div className="max-w-3xl space-y-6 pb-20 font-sans">
@@ -48,15 +48,15 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
         <CardHeader className="p-5 bg-slate-50/60 border-b border-slate-200/80">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base font-bold text-slate-900 tracking-tight">
-              {mode === 'create' ? 'New Entry Information' : 'Edit Information'}
+              {mode === 'create' ? 'Thông tin tạo mới' : 'Chỉnh sửa thông tin'}
             </CardTitle>
             <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-blue-50 text-[#0065eb] border border-blue-200 uppercase">
-              {mode} MODE
+              {mode === 'create' ? 'TẠO MỚI' : 'CHỈNH SỬA'}
             </span>
           </div>
           {description && (
             <CardDescription className="text-xs text-slate-500 mt-1">
-              Fill in all mandatory parameters carefully.
+              Vui lòng điền đầy đủ thông tin vào các trường bắt buộc bên dưới.
             </CardDescription>
           )}
         </CardHeader>
@@ -77,7 +77,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
               disabled={loading}
               className="text-xs font-medium text-slate-600 hover:bg-slate-100 border-slate-200 cursor-pointer h-9 px-4 rounded-lg"
             >
-              Cancel
+              Hủy bỏ
             </Button>
 
             <div className="flex items-center gap-3">
@@ -90,7 +90,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
                   className="text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 cursor-pointer h-9 px-4 rounded-lg"
                 >
                   <Save className="w-3.5 h-3.5 mr-1.5" />
-                  Save Draft
+                  Lưu nháp
                 </Button>
               )}
 
@@ -102,7 +102,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
                 {loading ? (
                   <>
                     <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
-                    Saving...
+                    Đang lưu...
                   </>
                 ) : (
                   submitText || defaultSubmitText

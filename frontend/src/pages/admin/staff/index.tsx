@@ -25,7 +25,7 @@ export const StaffListPage: React.FC = () => {
       const res = await adminService.getStaff();
       setStaffList(res.items || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load staff list');
+      toast.error(err.message || 'Không thể tải danh sách nhân viên');
     } finally {
       setLoading(false);
     }
@@ -34,7 +34,7 @@ export const StaffListPage: React.FC = () => {
   const columns: ColumnDef<AuthUser>[] = useMemo(() => [
     {
       accessorKey: 'full_name',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Staff Name" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Họ và Tên Nhân Viên" />,
       cell: ({ row }) => (
         <div>
           <p className="font-semibold text-slate-900 text-xs">{row.original.full_name}</p>
@@ -44,18 +44,18 @@ export const StaffListPage: React.FC = () => {
     },
     {
       accessorKey: 'role',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Vai Trò Quyền Hạn" />,
       cell: ({ row }) => (
         row.original.role === 'ADMIN' ? (
-          <span className="font-mono text-[11px] font-semibold text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded border border-blue-200/60">ADMIN</span>
+          <span className="font-mono text-[11px] font-semibold text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded border border-blue-200/60">QUẢN TRỊ VIÊN (ADMIN)</span>
         ) : (
-          <span className="font-mono text-[11px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/60">STAFF</span>
+          <span className="font-mono text-[11px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/60">NHÂN VIÊN (STAFF)</span>
         )
       ),
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <Button
           variant="ghost"
@@ -73,11 +73,11 @@ export const StaffListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Staff & Administrators"
-        description="Manage system administrative privileges, staff operator accounts, and roles."
-        breadcrumbs={[{ label: 'Staff Accounts' }]}
+        title="Quản lý Nhân viên & Quản trị viên"
+        description="Quản lý danh sách tài khoản nhân viên vận hành, cấp quyền truy cập và vai trò hệ thống."
+        breadcrumbs={[{ label: 'Tài khoản Nhân viên' }]}
         primaryAction={{
-          label: 'Add Staff Account',
+          label: 'Thêm Nhân Viên Mới',
           onClick: () => navigate('/admin/staff/new'),
         }}
       />
@@ -86,7 +86,7 @@ export const StaffListPage: React.FC = () => {
         columns={columns}
         data={staffList}
         loading={loading}
-        searchPlaceholder="Search staff name or email..."
+        searchPlaceholder="Tìm tên nhân viên hoặc email..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadStaff}

@@ -20,7 +20,7 @@ export const AdminAudit: React.FC = () => {
       const res = await adminService.getAuditLogs();
       setLogs(res.items || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load audit logs');
+      toast.error(err.message || 'Không thể tải nhật ký audit log');
     } finally {
       setLoading(false);
     }
@@ -29,17 +29,17 @@ export const AdminAudit: React.FC = () => {
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: "created_at",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Timestamp" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Thời Gian Thao Tác" />,
       cell: ({ row }) => <span className="font-mono text-[11px] text-slate-500">{new Date(row.getValue<string>("created_at")).toLocaleString()}</span>,
     },
     {
       accessorKey: "user_id",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="User ID" />,
-      cell: ({ row }) => <span className="font-mono font-semibold text-slate-800">{row.getValue<string>("user_id")?.substring(0, 8) || 'SYSTEM'}</span>,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Mã Người Dùng" />,
+      cell: ({ row }) => <span className="font-mono font-semibold text-slate-800">{row.getValue<string>("user_id")?.substring(0, 8) || 'HỆ THỐNG'}</span>,
     },
     {
       accessorKey: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Hành Động Thực Thi" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.getValue("action")}
@@ -48,17 +48,17 @@ export const AdminAudit: React.FC = () => {
     },
     {
       accessorKey: "resource",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Resource" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Tài Nguyên Thao Tác" />,
       cell: ({ row }) => <span className="font-semibold text-slate-700 text-xs">{row.getValue("resource")}</span>,
     },
     {
       accessorKey: "resource_id",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Resource ID" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Mã Tài Nguyên" />,
       cell: ({ row }) => <span className="font-mono text-[11px] text-slate-500">{row.getValue<string>("resource_id")?.substring(0, 8) || '-'}</span>,
     },
     {
       accessorKey: "ip_address",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="IP Address" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Địa Chỉ IP" />,
       cell: ({ row }) => <span className="font-mono text-[11px] text-slate-500">{row.getValue("ip_address") || '127.0.0.1'}</span>,
     },
   ], []);
@@ -67,9 +67,9 @@ export const AdminAudit: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="System Audit Logs"
-        description="Immutable security trail logging system operations, administrative changes, and user activities."
-        breadcrumbs={[{ label: 'System Audit Logs' }]}
+        title="Nhật ký Audit Log Hệ thống"
+        description="Lưu vết lịch sử thao tác quản trị, truy cập dữ liệu và các hành động bảo mật hệ thống."
+        breadcrumbs={[{ label: 'Nhật ký Hệ thống' }]}
       />
 
       <EnterpriseDataTable
@@ -79,7 +79,7 @@ export const AdminAudit: React.FC = () => {
         onRefresh={loadAuditLogs}
         enableRowSelection={true}
         enableGlobalFilter={true}
-        searchPlaceholder="Filter action, resource, IP address..."
+        searchPlaceholder="Lọc hành động, tài nguyên, địa chỉ IP..."
       />
     </div>
   );

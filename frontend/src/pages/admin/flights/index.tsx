@@ -27,7 +27,7 @@ export const FlightsListPage: React.FC = () => {
       const res = await adminService.getFlights();
       setFlights(res.items || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load flights');
+      toast.error(err.message || 'Không thể tải danh sách chuyến bay');
     } finally {
       setLoading(false);
     }
@@ -38,11 +38,11 @@ export const FlightsListPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminService.deleteFlight(deleteId);
-      toast.success('Flight deleted successfully');
+      toast.success('Đã hủy lịch chuyến bay thành công');
       setDeleteId(null);
       loadFlights();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to delete flight');
+      toast.error(err.message || 'Không thể xóa chuyến bay');
     } finally {
       setDeleting(false);
     }
@@ -51,26 +51,26 @@ export const FlightsListPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status?.toUpperCase()) {
       case 'SCHEDULED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />Scheduled</span>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />Đã lên lịch</span>;
       case 'BOARDING':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60"><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />Boarding</span>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60"><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />Đang lên máy bay</span>;
       case 'DEPARTED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />In Flight</span>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />Đang bay</span>;
       case 'ARRIVED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60"><span className="w-1.5 h-1.5 rounded-full bg-slate-400" />Arrived</span>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60"><span className="w-1.5 h-1.5 rounded-full bg-slate-400" />Đã hạ cánh</span>;
       case 'CANCELLED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60"><span className="w-1.5 h-1.5 rounded-full bg-red-600" />Cancelled</span>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60"><span className="w-1.5 h-1.5 rounded-full bg-red-600" />Đã hủy</span>;
       case 'DELAYED':
-        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded-md border border-amber-200/60"><span className="w-1.5 h-1.5 rounded-full bg-amber-600" />Delayed</span>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded-md border border-amber-200/60"><span className="w-1.5 h-1.5 rounded-full bg-amber-600" />Bị trễ</span>;
       default:
-        return <span className="text-xs text-slate-600">{status || 'SCHEDULED'}</span>;
+        return <span className="text-xs text-slate-600">{status || 'Đã lên lịch'}</span>;
     }
   };
 
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: 'flight_number',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Flight #" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Mã Chuyến Bay" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.flight_number}
@@ -79,16 +79,16 @@ export const FlightsListPage: React.FC = () => {
     },
     {
       accessorKey: 'airline',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Airline" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Hãng Bay" />,
       cell: ({ row }) => (
         <span className="font-medium text-slate-900 text-xs">
-          {row.original.airline_name || row.original.airline_code || 'Carrier'}
+          {row.original.airline_name || row.original.airline_code || 'Hãng bay'}
         </span>
       ),
     },
     {
       id: 'route',
-      header: 'Route',
+      header: 'Hành Trình',
       cell: ({ row }) => (
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
           <span>{row.original.departure_iata || 'SGN'}</span>
@@ -99,7 +99,7 @@ export const FlightsListPage: React.FC = () => {
     },
     {
       accessorKey: 'departure_time',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Departure Time" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Giờ Khởi Hành" />,
       cell: ({ row }) => (
         <span className="font-mono text-[11px] text-slate-600">
           {row.original.departure_time ? new Date(row.original.departure_time).toLocaleString() : 'N/A'}
@@ -108,12 +108,12 @@ export const FlightsListPage: React.FC = () => {
     },
     {
       accessorKey: 'status',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái" />,
       cell: ({ row }) => getStatusBadge(row.original.status),
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <div className="flex items-center gap-1">
           <Button
@@ -149,11 +149,11 @@ export const FlightsListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Flights Catalog & Schedules"
-        description="Manage active commercial flights, departure schedules, fares, and seat maps."
-        breadcrumbs={[{ label: 'Flights & Schedules' }]}
+        title="Quản lý Chuyến bay & Lịch trình"
+        description="Quản lý danh sách chuyến bay thương mại, lịch khởi hành, giá vé niêm yết và sơ đồ ghế."
+        breadcrumbs={[{ label: 'Quản lý Chuyến bay' }]}
         primaryAction={{
-          label: 'Create Flight',
+          label: 'Tạo Chuyến Bay Mới',
           onClick: () => navigate('/admin/flights/new'),
         }}
       />
@@ -162,7 +162,7 @@ export const FlightsListPage: React.FC = () => {
         columns={columns}
         data={flights}
         loading={loading}
-        searchPlaceholder="Search flight number, route, airline..."
+        searchPlaceholder="Tìm số hiệu chuyến bay, tuyến bay, hãng bay..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadFlights}
@@ -173,8 +173,8 @@ export const FlightsListPage: React.FC = () => {
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        title="Delete Flight Schedule"
-        description="Are you sure you want to cancel and delete this flight? Passengers with active bookings will be notified."
+        title="Hủy Lịch Chuyến Bay"
+        description="Bạn có chắc chắn muốn hủy và xóa chuyến bay này khỏi lịch trình không?"
       />
     </div>
   );

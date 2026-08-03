@@ -116,19 +116,19 @@ export const AdminDashboard: React.FC = () => {
       
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Dashboard Overview"
-        description="Real-time financial analytics, ticket volume velocity, and flight fleet distribution metrics."
+        title="Tổng quan Dashboard"
+        description="Phân tích doanh thu, số lượng vé đặt và tình trạng vận hành các chuyến bay thời gian thực."
         secondaryActions={
           <div className="flex items-center gap-2">
             <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger className="h-9 text-xs w-32 bg-white border-slate-200/80 rounded-lg">
-                <SelectValue placeholder="Time range" />
+                <SelectValue placeholder="Khoảng thời gian" />
               </SelectTrigger>
-              <SelectContent className="rounded-lg">
-                <SelectItem value="24h">Last 24 Hours</SelectItem>
-                <SelectItem value="7d">Last 7 Days</SelectItem>
-                <SelectItem value="30d">Last 30 Days</SelectItem>
-                <SelectItem value="qtd">Quarter to Date</SelectItem>
+              <SelectContent className="rounded-lg font-sans">
+                <SelectItem value="24h">24 Giờ Qua</SelectItem>
+                <SelectItem value="7d">7 Ngày Qua</SelectItem>
+                <SelectItem value="30d">30 Ngày Qua</SelectItem>
+                <SelectItem value="qtd">Quý Này</SelectItem>
               </SelectContent>
             </Select>
 
@@ -139,13 +139,13 @@ export const AdminDashboard: React.FC = () => {
               className="h-9 text-xs font-normal border-slate-200/80 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer rounded-lg px-3"
             >
               <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
-              Refresh
+              Làm mới
             </Button>
           </div>
         }
         primaryAction={{
-          label: 'Export Data',
-          onClick: () => toast.success('Operational report exported to CSV'),
+          label: 'Xuất Dữ Liệu',
+          onClick: () => toast.success('Đã xuất báo cáo dữ liệu thành công'),
           icon: Download,
         }}
       />
@@ -157,7 +157,7 @@ export const AdminDashboard: React.FC = () => {
         <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3 relative">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Net Revenue</span>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng Doanh Thu Net</span>
               <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                 {summary?.total_revenue?.toLocaleString()} <span className="text-xs font-normal text-slate-500">{summary?.currency || 'VND'}</span>
               </span>
@@ -171,7 +171,7 @@ export const AdminDashboard: React.FC = () => {
             <span className="flex items-center text-[#0065eb] font-semibold gap-1">
               <TrendingUp className="w-3.5 h-3.5" /> +14.2%
             </span>
-            <span className="text-slate-400 font-normal">vs. previous period</span>
+            <span className="text-slate-400 font-normal">so với kỳ trước</span>
           </div>
         </Card>
 
@@ -179,9 +179,9 @@ export const AdminDashboard: React.FC = () => {
         <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Flight Bookings</span>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng Số Vé Đã Đặt</span>
               <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                {summary?.total_bookings} <span className="text-xs font-normal text-slate-500">tickets</span>
+                {summary?.total_bookings} <span className="text-xs font-normal text-slate-500">vé</span>
               </span>
             </div>
             <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
@@ -191,9 +191,9 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
             <span className="text-slate-600 font-normal">
-              <strong className="text-[#0065eb] font-semibold">{summary?.confirmed_bookings}</strong> Confirmed
+              <strong className="text-[#0065eb] font-semibold">{summary?.confirmed_bookings}</strong> Đã xác nhận
             </span>
-            <span className="text-slate-400 font-normal">88% Conversion</span>
+            <span className="text-slate-400 font-normal">88% Chuyển đổi</span>
           </div>
         </Card>
 
@@ -201,9 +201,9 @@ export const AdminDashboard: React.FC = () => {
         <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Registered Accounts</span>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Khách Hàng Đăng Ký</span>
               <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                {summary?.total_customers} <span className="text-xs font-normal text-slate-500">users</span>
+                {summary?.total_customers} <span className="text-xs font-normal text-slate-500">tài khoản</span>
               </span>
             </div>
             <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
@@ -213,9 +213,9 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
             <span className="flex items-center text-[#0065eb] font-semibold gap-1">
-              <Activity className="w-3.5 h-3.5" /> 34 Live Now
+              <Activity className="w-3.5 h-3.5" /> 34 Đang truy cập
             </span>
-            <span className="text-slate-400 font-normal">+128 this week</span>
+            <span className="text-slate-400 font-normal">+128 tuần này</span>
           </div>
         </Card>
 
@@ -223,9 +223,9 @@ export const AdminDashboard: React.FC = () => {
         <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
           <div className="flex items-start justify-between">
             <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Active Fleet Metrics</span>
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng Chuyến Bay Vận Hành</span>
               <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                {flightMetrics.reduce((acc, curr) => acc + (curr.count || 0), 0) || 48} <span className="text-xs font-normal text-slate-500">flights</span>
+                {flightMetrics.reduce((acc, curr) => acc + (curr.count || 0), 0) || 48} <span className="text-xs font-normal text-slate-500">chuyến</span>
               </span>
             </div>
             <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
@@ -234,8 +234,8 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-            <span className="text-[#0065eb] font-semibold">92% On-time</span>
-            <span className="text-slate-400 font-normal">{flightMetrics.length} Status Types</span>
+            <span className="text-[#0065eb] font-semibold">92% Đúng giờ</span>
+            <span className="text-slate-400 font-normal">{flightMetrics.length} Trạng thái</span>
           </div>
         </Card>
       </div>
@@ -248,14 +248,14 @@ export const AdminDashboard: React.FC = () => {
           <CardHeader className="p-0 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                <TrendingUp className="w-4 h-4 text-[#0065eb]" /> Financial Revenue Trend (Area Chart)
+                <TrendingUp className="w-4 h-4 text-[#0065eb]" /> Xu Hướng Doanh Thu
               </CardTitle>
               <CardDescription className="text-[11px] text-slate-500 mt-0.5">
-                Smooth gradient visualization of daily gross revenue & ticket volume.
+                Biểu đồ thể hiện tổng doanh thu và sản lượng vé bán theo từng ngày.
               </CardDescription>
             </div>
             <Badge variant="outline" className="bg-blue-50 text-[#0065eb] border-blue-200 text-[10px] font-medium">
-              Area Chart
+              Biểu đồ miền
             </Badge>
           </CardHeader>
 
@@ -303,14 +303,14 @@ export const AdminDashboard: React.FC = () => {
           <CardHeader className="p-0 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                <BarChart3 className="w-4 h-4 text-slate-700" /> Daily Ticket Volume (Bar Chart)
+                <BarChart3 className="w-4 h-4 text-slate-700" /> Lượng Vé Bán Theo Ngày
               </CardTitle>
               <CardDescription className="text-[11px] text-slate-500 mt-0.5">
-                Ticket sales distribution per day.
+                Phân bổ số lượng vé bán theo ngày.
               </CardDescription>
             </div>
             <Badge variant="outline" className="bg-slate-100 text-slate-700 border-slate-200 text-[10px] font-medium">
-              Bar Chart
+              Biểu đồ cột
             </Badge>
           </CardHeader>
 
@@ -346,33 +346,33 @@ export const AdminDashboard: React.FC = () => {
         
         {/* Reusable Chart 1: Radial Grid */}
         <ChartRadialGrid 
-          title="Booking Source Channels (Radial Grid)"
-          description="Traffic segment breakdown"
+          title="Kênh Đặt Vé Bán Hàng"
+          description="Tỷ lệ phân bổ theo từng kênh bán"
           data={radialGridData}
-          footerTrendText="Direct channel grew +12.4%"
-          footerSubText="Distribution across API, Web, App & Kiosks"
+          footerTrendText="Kênh trực tiếp tăng trưởng +12.4%"
+          footerSubText="Phân bổ qua API, Web, App và Kiosk"
         />
 
         {/* Reusable Chart 2: Radial Shape Gauge */}
         <ChartRadialShape 
-          title="Fleet Capacity Utilization"
-          description="Operational seat occupancy rate"
+          title="Tỷ Lệ Lấp Đầy Chỗ Tàu Bay"
+          description="Tỷ lệ lấp đầy ghế thực tế các chuyến bay"
           value={88}
-          label="Occupancy %"
+          label="Tỷ lệ %"
           color="#0065eb"
           endAngle={280}
-          footerTrendText="Target set at 85.0%"
-          footerSubText="Surpassed monthly revenue flight target"
+          footerTrendText="Mục tiêu đặt ra: 85.0%"
+          footerSubText="Đã vượt chỉ tiêu sản lượng bay theo tháng"
         />
 
         {/* Reusable Chart 3: Donut with Center Text */}
         <ChartPieDonutText 
-          title="Active Fleet Operational Status"
-          description="Flights segmented by status code"
+          title="Trạng Thái Vận Hành Đội Bay"
+          description="Phân loại chuyến bay theo mã trạng thái"
           data={pieDonutData}
-          centerLabel="Total Flights"
-          footerTrendText="92% On-time dispatch rate"
-          footerSubText="Live operational status breakdown"
+          centerLabel="Tổng Chuyến"
+          footerTrendText="92% Tỷ lệ cất cánh đúng giờ"
+          footerSubText="Thống kê tình trạng hoạt động hiện tại"
         />
 
       </div>

@@ -28,7 +28,7 @@ export const CouponsListPage: React.FC = () => {
       const res = await adminService.getCoupons();
       setCoupons(res || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load coupons');
+      toast.error(err.message || 'Không thể tải danh sách mã giảm giá');
     } finally {
       setLoading(false);
     }
@@ -39,11 +39,11 @@ export const CouponsListPage: React.FC = () => {
     setDeleting(true);
     try {
       await adminService.deleteCoupon(deleteId);
-      toast.success('Coupon disabled successfully');
+      toast.success('Đã tạm ngừng mã giảm giá thành công');
       setDeleteId(null);
       loadCoupons();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to disable coupon');
+      toast.error(err.message || 'Không thể tạm ngừng mã giảm giá');
     } finally {
       setDeleting(false);
     }
@@ -52,7 +52,7 @@ export const CouponsListPage: React.FC = () => {
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
       accessorKey: 'code',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Promo Code" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Mã Ưu Đãi" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.code}
@@ -61,27 +61,27 @@ export const CouponsListPage: React.FC = () => {
     },
     {
       accessorKey: 'discount_type',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Loại Giảm Giá" />,
       cell: ({ row }) => (
         <Badge variant="outline" className="text-[11px] font-normal border-slate-200 text-slate-600">
-          {row.original.discount_type}
+          {row.original.discount_type === 'PERCENT' ? 'Phần trăm (%)' : 'Số tiền cố định'}
         </Badge>
       ),
     },
     {
       accessorKey: 'discount_value',
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Value" />,
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Giá Trị Giảm" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-bold text-slate-900">
           {row.original.discount_type === 'PERCENT'
-            ? `${row.original.discount_value}% OFF`
+            ? `GIẢM ${row.original.discount_value}%`
             : `${Number(row.original.discount_value).toLocaleString('vi-VN')} VND`}
         </span>
       ),
     },
     {
       id: 'validity',
-      header: 'Valid Period',
+      header: 'Thời Gian Hiệu Lực',
       cell: ({ row }) => (
         <div className="text-[11px] text-slate-500 font-mono">
           <span>{row.original.valid_from?.substring(0, 10)}</span>
@@ -92,7 +92,7 @@ export const CouponsListPage: React.FC = () => {
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: 'Thao Tác',
       cell: ({ row }) => (
         <div className="flex items-center gap-1">
           <Button
@@ -120,11 +120,11 @@ export const CouponsListPage: React.FC = () => {
     <div className="space-y-6 font-sans">
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
-        title="Coupons & Promotions"
-        description="Manage promotional discount vouchers, percent discounts, and validity periods."
-        breadcrumbs={[{ label: 'Coupons & Promos' }]}
+        title="Quản lý Mã giảm giá & Khuyến mãi"
+        description="Quản lý các chương trình voucher ưu đãi, giá trị phần trăm giảm và thời hạn áp dụng."
+        breadcrumbs={[{ label: 'Mã giảm giá' }]}
         primaryAction={{
-          label: 'Create Coupon',
+          label: 'Tạo Mã Giảm Giá',
           onClick: () => navigate('/admin/coupons/new'),
         }}
       />
@@ -133,7 +133,7 @@ export const CouponsListPage: React.FC = () => {
         columns={columns}
         data={coupons}
         loading={loading}
-        searchPlaceholder="Search promo code..."
+        searchPlaceholder="Tìm mã ưu đãi khuyến mãi..."
         enableGlobalFilter={true}
         enableRowSelection={true}
         onRefresh={loadCoupons}
@@ -144,8 +144,8 @@ export const CouponsListPage: React.FC = () => {
         onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={handleDelete}
         loading={deleting}
-        title="Disable Coupon Code"
-        description="Are you sure you want to deactivate this promotional coupon?"
+        title="Tạm Ngừng Mã Giảm Giá"
+        description="Bạn có chắc chắn muốn vô hiệu hóa mã ưu đãi khuyến mãi này không?"
       />
     </div>
   );
