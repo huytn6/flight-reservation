@@ -10,8 +10,10 @@ import type { SavedPassenger } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { UserCheck, Lock, ShieldCheck } from 'lucide-react';
+import { UserCheck, Lock, ShieldCheck, CalendarIcon } from 'lucide-react';
 
 export const Checkout: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -174,10 +176,22 @@ export const Checkout: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* Left Form Column (8 cols) */}
+          {/* Left Column (8 cols): 1. Interactive Seat Selection FIRST, 2. Contact Info, 3. Passenger Info */}
           <div className="lg:col-span-8 flex flex-col gap-6">
             
-            {/* Contact Information Form */}
+            {/* 1. Interactive Seat Selection Map (MOVED UP TO TOP) */}
+            {flightId && (
+              <SeatMapSelector
+                draftId={draftId}
+                segmentId={flightId}
+                passengerCount={passengers.length}
+                onSeatHoldsChange={() => {
+                  draftService.getPriceBreakdown(draftId).then(setBreakdown);
+                }}
+              />
+            )}
+
+            {/* 2. Contact Information Form */}
             <Card className="bg-white p-6 rounded-2xl border-0 shadow-none flex flex-col gap-4">
               <h2 className="text-sm font-semibold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
                 <UserCheck className="w-4 h-4 text-[#0065eb]" /> Thông Tin Người Liên Hệ
@@ -198,7 +212,7 @@ export const Checkout: React.FC = () => {
               </div>
             </Card>
 
-            {/* Passenger Details Form */}
+            {/* 3. Passenger Details Form */}
             <Card className="bg-white p-6 rounded-2xl border-0 shadow-none flex flex-col gap-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <h2 className="text-sm font-semibold text-slate-900">Danh Sách Hành Khách</h2>
@@ -249,21 +263,36 @@ export const Checkout: React.FC = () => {
                       />
                     </div>
 
+                    {/* Date of Birth Picker using shadcn Popover + Calendar */}
                     <div>
                       <label className="text-[11px] font-medium text-slate-600 block mb-1">Ngày sinh</label>
-                      <Input
-                        type="date"
-                        value={pax.date_of_birth || ''}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setPassengers((prev) => {
-                            const next = [...prev];
-                            next[idx] = { ...next[idx], date_of_birth: val };
-                            return next;
-                          });
-                        }}
-                        className="text-xs h-9 bg-white"
-                      />
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-full justify-start text-left font-normal text-xs h-9 bg-white border-slate-200 shadow-none cursor-pointer"
+                          >
+                            <CalendarIcon className="mr-2 h-3.5 w-3.5 text-slate-400" />
+                            {pax.date_of_birth ? pax.date_of_birth : 'Chọn ngày sinh'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 bg-white border border-slate-200 shadow-xl rounded-xl" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={pax.date_of_birth ? new Date(pax.date_of_birth) : undefined}
+                            onSelect={(d) => {
+                              if (d) {
+                                const iso = d.toISOString().split('T')[0];
+                                setPassengers((prev) => {
+                                  const next = [...prev];
+                                  next[idx] = { ...next[idx], date_of_birth: iso };
+                                  return next;
+                                });
+                              }
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
 
                     <div>
@@ -303,18 +332,6 @@ export const Checkout: React.FC = () => {
                 </div>
               ))}
             </Card>
-
-            {/* Interactive Seat Selection Map */}
-            {flightId && (
-              <SeatMapSelector
-                draftId={draftId}
-                segmentId={flightId}
-                passengerCount={passengers.length}
-                onSeatHoldsChange={() => {
-                  draftService.getPriceBreakdown(draftId).then(setBreakdown);
-                }}
-              />
-            )}
 
           </div>
 
