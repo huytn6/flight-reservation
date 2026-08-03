@@ -3,7 +3,9 @@ import { staffService } from '@/services/staff';
 import type { SupportTicket } from '@/services/support';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, MessageSquare } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { Send, MessageSquare, UserCheck, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const StaffTickets: React.FC = () => {
@@ -24,7 +26,7 @@ export const StaffTickets: React.FC = () => {
       const res = await staffService.getTickets(statusFilter);
       setTickets(res.items || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load tickets');
+      toast.error(err.message || 'Tải danh sách yêu cầu hỗ trợ thất bại');
     } finally {
       setLoading(false);
     }
@@ -35,7 +37,7 @@ export const StaffTickets: React.FC = () => {
       const detail = await staffService.getTicketDetail(id);
       setActiveTicketDetail(detail);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load ticket details');
+      toast.error(err.message || 'Tải chi tiết yêu cầu hỗ trợ thất bại');
     }
   };
 
@@ -43,11 +45,11 @@ export const StaffTickets: React.FC = () => {
     if (!activeTicketDetail) return;
     try {
       await staffService.updateTicketStatus(activeTicketDetail.ticket.id, newStatus);
-      toast.success(`Status updated to ${newStatus}`);
+      toast.success('Đã cập nhật trạng thái yêu cầu thành công');
       handleSelectTicket(activeTicketDetail.ticket.id);
       loadTickets();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update status');
+      toast.error(err.message || 'Cập nhật trạng thái thất bại');
     }
   };
 
@@ -55,10 +57,10 @@ export const StaffTickets: React.FC = () => {
     if (!activeTicketDetail) return;
     try {
       await staffService.assignTicket(activeTicketDetail.ticket.id);
-      toast.success('Ticket assigned to you');
+      toast.success('Đã tự phân công tiếp nhận yêu cầu này');
       handleSelectTicket(activeTicketDetail.ticket.id);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to assign ticket');
+      toast.error(err.message || 'Tiếp nhận yêu cầu thất bại');
     }
   };
 
@@ -68,141 +70,210 @@ export const StaffTickets: React.FC = () => {
     setSendingReply(true);
     try {
       await staffService.replyTicket(activeTicketDetail.ticket.id, replyBody);
-      toast.success('Staff reply sent');
+      toast.success('Đã gửi phản hồi cho khách hàng thành công');
       setReplyBody('');
       handleSelectTicket(activeTicketDetail.ticket.id);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send reply');
+      toast.error(err.message || 'Gửi phản hồi thất bại');
     } finally {
       setSendingReply(false);
     }
   };
 
-  return (
-    <div className="flex flex-col gap-6 font-sans">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Support Desk Tickets
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">Manage, assign, and reply to customer support requests.</p>
-        </div>
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'OPEN':
+        return 'Mới tạo';
+      case 'IN_PROGRESS':
+        return 'Đang xử lý';
+      case 'WAITING_CUSTOMER':
+        return 'Chờ khách phản hồi';
+      case 'RESOLVED':
+        return 'Đã giải quyết';
+      case 'CLOSED':
+        return 'Đã đóng';
+      default:
+        return status;
+    }
+  };
 
-        <div className="flex bg-white p-1 rounded-xl border border-slate-200 gap-1 text-xs font-semibold">
-          {['', 'OPEN', 'IN_PROGRESS', 'WAITING_CUSTOMER', 'RESOLVED'].map((st) => (
-            <button
-              key={st}
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                statusFilter === st ? 'bg-[#0065eb] text-white font-bold' : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              {st || 'All'}
-            </button>
-          ))}
-        </div>
+  return (
+    <div className="w-full space-y-4 font-sans relative pb-12">
+      {/* Enterprise Page Header */}
+      <AdminPageHeader
+        title="Quản Lý Hỗ Trợ Khách Hàng"
+        description="Theo dõi, tiếp nhận và phản hồi giải đáp các yêu cầu hỗ trợ từ khách hàng."
+        breadcrumbs={[
+          { label: 'Hỗ trợ khách hàng' },
+        ]}
+      />
+
+      {/* Filter Tabs */}
+      <div className="flex bg-white p-1 rounded-lg border border-slate-200/60 w-fit gap-1 text-xs">
+        {[
+          { key: '', label: 'Tất cả' },
+          { key: 'OPEN', label: 'Mới tạo' },
+          { key: 'IN_PROGRESS', label: 'Đang xử lý' },
+          { key: 'WAITING_CUSTOMER', label: 'Chờ phản hồi' },
+          { key: 'RESOLVED', label: 'Đã giải quyết' },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => setStatusFilter(tab.key)}
+            className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer text-xs font-normal ${
+              statusFilter === tab.key
+                ? 'bg-[#0065eb] text-white font-medium'
+                : 'text-slate-600 hover:bg-slate-50'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Tickets List */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col gap-3">
-          <h2 className="text-xs font-bold text-slate-900 border-b border-slate-100 pb-2">Tickets List ({tickets.length})</h2>
-          {loading ? (
-            <p className="text-xs text-slate-500">Loading tickets...</p>
-          ) : (
-            <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
-              {tickets.map((t) => (
-                <div
-                  key={t.id}
-                  onClick={() => handleSelectTicket(t.id)}
-                  className={`p-3 text-xs flex flex-col gap-1 cursor-pointer transition-colors ${
-                    activeTicketDetail?.ticket.id === t.id ? 'bg-blue-50/80 border-l-2 border-[#0065eb]' : 'hover:bg-slate-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-bold text-slate-900 truncate">{t.subject}</span>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0">{t.status}</span>
-                  </div>
-                  <span className="text-[10px] text-slate-400">{new Date(t.created_at).toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Ticket Reply & Controls Workspace */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs min-h-[550px] flex flex-col justify-between">
-          {!activeTicketDetail ? (
-            <div className="flex flex-col items-center justify-center my-auto text-slate-400 gap-2">
-              <MessageSquare className="w-10 h-10 text-slate-300" />
-              <p className="text-xs font-semibold text-slate-600">Select a support ticket to inspect and reply</p>
-            </div>
-          ) : (
-            <div className="flex flex-col h-full justify-between gap-4">
-              {/* Header & Status Changer */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                <div>
-                  <h2 className="text-base font-bold text-slate-900">{activeTicketDetail.ticket.subject}</h2>
-                  <p className="text-xs text-slate-500 font-mono">Customer ID: {activeTicketDetail.ticket.user_id}</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button onClick={handleAssignToSelf} size="sm" variant="outline" className="text-xs border-slate-200 text-slate-700 cursor-pointer">
-                    Assign Self
-                  </Button>
-                  <select
-                    value={activeTicketDetail.ticket.status}
-                    onChange={(e) => handleStatusChange(e.target.value)}
-                    className="text-xs font-bold p-1.5 border border-blue-200 rounded-lg bg-blue-50 text-[#0065eb] cursor-pointer"
-                  >
-                    <option value="OPEN">OPEN</option>
-                    <option value="IN_PROGRESS">IN_PROGRESS</option>
-                    <option value="WAITING_CUSTOMER">WAITING_CUSTOMER</option>
-                    <option value="RESOLVED">RESOLVED</option>
-                    <option value="CLOSED">CLOSED</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Message Thread */}
-              <div className="flex flex-col gap-3 my-2 max-h-96 overflow-y-auto p-3 bg-slate-50 rounded-xl border border-slate-100">
-                {activeTicketDetail.messages?.map((m: any) => {
-                  const isStaff = m.sender_type === 'STAFF';
-                  return (
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        
+        {/* Left Column (4 Cols): Tickets List */}
+        <div className="lg:col-span-4">
+          <Card className="bg-white border-0 shadow-none rounded-lg py-0">
+            <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
+              <CardTitle className="text-xs font-semibold text-slate-900">
+                Danh Sách Yêu Cầu ({tickets.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              {loading ? (
+                <p className="p-4 text-xs text-slate-500">Đang tải danh sách yêu cầu...</p>
+              ) : tickets.length === 0 ? (
+                <p className="p-4 text-xs text-slate-500">Không có yêu cầu hỗ trợ nào.</p>
+              ) : (
+                <div className="divide-y divide-slate-100 max-h-[550px] overflow-y-auto">
+                  {tickets.map((t) => (
                     <div
-                      key={m.id}
-                      className={`p-3 rounded-2xl max-w-[80%] text-xs flex flex-col gap-1 ${
-                        isStaff ? 'bg-[#0065eb] text-white self-end' : 'bg-white text-slate-900 border border-slate-200 self-start'
+                      key={t.id}
+                      onClick={() => handleSelectTicket(t.id)}
+                      className={`p-3.5 text-xs flex flex-col gap-1.5 cursor-pointer transition-colors ${
+                        activeTicketDetail?.ticket.id === t.id
+                          ? 'bg-blue-50/70 border-l-2 border-[#0065eb]'
+                          : 'hover:bg-slate-50'
                       }`}
                     >
-                      <span className="font-bold text-[10px] opacity-80">{isStaff ? 'Staff (You)' : 'Customer'}</span>
-                      <p className="leading-relaxed">{m.body}</p>
-                      <span className="text-[9px] opacity-60 text-right">{new Date(m.created_at).toLocaleTimeString()}</span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-semibold text-slate-900 truncate">{t.subject}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-700 shrink-0">
+                          {getStatusLabel(t.status)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                        <Clock className="w-3 h-3" />
+                        <span>{new Date(t.created_at).toLocaleString('vi-VN')}</span>
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Reply Input Form */}
-              <form onSubmit={handleReplySubmit} className="flex gap-2 items-center">
-                <Input
-                  placeholder="Type official response to customer..."
-                  value={replyBody}
-                  onChange={(e) => setReplyBody(e.target.value)}
-                  className="text-xs h-10 bg-white border-slate-200 focus:border-[#0065eb]"
-                />
-                <Button
-                  type="submit"
-                  disabled={sendingReply || !replyBody.trim()}
-                  className="bg-[#0065eb] hover:bg-blue-700 text-white h-10 text-xs px-4 rounded-lg cursor-pointer shrink-0"
-                >
-                  <Send className="w-3.5 h-3.5 mr-1" />
-                  Reply
-                </Button>
-              </form>
-            </div>
-          )}
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Right Column (8 Cols): Reply Workspace */}
+        <div className="lg:col-span-8">
+          <Card className="bg-white border-0 shadow-none rounded-lg py-0 min-h-[550px] flex flex-col justify-between">
+            {!activeTicketDetail ? (
+              <div className="flex flex-col items-center justify-center my-auto p-12 text-slate-400 gap-2 text-center">
+                <MessageSquare className="w-10 h-10 text-slate-300 stroke-[1.5]" />
+                <p className="text-xs font-medium text-slate-600">
+                  Vui lòng chọn một yêu cầu hỗ trợ từ danh sách bên trái để xem chi tiết và trao đổi với khách hàng
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col h-full justify-between p-4 gap-4">
+                
+                {/* Header & Status Selector */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                  <div>
+                    <h2 className="text-sm font-bold text-slate-900">
+                      {activeTicketDetail.ticket.subject}
+                    </h2>
+                    <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                      Mã khách hàng: {activeTicketDetail.ticket.user_id}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      onClick={handleAssignToSelf}
+                      variant="outline"
+                      className="text-xs font-normal border-slate-200/70 text-slate-700 hover:bg-slate-50 h-8 px-3 rounded-md cursor-pointer shadow-none flex items-center gap-1"
+                    >
+                      <UserCheck className="w-3.5 h-3.5 text-slate-500" />
+                      Tự tiếp nhận
+                    </Button>
+
+                    <select
+                      value={activeTicketDetail.ticket.status}
+                      onChange={(e) => handleStatusChange(e.target.value)}
+                      className="text-xs font-medium p-1.5 border border-blue-200 rounded-md bg-blue-50 text-[#0065eb] cursor-pointer focus:outline-none"
+                    >
+                      <option value="OPEN">Mới tạo (OPEN)</option>
+                      <option value="IN_PROGRESS">Đang xử lý (IN_PROGRESS)</option>
+                      <option value="WAITING_CUSTOMER">Chờ khách phản hồi (WAITING)</option>
+                      <option value="RESOLVED">Đã giải quyết (RESOLVED)</option>
+                      <option value="CLOSED">Đã đóng (CLOSED)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Messages Thread */}
+                <div className="flex flex-col gap-3 my-2 max-h-[380px] overflow-y-auto p-4 bg-slate-50/70 rounded-lg border-0">
+                  {activeTicketDetail.messages?.map((m: any) => {
+                    const isStaff = m.sender_type === 'STAFF';
+                    return (
+                      <div
+                        key={m.id}
+                        className={`p-3 rounded-lg max-w-[80%] text-xs flex flex-col gap-1 ${
+                          isStaff
+                            ? 'bg-[#0065eb] text-white self-end'
+                            : 'bg-white text-slate-900 border border-slate-100 self-start'
+                        }`}
+                      >
+                        <span className="font-semibold text-[10px] opacity-85">
+                          {isStaff ? 'Nhân viên hỗ trợ (Bạn)' : 'Khách hàng'}
+                        </span>
+                        <p className="leading-relaxed whitespace-pre-wrap">{m.body}</p>
+                        <span className="text-[9px] opacity-65 text-right font-mono">
+                          {new Date(m.created_at).toLocaleTimeString('vi-VN')}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Reply Form */}
+                <form onSubmit={handleReplySubmit} className="flex gap-2 items-center pt-2">
+                  <Input
+                    placeholder="Nhập nội dung phản hồi cho khách hàng..."
+                    value={replyBody}
+                    onChange={(e) => setReplyBody(e.target.value)}
+                    className="text-xs h-9 bg-white border-slate-200/60 shadow-none focus:border-[#0065eb]"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={sendingReply || !replyBody.trim()}
+                    className="bg-[#0065eb] hover:bg-blue-700 text-white h-9 text-xs font-normal px-4 rounded-md cursor-pointer shrink-0 shadow-none flex items-center gap-1.5"
+                  >
+                    <Send className="w-3.5 h-3.5" />
+                    Gửi phản hồi
+                  </Button>
+                </form>
+
+              </div>
+            )}
+          </Card>
+        </div>
+
       </div>
     </div>
   );
