@@ -45,7 +45,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarMenuBadge,
   SidebarTrigger,
   SidebarInset,
   SidebarRail,
@@ -68,7 +67,7 @@ export const AdminLayout: React.FC = () => {
     {
       group: 'FLIGHTS & FLEET CATALOG',
       items: [
-        { path: '/admin/flights', label: 'Flights & Schedules', icon: Plane, badge: 'Live' },
+        { path: '/admin/flights', label: 'Flights & Schedules', icon: Plane, badge: null },
         { path: '/admin/airports', label: 'Airports Catalog', icon: Building2, badge: null },
         { path: '/admin/airlines', label: 'Airlines Catalog', icon: PlaneTakeoff, badge: null },
         { path: '/admin/aircraft', label: 'Aircraft Fleet', icon: Plane, badge: null },
@@ -88,7 +87,7 @@ export const AdminLayout: React.FC = () => {
       items: [
         { path: '/admin/customers', label: 'Customers', icon: Users, badge: null },
         { path: '/admin/staff', label: 'Staff Accounts', icon: UserCheck, badge: null },
-        { path: '/admin/audit', label: 'System Audit Logs', icon: FileText, badge: 'Sec' },
+        { path: '/admin/audit', label: 'System Audit Logs', icon: FileText, badge: null },
       ],
     },
   ];
@@ -153,13 +152,6 @@ export const AdminLayout: React.FC = () => {
                               <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
                             </Link>
                           </SidebarMenuButton>
-                          {item.badge && (
-                            <SidebarMenuBadge className={`text-[9px] px-1.5 py-0.2 rounded font-semibold group-data-[collapsible=icon]:hidden ${
-                              isActive ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 border border-slate-200'
-                            }`}>
-                              {item.badge}
-                            </SidebarMenuBadge>
-                          )}
                         </SidebarMenuItem>
                       );
                     })}
@@ -169,20 +161,8 @@ export const AdminLayout: React.FC = () => {
             ))}
           </SidebarContent>
 
-          {/* Bottom Infrastructure & User Panel */}
+          {/* Bottom User Panel */}
           <SidebarFooter className="p-3 border-t border-slate-200/80 flex flex-col gap-2 bg-white group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:items-center">
-            {/* System Health Pulse */}
-            <div className="p-2 bg-slate-50 border border-slate-200/80 rounded-md flex items-center justify-between text-[11px] group-data-[collapsible=icon]:hidden">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0065eb]"></span>
-                </span>
-                <span className="text-slate-700 font-medium">API Core & DB</span>
-              </div>
-              <span className="text-[10px] text-[#0065eb] font-mono font-semibold">99.9% UP</span>
-            </div>
-
             {/* User Card & Logout */}
             <div className="flex items-center justify-between p-2 bg-slate-50 rounded-md border border-slate-200/80 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:justify-center">
               <div className="flex items-center gap-2 min-w-0 group-data-[collapsible=icon]:justify-center">
