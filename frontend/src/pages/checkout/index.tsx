@@ -12,8 +12,27 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { UserCheck, ShieldCheck, CalendarIcon } from 'lucide-react';
+
+const NATIONALITY_OPTIONS = [
+  { code: 'VN', label: 'Việt Nam (VN)' },
+  { code: 'US', label: 'Hoa Kỳ (US)' },
+  { code: 'JP', label: 'Nhật Bản (JP)' },
+  { code: 'KR', label: 'Hàn Quốc (KR)' },
+  { code: 'TH', label: 'Thái Lan (TH)' },
+  { code: 'SG', label: 'Singapore (SG)' },
+  { code: 'AU', label: 'Úc (AU)' },
+  { code: 'GB', label: 'Vương Quốc Anh (GB)' },
+  { code: 'FR', label: 'Pháp (FR)' },
+  { code: 'DE', label: 'Đức (DE)' },
+  { code: 'CA', label: 'Canada (CA)' },
+  { code: 'CN', label: 'Trung Quốc (CN)' },
+  { code: 'TW', label: 'Đài Loan (TW)' },
+  { code: 'MY', label: 'Malaysia (MY)' },
+  { code: 'ID', label: 'Indonesia (ID)' },
+];
 
 export const Checkout: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -30,7 +49,7 @@ export const Checkout: React.FC = () => {
   });
 
   const [passengers, setPassengers] = useState<Partial<DraftPassenger>[]>([
-    { passenger_index: 0, passenger_type: 'ADULT', full_name: user?.full_name || '' },
+    { passenger_index: 0, passenger_type: 'ADULT', full_name: user?.full_name || '', nationality: 'VN' },
   ]);
 
   const [savedPassengers, setSavedPassengers] = useState<SavedPassenger[]>([]);
@@ -95,7 +114,7 @@ export const Checkout: React.FC = () => {
         ...next[index],
         full_name: saved.full_name,
         date_of_birth: saved.date_of_birth,
-        nationality: saved.nationality,
+        nationality: saved.nationality || 'VN',
         passport_number: saved.passport_number,
         passport_expiry: saved.passport_expiry,
       };
@@ -107,7 +126,7 @@ export const Checkout: React.FC = () => {
   const handleAddPassengerInput = () => {
     setPassengers((prev) => [
       ...prev,
-      { passenger_index: prev.length, passenger_type: 'ADULT', full_name: '' },
+      { passenger_index: prev.length, passenger_type: 'ADULT', full_name: '', nationality: 'VN' },
     ]);
   };
 
@@ -149,7 +168,18 @@ export const Checkout: React.FC = () => {
       setCreatedBookingId(bookingRes.id);
       setIsPaymentModalOpen(true);
     } catch (err: any) {
-      toast.error(err.message || 'Tạo đơn đặt vé thất bại');
+      const msg = err.message || '';
+      if (
+        msg.includes('active') || 
+        msg.includes('expired') || 
+        err.code === 'DRAFT_NOT_ACTIVE' || 
+        err.code === 'DRAFT_EXPIRED'
+      ) {
+        toast.error('Đơn hàng nháp này đã hoàn tất đặt vé hoặc hết hạn. Đang chuyển về trang tìm kiếm...');
+        setTimeout(() => navigate('/'), 1200);
+      } else {
+        toast.error(msg || 'Tạo đơn đặt vé thất bại');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -291,21 +321,30 @@ export const Checkout: React.FC = () => {
                       </Popover>
                     </div>
 
+                    {/* Nationality using shadcn Select */}
                     <div>
                       <label className="text-[11px] font-medium text-slate-600 block mb-1">Quốc tịch</label>
-                      <Input
-                        value={pax.nationality || ''}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                      <Select
+                        value={pax.nationality || 'VN'}
+                        onValueChange={(val) => {
                           setPassengers((prev) => {
                             const next = [...prev];
                             next[idx] = { ...next[idx], nationality: val };
                             return next;
                           });
                         }}
-                        placeholder="VN"
-                        className="text-xs h-9 bg-white"
-                      />
+                      >
+                        <SelectTrigger className="w-full text-xs h-9 bg-white border-slate-200 shadow-none cursor-pointer">
+                          <SelectValue placeholder="Chọn quốc tịch" />
+                        </SelectTrigger>
+                        <SelectContent className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)] bg-white border-slate-200 shadow-xl max-h-60 overflow-y-auto">
+                          {NATIONALITY_OPTIONS.map((c) => (
+                            <SelectItem key={c.code} value={c.code} className="text-xs cursor-pointer">
+                              {c.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div>

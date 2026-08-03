@@ -3,7 +3,7 @@ import { paymentService, type Payment, type PaymentTransaction } from '@/service
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { CreditCard, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { CreditCard, Smartphone, Landmark, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
 
 interface PaymentModalProps {
   bookingId: string;
@@ -48,7 +48,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         onSuccess();
       }, 1200);
     } catch (err: any) {
-      toast.error(err.message || 'Xác nhận thanh toán thất bại');
+      if (err.code === 'PAYMENT_ALREADY_PROCESSED' || err.message?.includes('SUCCESS')) {
+        toast.success('Đơn hàng này đã được thanh toán thành công từ trước!');
+        onSuccess();
+      } else {
+        toast.error(err.message || 'Xác nhận thanh toán thất bại');
+      }
     } finally {
       setLoading(false);
     }
@@ -93,6 +98,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
   };
 
+  const paymentMethods = [
+    { code: 'CARD', label: 'Thẻ Quốc Tế', icon: <CreditCard className="w-5 h-5 text-[#0065eb]" /> },
+    { code: 'MOMO', label: 'Ví MoMo', icon: <Smartphone className="w-5 h-5 text-pink-600" /> },
+    { code: 'BANK_TRANSFER', label: 'Chuyển Khoản', icon: <Landmark className="w-5 h-5 text-emerald-600" /> },
+  ];
+
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-white border-0 shadow-xl rounded-2xl p-6 font-sans">
@@ -114,20 +125,18 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           <div className="flex flex-col gap-4 mt-2">
             <p className="text-xs font-medium text-slate-700">Chọn phương thức thanh toán:</p>
             <div className="grid grid-cols-3 gap-2">
-              {[
-                { code: 'CARD', label: 'Thẻ Quốc Tế', icon: '💳' },
-                { code: 'MOMO', label: 'Ví MoMo', icon: '📱' },
-                { code: 'BANK_TRANSFER', label: 'Chuyển Khoản', icon: '🏦' },
-              ].map((m) => (
+              {paymentMethods.map((m) => (
                 <button
                   key={m.code}
                   type="button"
                   onClick={() => setMethod(m.code as any)}
-                  className={`p-3 rounded-xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`p-3 rounded-xl border text-center flex flex-col items-center gap-2 transition-all cursor-pointer ${
                     method === m.code ? 'border-[#0065eb] bg-blue-50/80 text-[#0065eb] font-semibold' : 'border-slate-200/80 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <span className="text-xl">{m.icon}</span>
+                  <div className="p-2 rounded-lg bg-slate-100/70 flex items-center justify-center">
+                    {m.icon}
+                  </div>
                   <span className="text-[11px] font-medium">{m.label}</span>
                 </button>
               ))}
@@ -154,6 +163,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 {payment.status === 'SUCCESS' ? 'Thành công' : payment.status === 'FAILED' ? 'Thất bại' : 'Đang xử lý'}
               </span>
             </div>
+
+            {payment.status === 'SUCCESS' && (
+              <div className="p-4 bg-emerald-50 border border-emerald-200/80 rounded-xl text-center flex flex-col items-center gap-2">
+                <CheckCircle2 className="w-8 h-8 text-emerald-600 animate-bounce" />
+                <p className="text-xs font-semibold text-emerald-800">Thanh Toán Thành Công!</p>
+                <p className="text-[11px] text-emerald-600">Vé máy bay của bạn đã được phát hành thành công.</p>
+                <Button
+                  onClick={onSuccess}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8.5 px-4 rounded-lg mt-1 cursor-pointer shadow-none"
+                >
+                  Xem Vé Điện Tử Ngay
+                </Button>
+              </div>
+            )}
 
             {payment.status === 'PENDING' && (
               <div className="flex flex-col gap-2">

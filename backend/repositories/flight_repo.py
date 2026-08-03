@@ -177,7 +177,7 @@ def create_fare_inventory(db, inv_id, fare_id, total_seats):
 def reduce_fare_inventory(db, fare_id, count):
     now = utcnow_iso()
     db.execute(
-        "UPDATE fare_inventories SET available_seats=MAX(0,available_seats-?), updated_at=? WHERE fare_id=?",
+        "UPDATE fare_inventories SET available_seats=GREATEST(0,available_seats-?), updated_at=? WHERE fare_id=?",
         (count, now, fare_id)
     )
 
