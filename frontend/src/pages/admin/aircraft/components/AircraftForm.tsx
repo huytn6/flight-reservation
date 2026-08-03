@@ -2,7 +2,6 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plane, Users } from 'lucide-react';
 
 export interface AircraftFormData {
   code: string;
@@ -23,91 +22,76 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
   mode,
 }) => {
   return (
-    <div className="flex flex-col gap-4 font-sans">
-      {/* Card 1: Định Danh Dòng Máy Bay */}
-      <Card className="bg-white border-slate-200/80 shadow-2xs rounded-xl overflow-hidden">
-        <CardHeader className="p-4 bg-slate-50/60 border-b border-slate-200/80">
-          <CardTitle className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Plane className="w-3.5 h-3.5 text-[#0065eb]" />
-            Mã Loại & Dòng Tàu Bay
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="code" className="text-xs font-semibold text-slate-700">
-              Mã Loại Tàu Bay (ICAO) <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="code"
-              name="code"
-              value={formData.code}
-              onChange={(e) => setFormData((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
-              placeholder="VD: A320, A321, B787"
-              required
-              disabled={mode === 'edit'}
-              className="uppercase tracking-wider font-mono text-xs bg-white border-slate-200 h-9"
-            />
-          </div>
+    <Card className="bg-white border-slate-200/80 shadow-none rounded-lg overflow-hidden font-sans">
+      <CardHeader className="p-4 sm:p-5 bg-white border-b border-slate-100">
+        <CardTitle className="text-xs font-semibold text-slate-900">
+          Thông Tin Loại Máy Bay
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="code" className="text-xs font-medium text-slate-700">
+            Mã Loại Tàu Bay (ICAO) <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="code"
+            name="code"
+            value={formData.code}
+            onChange={(e) => setFormData((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
+            placeholder="VD: A320, A321, B787"
+            required
+            disabled={mode === 'edit'}
+            className="uppercase font-mono text-xs bg-white border-slate-200 h-9"
+          />
+        </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="model" className="text-xs font-semibold text-slate-700">
-              Tên Dòng Máy Bay Chi Tiết <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="model"
-              name="model"
-              value={formData.model}
-              onChange={(e) => setFormData((prev) => ({ ...prev, model: e.target.value }))}
-              placeholder="VD: Airbus A321-200"
-              required
-              className="text-xs bg-white border-slate-200 h-9"
-            />
-          </div>
-        </CardContent>
-      </Card>
+        <div className="space-y-1.5">
+          <Label htmlFor="model" className="text-xs font-medium text-slate-700">
+            Tên Dòng Máy Bay <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="model"
+            name="model"
+            value={formData.model}
+            onChange={(e) => setFormData((prev) => ({ ...prev, model: e.target.value }))}
+            placeholder="VD: Airbus A321-200"
+            required
+            className="text-xs bg-white border-slate-200 h-9"
+          />
+        </div>
 
-      {/* Card 2: Thông Số Kỹ Thuật & Sức Chứa */}
-      <Card className="bg-white border-slate-200/80 shadow-2xs rounded-xl overflow-hidden">
-        <CardHeader className="p-4 bg-slate-50/60 border-b border-slate-200/80">
-          <CardTitle className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Users className="w-3.5 h-3.5 text-[#0065eb]" />
-            Nhà Sản Xuất & Sức Chứa Ghế Ngồi
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="manufacturer" className="text-xs font-semibold text-slate-700">
-              Nhà Sản Xuất <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="manufacturer"
-              name="manufacturer"
-              value={formData.manufacturer}
-              onChange={(e) => setFormData((prev) => ({ ...prev, manufacturer: e.target.value }))}
-              placeholder="VD: Airbus, Boeing"
-              required
-              className="text-xs bg-white border-slate-200 h-9"
-            />
-          </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="manufacturer" className="text-xs font-medium text-slate-700">
+            Nhà Sản Xuất <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="manufacturer"
+            name="manufacturer"
+            value={formData.manufacturer}
+            onChange={(e) => setFormData((prev) => ({ ...prev, manufacturer: e.target.value }))}
+            placeholder="VD: Airbus, Boeing"
+            required
+            className="text-xs bg-white border-slate-200 h-9"
+          />
+        </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="capacity" className="text-xs font-semibold text-slate-700">
-              Tổng Sức Chứa Ghế Ngồi <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="capacity"
-              name="capacity"
-              type="number"
-              value={formData.capacity}
-              onChange={(e) => setFormData((prev) => ({ ...prev, capacity: Number(e.target.value) }))}
-              placeholder="VD: 180, 220"
-              required
-              min={1}
-              className="font-mono text-xs bg-white border-slate-200 h-9"
-            />
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="capacity" className="text-xs font-medium text-slate-700">
+            Sức Chứa Ghế Ngồi <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="capacity"
+            name="capacity"
+            type="number"
+            value={formData.capacity}
+            onChange={(e) => setFormData((prev) => ({ ...prev, capacity: Number(e.target.value) }))}
+            placeholder="VD: 180, 220"
+            required
+            min={1}
+            className="font-mono text-xs bg-white border-slate-200 h-9"
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 };
