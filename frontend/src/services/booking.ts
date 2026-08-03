@@ -5,7 +5,7 @@ export interface Booking {
   id: string;
   user_id: string;
   pnr: string;
-  status: 'PENDING' | 'PENDING_PAYMENT' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+  status: string;
   total_amount: number;
   currency: string;
   contact_name: string;
