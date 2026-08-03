@@ -31,11 +31,11 @@ export const AirlineEditPage: React.FC = () => {
           name: airline.name || '',
         });
       } else {
-        toast.error('Airline not found');
+        toast.error('Không tìm thấy thông tin hãng bay');
         navigate('/admin/airlines');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load airline details');
+      toast.error(err.message || 'Tải thông tin hãng bay thất bại');
     } finally {
       setFetching(false);
     }
@@ -47,26 +47,30 @@ export const AirlineEditPage: React.FC = () => {
     setLoading(true);
     try {
       await adminService.updateAirline(id, formData);
-      toast.success('Airline updated successfully!');
+      toast.success('Cập nhật hãng bay thành công!');
       navigate('/admin/airlines');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update airline');
+      toast.error(err.message || 'Cập nhật hãng bay thất bại');
     } finally {
       setLoading(false);
     }
   };
 
   if (fetching) {
-    return <div className="p-8 text-center text-xs text-slate-500">Loading airline details...</div>;
+    return <div className="p-8 text-center text-xs text-slate-500 font-sans">Đang tải thông tin hãng bay...</div>;
   }
 
   return (
     <AdminFormLayout
-      title={`Edit Airline: ${formData.name}`}
-      description="Update airline profile details and metadata."
+      title={`Chỉnh Sửa Hãng Bay: ${formData.name}`}
+      description="Cập nhật thông tin nhận diện đối tác hãng hàng không."
       backPath="/admin/airlines"
       mode="edit"
-      submitText="Update Airline"
+      submitText="Lưu thay đổi"
+      breadcrumbs={[
+        { label: 'Quản lý hãng bay', href: '/admin/airlines' },
+        { label: `Chỉnh sửa ${formData.iata_code || formData.name}` },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

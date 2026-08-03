@@ -37,11 +37,11 @@ export const CouponEditPage: React.FC = () => {
           valid_until: cp.valid_until ? cp.valid_until.substring(0, 16) : '',
         });
       } else {
-        toast.error('Coupon not found');
+        toast.error('Không tìm thấy mã giảm giá');
         navigate('/admin/coupons');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load coupon details');
+      toast.error(err.message || 'Tải thông tin mã giảm giá thất bại');
     } finally {
       setFetching(false);
     }
@@ -53,26 +53,30 @@ export const CouponEditPage: React.FC = () => {
     setLoading(true);
     try {
       await adminService.updateCoupon(id, formData);
-      toast.success('Coupon updated successfully!');
+      toast.success('Cập nhật mã giảm giá thành công!');
       navigate('/admin/coupons');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update coupon');
+      toast.error(err.message || 'Cập nhật mã giảm giá thất bại');
     } finally {
       setLoading(false);
     }
   };
 
   if (fetching) {
-    return <div className="p-8 text-center text-xs text-slate-500">Loading coupon details...</div>;
+    return <div className="p-8 text-center text-xs text-slate-500 font-sans">Đang tải thông tin mã giảm giá...</div>;
   }
 
   return (
     <AdminFormLayout
-      title={`Edit Coupon: ${formData.code}`}
-      description="Update discount rate, type, or expiration dates."
+      title={`Chỉnh Sửa Mã Giảm Giá: ${formData.code}`}
+      description="Cập nhật mức chiết khấu, hình thức giảm hoặc thời gian hiệu lực."
       backPath="/admin/coupons"
       mode="edit"
-      submitText="Update Coupon"
+      submitText="Lưu thay đổi"
+      breadcrumbs={[
+        { label: 'Quản lý mã giảm giá', href: '/admin/coupons' },
+        { label: `Chỉnh sửa ${formData.code}` },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

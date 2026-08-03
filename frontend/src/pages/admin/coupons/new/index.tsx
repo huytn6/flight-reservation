@@ -20,17 +20,17 @@ export const CouponCreatePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.code || !formData.discount_value) {
-      toast.error('Please fill in all required coupon fields');
+      toast.error('Vui lòng điền đầy đủ thông tin mã giảm giá bắt buộc');
       return;
     }
 
     setLoading(true);
     try {
       await adminService.createCoupon(formData);
-      toast.success('Coupon created successfully!');
+      toast.success('Tạo mã giảm giá thành công!');
       navigate('/admin/coupons');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create coupon');
+      toast.error(err.message || 'Tạo mã giảm giá thất bại');
     } finally {
       setLoading(false);
     }
@@ -38,11 +38,15 @@ export const CouponCreatePage: React.FC = () => {
 
   return (
     <AdminFormLayout
-      title="Create Discount Coupon"
-      description="Issue a new promotional voucher code for customer checkout discounts."
+      title="Thêm Mã Giảm Giá Mới"
+      description="Phát hành mã voucher khuyến mãi ưu đãi cho khách hàng khi đặt vé."
       backPath="/admin/coupons"
       mode="create"
-      submitText="Create Coupon"
+      submitText="Tạo mới"
+      breadcrumbs={[
+        { label: 'Quản lý mã giảm giá', href: '/admin/coupons' },
+        { label: 'Thêm mã giảm giá' },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

@@ -19,17 +19,17 @@ export const AircraftCreatePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.code || !formData.model || !formData.capacity) {
-      toast.error('Please fill in all required fields');
+      toast.error('Vui lòng điền đầy đủ tất cả thông tin bắt buộc');
       return;
     }
 
     setLoading(true);
     try {
       await adminService.createAircraftType(formData);
-      toast.success('Aircraft type created successfully!');
+      toast.success('Thêm loại máy bay thành công!');
       navigate('/admin/aircraft');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create aircraft type');
+      toast.error(err.message || 'Thêm loại máy bay thất bại');
     } finally {
       setLoading(false);
     }
@@ -37,11 +37,15 @@ export const AircraftCreatePage: React.FC = () => {
 
   return (
     <AdminFormLayout
-      title="Create Aircraft Type"
-      description="Add a new aircraft specification to the fleet catalog."
+      title="Thêm Dòng Máy Bay Mới"
+      description="Nhập đầy đủ thông tin kỹ thuật và sức chứa ghế để lưu vào danh mục tàu bay."
       backPath="/admin/aircraft"
       mode="create"
-      submitText="Create Aircraft"
+      submitText="Tạo mới"
+      breadcrumbs={[
+        { label: 'Quản lý tàu bay', href: '/admin/aircraft' },
+        { label: 'Thêm dòng máy bay' },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

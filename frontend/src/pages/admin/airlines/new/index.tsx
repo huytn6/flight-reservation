@@ -17,17 +17,17 @@ export const AirlineCreatePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.iata_code || !formData.name) {
-      toast.error('Please fill in all required fields');
+      toast.error('Vui lòng điền đầy đủ tất cả thông tin bắt buộc');
       return;
     }
 
     setLoading(true);
     try {
       await adminService.createAirline(formData);
-      toast.success('Airline created successfully!');
+      toast.success('Thêm hãng hàng không thành công!');
       navigate('/admin/airlines');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create airline');
+      toast.error(err.message || 'Thêm hãng hàng không thất bại');
     } finally {
       setLoading(false);
     }
@@ -35,11 +35,15 @@ export const AirlineCreatePage: React.FC = () => {
 
   return (
     <AdminFormLayout
-      title="Create New Airline"
-      description="Register a new airline partner into the flight catalog database."
+      title="Thêm Hãng Bay Mới"
+      description="Đăng ký đối tác hãng hàng không mới vào cơ sở dữ liệu."
       backPath="/admin/airlines"
       mode="create"
-      submitText="Create Airline"
+      submitText="Tạo mới"
+      breadcrumbs={[
+        { label: 'Quản lý hãng bay', href: '/admin/airlines' },
+        { label: 'Thêm hãng bay' },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

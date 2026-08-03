@@ -35,11 +35,11 @@ export const AircraftEditPage: React.FC = () => {
           capacity: item.capacity || 0,
         });
       } else {
-        toast.error('Aircraft type not found');
+        toast.error('Không tìm thấy thông tin loại máy bay');
         navigate('/admin/aircraft');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load aircraft details');
+      toast.error(err.message || 'Tải thông tin loại máy bay thất bại');
     } finally {
       setFetching(false);
     }
@@ -51,26 +51,30 @@ export const AircraftEditPage: React.FC = () => {
     setLoading(true);
     try {
       await adminService.updateAircraftType(id, formData);
-      toast.success('Aircraft type updated successfully!');
+      toast.success('Cập nhật dòng máy bay thành công!');
       navigate('/admin/aircraft');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update aircraft type');
+      toast.error(err.message || 'Cập nhật dòng máy bay thất bại');
     } finally {
       setLoading(false);
     }
   };
 
   if (fetching) {
-    return <div className="p-8 text-center text-xs text-slate-500">Loading aircraft details...</div>;
+    return <div className="p-8 text-center text-xs text-slate-500 font-sans">Đang tải thông tin dòng máy bay...</div>;
   }
 
   return (
     <AdminFormLayout
-      title={`Edit Aircraft: ${formData.code}`}
-      description="Update aircraft capacity and model specifications."
+      title={`Chỉnh Sửa Dòng Máy Bay: ${formData.code}`}
+      description="Cập nhật thông tin chi tiết kỹ thuật và sức chứa ghế ngồi."
       backPath="/admin/aircraft"
       mode="edit"
-      submitText="Update Aircraft"
+      submitText="Lưu thay đổi"
+      breadcrumbs={[
+        { label: 'Quản lý tàu bay', href: '/admin/aircraft' },
+        { label: `Chỉnh sửa ${formData.code}` },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

@@ -22,17 +22,17 @@ export const FlightCreatePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.flight_number || !formData.airline_id || !formData.departure_airport_id || !formData.arrival_airport_id) {
-      toast.error('Please complete all required flight fields');
+      toast.error('Vui lòng điền đầy đủ tất cả thông tin chuyến bay bắt buộc');
       return;
     }
 
     setLoading(true);
     try {
       await adminService.createFlight(formData);
-      toast.success('Flight created successfully!');
+      toast.success('Tạo chuyến bay mới thành công!');
       navigate('/admin/flights');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create flight');
+      toast.error(err.message || 'Tạo chuyến bay thất bại');
     } finally {
       setLoading(false);
     }
@@ -40,11 +40,15 @@ export const FlightCreatePage: React.FC = () => {
 
   return (
     <AdminFormLayout
-      title="Create Flight Schedule"
-      description="Set up a new flight route, departure schedule, and carrier information."
+      title="Thêm Lịch Khởi Hành Chuyến Bay"
+      description="Thiết lập hành trình bay mới, lịch cất/hạ cánh và phân công hãng bay."
       backPath="/admin/flights"
       mode="create"
-      submitText="Create Flight"
+      submitText="Tạo mới"
+      breadcrumbs={[
+        { label: 'Quản lý chuyến bay', href: '/admin/flights' },
+        { label: 'Thêm chuyến bay' },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

@@ -19,7 +19,7 @@ export const CmsCreatePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.key || !formData.title || !formData.body) {
-      toast.error('Please fill in all required CMS fields');
+      toast.error('Vui lòng điền đầy đủ thông tin bài viết bắt buộc');
       return;
     }
 
@@ -29,10 +29,10 @@ export const CmsCreatePage: React.FC = () => {
         ...formData,
         is_published: formData.is_published ? 1 : 0,
       });
-      toast.success('CMS page created successfully!');
+      toast.success('Tạo bài viết CMS thành công!');
       navigate('/admin/cms');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create CMS page');
+      toast.error(err.message || 'Tạo bài viết CMS thất bại');
     } finally {
       setLoading(false);
     }
@@ -40,11 +40,15 @@ export const CmsCreatePage: React.FC = () => {
 
   return (
     <AdminFormLayout
-      title="Create CMS Article"
-      description="Publish news, support articles, or system policies."
+      title="Thêm Bài Viết CMS Mới"
+      description="Soạn thảo tin tức, bài viết hướng dẫn hoặc điều khoản chính sách."
       backPath="/admin/cms"
       mode="create"
-      submitText="Publish Article"
+      submitText="Tạo mới"
+      breadcrumbs={[
+        { label: 'Quản lý bài viết CMS', href: '/admin/cms' },
+        { label: 'Thêm bài viết' },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

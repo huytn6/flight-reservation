@@ -35,11 +35,11 @@ export const CmsEditPage: React.FC = () => {
           is_published: Boolean(item.is_published),
         });
       } else {
-        toast.error('CMS article not found');
+        toast.error('Không tìm thấy bài viết CMS');
         navigate('/admin/cms');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load CMS details');
+      toast.error(err.message || 'Tải thông tin bài viết CMS thất bại');
     } finally {
       setFetching(false);
     }
@@ -54,26 +54,30 @@ export const CmsEditPage: React.FC = () => {
         ...formData,
         is_published: formData.is_published ? 1 : 0,
       });
-      toast.success('CMS page updated successfully!');
+      toast.success('Cập nhật bài viết CMS thành công!');
       navigate('/admin/cms');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update CMS page');
+      toast.error(err.message || 'Cập nhật bài viết CMS thất bại');
     } finally {
       setLoading(false);
     }
   };
 
   if (fetching) {
-    return <div className="p-8 text-center text-xs text-slate-500">Loading article details...</div>;
+    return <div className="p-8 text-center text-xs text-slate-500 font-sans">Đang tải thông tin bài viết...</div>;
   }
 
   return (
     <AdminFormLayout
-      title={`Edit CMS: ${formData.title}`}
-      description="Update article content or toggle published state."
+      title={`Chỉnh Sửa Bài Viết CMS: ${formData.title}`}
+      description="Cập nhật nội dung chi tiết hoặc bật/tắt trạng thái xuất bản."
       backPath="/admin/cms"
       mode="edit"
-      submitText="Update Article"
+      submitText="Lưu thay đổi"
+      breadcrumbs={[
+        { label: 'Quản lý bài viết CMS', href: '/admin/cms' },
+        { label: `Chỉnh sửa ${formData.key}` },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

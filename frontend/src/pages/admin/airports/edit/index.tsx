@@ -15,7 +15,7 @@ export const AirportEditPage: React.FC = () => {
     iata_code: '',
     name: '',
     city: '',
-    country: 'Vietnam',
+    country: 'Việt Nam',
     country_code: 'VN',
     timezone: 'Asia/Ho_Chi_Minh',
   });
@@ -36,16 +36,16 @@ export const AirportEditPage: React.FC = () => {
           iata_code: airport.iata_code || '',
           name: airport.name || '',
           city: airport.city || '',
-          country: airport.country || 'Vietnam',
+          country: airport.country || 'Việt Nam',
           country_code: airport.country_code || 'VN',
           timezone: airport.timezone || 'Asia/Ho_Chi_Minh',
         });
       } else {
-        toast.error('Airport not found');
+        toast.error('Không tìm thấy thông tin sân bay');
         navigate('/admin/airports');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load airport details');
+      toast.error(err.message || 'Tải thông tin sân bay thất bại');
     } finally {
       setFetching(false);
     }
@@ -57,26 +57,30 @@ export const AirportEditPage: React.FC = () => {
     setLoading(true);
     try {
       await adminService.updateAirport(id, formData);
-      toast.success('Airport updated successfully!');
+      toast.success('Cập nhật thông tin sân bay thành công!');
       navigate('/admin/airports');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update airport');
+      toast.error(err.message || 'Cập nhật thông tin sân bay thất bại');
     } finally {
       setLoading(false);
     }
   };
 
   if (fetching) {
-    return <div className="p-8 text-center text-xs text-slate-500">Loading airport details...</div>;
+    return <div className="p-8 text-center text-xs text-slate-500 font-sans">Đang tải thông tin sân bay...</div>;
   }
 
   return (
     <AdminFormLayout
-      title={`Edit Airport: ${formData.iata_code}`}
-      description="Update location details, name, or timezone settings for this airport."
+      title={`Chỉnh Sửa Sân Bay: ${formData.iata_code}`}
+      description="Cập nhật vị trí địa lý, tên sân bay hoặc thiết lập múi giờ."
       backPath="/admin/airports"
       mode="edit"
-      submitText="Update Airport"
+      submitText="Lưu thay đổi"
+      breadcrumbs={[
+        { label: 'Quản lý sân bay', href: '/admin/airports' },
+        { label: `Chỉnh sửa ${formData.iata_code}` },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

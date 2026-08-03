@@ -13,7 +13,7 @@ export const AirportCreatePage: React.FC = () => {
     iata_code: '',
     name: '',
     city: '',
-    country: 'Vietnam',
+    country: 'Việt Nam',
     country_code: 'VN',
     timezone: 'Asia/Ho_Chi_Minh',
   });
@@ -21,17 +21,17 @@ export const AirportCreatePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.iata_code || !formData.name || !formData.city) {
-      toast.error('Please fill in all required fields');
+      toast.error('Vui lòng điền đầy đủ tất cả thông tin bắt buộc');
       return;
     }
 
     setLoading(true);
     try {
       await adminService.createAirport(formData);
-      toast.success('Airport created successfully!');
+      toast.success('Thêm sân bay thành công!');
       navigate('/admin/airports');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create airport');
+      toast.error(err.message || 'Thêm sân bay thất bại');
     } finally {
       setLoading(false);
     }
@@ -39,11 +39,15 @@ export const AirportCreatePage: React.FC = () => {
 
   return (
     <AdminFormLayout
-      title="Create New Airport"
-      description="Add a new airport entry to the global flight catalog database."
+      title="Thêm Sân Bay Mới"
+      description="Nhập đầy đủ thông tin kỹ thuật và chuẩn dữ liệu sân bay."
       backPath="/admin/airports"
       mode="create"
-      submitText="Create Airport"
+      submitText="Tạo mới"
+      breadcrumbs={[
+        { label: 'Quản lý sân bay', href: '/admin/airports' },
+        { label: 'Thêm sân bay' },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >

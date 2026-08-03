@@ -42,11 +42,11 @@ export const FlightEditPage: React.FC = () => {
           status: fl.status || 'SCHEDULED',
         });
       } else {
-        toast.error('Flight not found');
+        toast.error('Không tìm thấy chuyến bay');
         navigate('/admin/flights');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load flight details');
+      toast.error(err.message || 'Tải thông tin chuyến bay thất bại');
     } finally {
       setFetching(false);
     }
@@ -58,26 +58,30 @@ export const FlightEditPage: React.FC = () => {
     setLoading(true);
     try {
       await adminService.updateFlight(id, formData);
-      toast.success('Flight updated successfully!');
+      toast.success('Cập nhật chuyến bay thành công!');
       navigate('/admin/flights');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update flight');
+      toast.error(err.message || 'Cập nhật chuyến bay thất bại');
     } finally {
       setLoading(false);
     }
   };
 
   if (fetching) {
-    return <div className="p-8 text-center text-xs text-slate-500">Loading flight details...</div>;
+    return <div className="p-8 text-center text-xs text-slate-500 font-sans">Đang tải thông tin chuyến bay...</div>;
   }
 
   return (
     <AdminFormLayout
-      title={`Edit Flight: ${formData.flight_number}`}
-      description="Update departure times, assigned aircraft, or flight operational status."
+      title={`Chỉnh Sửa Chuyến Bay: ${formData.flight_number}`}
+      description="Cập nhật giờ cất/hạ cánh, máy bay vận hành hoặc trạng thái chuyến bay."
       backPath="/admin/flights"
       mode="edit"
-      submitText="Update Flight"
+      submitText="Lưu thay đổi"
+      breadcrumbs={[
+        { label: 'Quản lý chuyến bay', href: '/admin/flights' },
+        { label: `Chỉnh sửa ${formData.flight_number}` },
+      ]}
       loading={loading}
       onSubmit={handleSubmit}
     >
