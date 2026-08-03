@@ -34,7 +34,7 @@ export const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
   const IconComponent = primaryAction?.icon || Save;
 
   return (
-    <div className="flex flex-col gap-3 pb-3 border-b border-slate-100 font-sans">
+    <div className="flex flex-col gap-2 font-sans">
       {/* Optional Breadcrumbs */}
       {breadcrumbs.length > 0 && (
         <nav className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
