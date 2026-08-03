@@ -121,16 +121,10 @@ export const Header = () => {
                 {(user.role === 'STAFF' || user.role === 'ADMIN') && (
                   <>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/staff')} className="px-3 py-2 text-xs font-semibold hover:bg-purple-50 text-purple-700 rounded-xl cursor-pointer">
-                      <Shield className="w-4 h-4 mr-2 text-purple-600" /> Staff Portal
+                    <DropdownMenuItem onClick={() => navigate('/admin')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 text-[#0065eb] rounded-xl cursor-pointer">
+                      <Shield className="w-4 h-4 mr-2 text-[#0065eb]" /> Management Dashboard
                     </DropdownMenuItem>
                   </>
-                )}
-
-                {user.role === 'ADMIN' && (
-                  <DropdownMenuItem onClick={() => navigate('/admin')} className="px-3 py-2 text-xs font-semibold hover:bg-emerald-50 text-emerald-700 rounded-xl cursor-pointer">
-                    <Shield className="w-4 h-4 mr-2 text-emerald-600" /> Admin Portal
-                  </DropdownMenuItem>
                 )}
 
                 <DropdownMenuSeparator />

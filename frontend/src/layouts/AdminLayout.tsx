@@ -16,7 +16,8 @@ import {
   Search,
   Plus,
   ExternalLink,
-  UserCheck
+  UserCheck,
+  LifeBuoy
 } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
 import { Button } from '@/components/ui/button';
@@ -77,6 +78,7 @@ export const AdminLayout: React.FC = () => {
       group: 'BUSINESS & REVENUE',
       items: [
         { path: '/admin/bookings', label: 'Bookings & Fares', icon: CreditCard, badge: null },
+        { path: '/admin/tickets', label: 'Support Desk Tickets', icon: LifeBuoy, badge: null },
         { path: '/admin/coupons', label: 'Coupons & Promos', icon: Tag, badge: null },
         { path: '/admin/cms', label: 'CMS Content Pages', icon: FileText, badge: null },
       ],

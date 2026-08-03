@@ -44,10 +44,8 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
 
         if (returnUrl) {
           navigate(decodeURIComponent(returnUrl));
-        } else if (res.user.role === 'ADMIN') {
+        } else if (res.user.role === 'ADMIN' || res.user.role === 'STAFF') {
           navigate('/admin');
-        } else if (res.user.role === 'STAFF') {
-          navigate('/staff');
         } else {
           navigate('/');
         }

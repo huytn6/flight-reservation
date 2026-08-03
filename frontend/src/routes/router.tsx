@@ -1,7 +1,6 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/layouts/MainLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
-import { StaffLayout } from '@/layouts/StaffLayout';
 import { AdminLayout } from '@/layouts/AdminLayout';
 
 import { ProtectedRoute, GuestGuard } from '@/components/auth/Guards';
@@ -20,7 +19,6 @@ import { BookingLookup } from '@/pages/booking-lookup';
 import { PriceAlerts } from '@/pages/price-alerts';
 import { Support } from '@/pages/support';
 
-import { StaffBookings } from '@/pages/staff/bookings';
 import { StaffTickets } from '@/pages/staff/tickets';
 
 // Admin Modules
@@ -158,27 +156,17 @@ export const router = createBrowserRouter([
   },
   {
     path: '/staff',
-    element: (
-      <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
-        <StaffLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true,
-        element: <StaffBookings />,
-      },
-      {
-        path: 'tickets',
-        element: <StaffTickets />,
-      },
-    ],
+    element: <Navigate to="/admin" replace />,
   },
-  // Enterprise Admin Portal Protected Routes
+  {
+    path: '/staff/tickets',
+    element: <Navigate to="/admin/tickets" replace />,
+  },
+  // Enterprise Management Portal Protected Routes (Staff & Admin Unified)
   {
     path: '/admin',
     element: (
-      <ProtectedRoute allowedRoles={['ADMIN']}>
+      <ProtectedRoute allowedRoles={['STAFF', 'ADMIN']}>
         <AdminLayout />
       </ProtectedRoute>
     ),
@@ -187,6 +175,8 @@ export const router = createBrowserRouter([
         index: true,
         element: <AdminDashboard />,
       },
+      // Support Tickets
+      { path: 'tickets', element: <StaffTickets /> },
       // Flights
       { path: 'flights', element: <FlightsListPage /> },
       { path: 'flights/new', element: <FlightCreatePage /> },
