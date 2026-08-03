@@ -12,6 +12,34 @@ import { flightService, type FlightOffer, type FareOption, type FareRule, type F
 import { useAuthStore } from '@/store/use-auth';
 import { toast } from 'sonner';
 
+// Helper to sanitize & format URL date parameters into strict YYYY-MM-DD
+const sanitizeIsoDate = (inputStr: string | null, fallbackOffsetDays = 1): string => {
+  if (!inputStr) {
+    const d = new Date();
+    d.setDate(d.getDate() + fallbackOffsetDays);
+    return d.toISOString().split('T')[0];
+  }
+  // Exact YYYY-MM-DD format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(inputStr)) {
+    return inputStr;
+  }
+  // Single/double digit day number like "12" or "19"
+  const dayNum = parseInt(inputStr, 10);
+  if (!isNaN(dayNum) && dayNum >= 1 && dayNum <= 31) {
+    const d = new Date();
+    d.setDate(dayNum);
+    return d.toISOString().split('T')[0];
+  }
+  // Generic date string parsing
+  const parsed = new Date(inputStr);
+  if (!isNaN(parsed.getTime())) {
+    return parsed.toISOString().split('T')[0];
+  }
+  const d = new Date();
+  d.setDate(d.getDate() + fallbackOffsetDays);
+  return d.toISOString().split('T')[0];
+};
+
 export const FlightResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -20,8 +48,13 @@ export const FlightResults: React.FC = () => {
   // Support both parameter formats (origin/leavingFrom, destination/goingTo, etc.)
   const origin = searchParams.get('origin') || searchParams.get('leavingFrom') || 'SGN';
   const destination = searchParams.get('destination') || searchParams.get('goingTo') || 'HAN';
-  const departureDate = searchParams.get('departure_date') || searchParams.get('startDate') || '';
-  const returnDate = searchParams.get('return_date') || searchParams.get('endDate') || '';
+  
+  const rawDep = searchParams.get('departure_date') || searchParams.get('startDate');
+  const rawRet = searchParams.get('return_date') || searchParams.get('endDate');
+
+  const departureDate = sanitizeIsoDate(rawDep, 1);
+  const returnDate = rawRet ? sanitizeIsoDate(rawRet, 5) : undefined;
+  
   const tripParam = searchParams.get('trip_type') || searchParams.get('trip') || '';
   const tripType = tripParam.toUpperCase().includes('ROUND') || returnDate ? 'ROUND_TRIP' : 'ONE_WAY';
 
@@ -67,8 +100,8 @@ export const FlightResults: React.FC = () => {
         trip_type: tripType as any,
         origin,
         destination,
-        departure_date: departureDate || undefined,
-        return_date: returnDate || undefined,
+        departure_date: departureDate,
+        return_date: returnDate,
         sort: sortOption as any,
       });
 
@@ -199,7 +232,7 @@ export const FlightResults: React.FC = () => {
                   Chuyến Bay {origin} → {destination}
                 </h1>
                 <div className="flex items-center gap-1 text-xs text-gray-500 font-medium mt-0.5">
-                  <span>Tìm thấy {flightOffers.length} chuyến bay phù hợp</span>
+                  <span>Tìm thấy {flightOffers.length} chuyến bay phù hợp ({departureDate})</span>
                   <Info className="w-3.5 h-3.5 text-gray-400" />
                 </div>
               </div>
