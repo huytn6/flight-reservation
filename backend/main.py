@@ -33,6 +33,7 @@ import controllers.review_controller     # noqa: F401
 import controllers.notification_controller # noqa: F401
 import controllers.staff_controller      # noqa: F401
 import controllers.admin_controller      # noqa: F401
+import controllers.health_controller     # noqa: F401
 
 
 class RequestHandler(BaseHTTPRequestHandler):
@@ -70,11 +71,13 @@ def setup_scheduler():
 
 
 def main():
-    logger.info('Initializing database schema...')
-    init_schema()
+    if config.RUN_SCHEMA_INIT:
+        logger.info('Initializing database schema...')
+        init_schema()
 
-    logger.info('Starting scheduler...')
-    setup_scheduler()
+    if config.RUN_SCHEDULER:
+        logger.info('Starting scheduler...')
+        setup_scheduler()
 
     addr = (config.HOST, config.PORT)
     server = ThreadingHTTPServer(addr, RequestHandler)

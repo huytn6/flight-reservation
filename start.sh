@@ -3,6 +3,14 @@ set -e
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 BACKEND_DIR="$ROOT/backend"
+DEV_COMPOSE="$ROOT/docker-compose.dev.yml"
+MYSQL_DEV_PORT="${MYSQL_DEV_PORT:-3308}"
+
+export DB_HOST=127.0.0.1
+export DB_PORT="$MYSQL_DEV_PORT"
+export DB_USER=root
+export DB_PASSWORD=root
+export DB_NAME=flight_booking
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -31,10 +39,10 @@ pip install -q -r "$BACKEND_DIR/requirements.txt"
 
 # ── Start MySQL ──────────────────────────────────────────────────────────────
 info "Starting MySQL container..."
-docker compose -f "$ROOT/docker-compose.yml" up -d mysql
+MYSQL_DEV_PORT="$MYSQL_DEV_PORT" docker compose -f "$DEV_COMPOSE" up -d mysql
 
 info "Waiting for MySQL to be ready..."
-until docker compose -f "$ROOT/docker-compose.yml" exec -T mysql \
+until MYSQL_DEV_PORT="$MYSQL_DEV_PORT" docker compose -f "$DEV_COMPOSE" exec -T mysql \
     mysqladmin ping -uroot -proot --silent 2>/dev/null; do
   printf "."
   sleep 2
@@ -44,7 +52,7 @@ info "MySQL is ready."
 
 # ── Flyway migration ─────────────────────────────────────────────────────────
 info "Running Flyway migrations..."
-docker compose -f "$ROOT/docker-compose.yml" run --rm flyway
+MYSQL_DEV_PORT="$MYSQL_DEV_PORT" docker compose -f "$DEV_COMPOSE" run --rm flyway
 
 # ── Seed demo data ────────────────────────────────────────────────────────────
 info "Seeding demo data..."

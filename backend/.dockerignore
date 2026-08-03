@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+tests/
+config.ini
+.pytest_cache/

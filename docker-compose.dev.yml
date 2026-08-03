@@ -1,0 +1,41 @@
+name: flight-reservation-dev
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: flight-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: flight_booking
+    ports:
+      - "${MYSQL_DEV_PORT:-3308}:3306"
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  flyway:
+    image: flight-flyway:dev
+    build:
+      context: .
+      dockerfile: deployment/flyway.Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./backend/database/migrations:/flyway/sql:ro
+    command:
+      - -url=jdbc:mysql://mysql:3306/flight_booking?sslMode=DISABLED&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - -user=root
+      - -password=root
+      - -baselineOnMigrate=true
+      - migrate
+
+volumes:
+  mysql_dev_data:
+    name: flight-mysql-dev-data
