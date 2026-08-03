@@ -54,7 +54,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
   return (
     <div className="flex flex-col gap-4 font-sans">
       {/* Card 1: Thông tin chuyến bay & Lịch trình */}
-      <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0">
+      <Card className="bg-white border-0 shadow-none rounded-lg py-0">
         <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
           <CardTitle className="text-xs font-semibold text-slate-900">
             Hành Trình & Lịch Khởi Hành
@@ -164,7 +164,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
       </Card>
 
       {/* Card 2: Phân công tàu bay & Trạng thái */}
-      <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0">
+      <Card className="bg-white border-0 shadow-none rounded-lg py-0">
         <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
           <CardTitle className="text-xs font-semibold text-slate-900">
             Tàu Bay & Trạng Thái Vận Hành

@@ -22,7 +22,7 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
   mode,
 }) => {
   return (
-    <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0 font-sans">
+    <Card className="bg-white border-0 shadow-none rounded-lg py-0 font-sans">
       <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
         <CardTitle className="text-xs font-semibold text-slate-900">
           Thông Tin Loại Máy Bay
