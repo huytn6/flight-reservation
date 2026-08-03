@@ -13,7 +13,7 @@ import { Card } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { UserCheck, Lock, ShieldCheck, CalendarIcon } from 'lucide-react';
+import { UserCheck, ShieldCheck, CalendarIcon } from 'lucide-react';
 
 export const Checkout: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -164,14 +164,9 @@ export const Checkout: React.FC = () => {
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-6">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Thanh Toán & Thông Tin Hành Khách</h1>
-            <p className="text-xs text-slate-500 mt-0.5">Hoàn tất thông tin hành khách để xác nhận giữ chỗ chuyến bay.</p>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full font-medium">
-            <Lock className="w-3.5 h-3.5" /> Bảo Mật SSL 256-Bit
-          </div>
+        <div className="border-b border-slate-200/80 pb-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Thanh Toán & Thông Tin Hành Khách</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Hoàn tất thông tin hành khách để xác nhận giữ chỗ chuyến bay.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -185,6 +180,7 @@ export const Checkout: React.FC = () => {
                 draftId={draftId}
                 segmentId={flightId}
                 passengerCount={passengers.length}
+                passengerNames={passengers.map((p) => p.full_name || '')}
                 onSeatHoldsChange={() => {
                   draftService.getPriceBreakdown(draftId).then(setBreakdown);
                 }}
