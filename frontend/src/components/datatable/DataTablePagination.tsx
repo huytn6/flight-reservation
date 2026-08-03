@@ -36,7 +36,7 @@ export function DataTablePagination<TData>({
   const toItem = Math.min((pageIndex + 1) * pageSize, filteredRowsCount)
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-3">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t border-slate-200/80 bg-white">
       {/* Selected Rows & Total Info */}
       <div className="flex-1 text-xs text-slate-500">
         {table.getFilteredSelectedRowModel().rows.length > 0 ? (

@@ -28,39 +28,39 @@ import { AdminDashboard } from '@/pages/admin/dashboard';
 import { AdminAudit } from '@/pages/admin/audit';
 
 import { FlightsListPage } from '@/pages/admin/flights';
-import { FlightCreatePage } from '@/pages/admin/flights/new';
-import { FlightDetailPage } from '@/pages/admin/flights/detail';
-import { FlightEditPage } from '@/pages/admin/flights/edit';
+import { FlightCreatePage } from '@/pages/admin/flights/new/index';
+import { FlightDetailPage } from '@/pages/admin/flights/detail/index';
+import { FlightEditPage } from '@/pages/admin/flights/edit/index';
 
 import { AirportsListPage } from '@/pages/admin/airports';
-import { AirportCreatePage } from '@/pages/admin/airports/new';
-import { AirportEditPage } from '@/pages/admin/airports/edit';
+import { AirportCreatePage } from '@/pages/admin/airports/new/index';
+import { AirportEditPage } from '@/pages/admin/airports/edit/index';
 
 import { AirlinesListPage } from '@/pages/admin/airlines';
-import { AirlineCreatePage } from '@/pages/admin/airlines/new';
-import { AirlineEditPage } from '@/pages/admin/airlines/edit';
+import { AirlineCreatePage } from '@/pages/admin/airlines/new/index';
+import { AirlineEditPage } from '@/pages/admin/airlines/edit/index';
 
 import { AircraftListPage } from '@/pages/admin/aircraft';
-import { AircraftCreatePage } from '@/pages/admin/aircraft/new';
-import { AircraftEditPage } from '@/pages/admin/aircraft/edit';
+import { AircraftCreatePage } from '@/pages/admin/aircraft/new/index';
+import { AircraftEditPage } from '@/pages/admin/aircraft/edit/index';
 
 import { CouponsListPage } from '@/pages/admin/coupons';
-import { CouponCreatePage } from '@/pages/admin/coupons/new';
-import { CouponEditPage } from '@/pages/admin/coupons/edit';
+import { CouponCreatePage } from '@/pages/admin/coupons/new/index';
+import { CouponEditPage } from '@/pages/admin/coupons/edit/index';
 
 import { CmsListPage } from '@/pages/admin/cms';
-import { CmsCreatePage } from '@/pages/admin/cms/new';
-import { CmsEditPage } from '@/pages/admin/cms/edit';
+import { CmsCreatePage } from '@/pages/admin/cms/new/index';
+import { CmsEditPage } from '@/pages/admin/cms/edit/index';
 
 import { CustomersListPage } from '@/pages/admin/customers';
-import { CustomerDetailPage } from '@/pages/admin/customers/detail';
+import { CustomerDetailPage } from '@/pages/admin/customers/detail/index';
 
 import { StaffListPage } from '@/pages/admin/staff';
-import { StaffCreatePage } from '@/pages/admin/staff/new';
-import { StaffEditPage } from '@/pages/admin/staff/edit';
+import { StaffCreatePage } from '@/pages/admin/staff/new/index';
+import { StaffEditPage } from '@/pages/admin/staff/edit/index';
 
 import { BookingsListPage } from '@/pages/admin/bookings';
-import { BookingDetailPage } from '@/pages/admin/bookings/detail';
+import { BookingDetailPage } from '@/pages/admin/bookings/detail/index';
 
 import { Forbidden } from '@/pages/forbidden';
 import { NotFound } from '@/pages/not-found';

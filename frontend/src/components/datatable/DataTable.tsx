@@ -235,16 +235,16 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div className={cn("w-full space-y-3 font-sans", className)}>
+    <div className={cn("w-full space-y-4 font-sans", className)}>
       
-      {/* Top Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+      {/* Top Floating Toolbar (Outside Table Card) */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         
         {/* Search Input & Faceted Filters */}
-        <div className="flex flex-wrap items-center gap-2 flex-1">
+        <div className="flex flex-wrap items-center gap-2.5 flex-1">
           {enableGlobalFilter && (
-            <div className="relative max-w-sm w-full sm:w-64">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+            <div className="relative max-w-sm w-full sm:w-72">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
               <Input
                 placeholder={searchPlaceholder}
                 value={globalFilter}
@@ -253,7 +253,7 @@ export function DataTable<TData, TValue>({
                   if (onGlobalFilterChange) onGlobalFilterChange(val)
                   else setInternalGlobalFilter(val)
                 }}
-                className="pl-8 pr-8 h-8 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-md focus:border-[#0065eb]"
+                className="pl-9 pr-8 h-9 text-xs bg-white border-slate-200 shadow-2xs focus:bg-white rounded-lg focus:border-[#0065eb] transition-all"
               />
               {globalFilter && (
                 <button
@@ -261,7 +261,7 @@ export function DataTable<TData, TValue>({
                     if (onGlobalFilterChange) onGlobalFilterChange("")
                     else setInternalGlobalFilter("")
                   }}
-                  className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 p-0.5"
+                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 p-0.5"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -289,10 +289,10 @@ export function DataTable<TData, TValue>({
                 if (onGlobalFilterChange) onGlobalFilterChange("")
                 else setInternalGlobalFilter("")
               }}
-              className="h-8 text-xs font-normal text-slate-500 hover:text-slate-800 px-2 cursor-pointer"
+              className="h-9 text-xs font-medium text-slate-500 hover:text-slate-800 px-2.5 cursor-pointer"
             >
               Reset Filters
-              <X className="ml-1 h-3.5 w-3.5" />
+              <X className="ml-1.5 h-3.5 w-3.5" />
             </Button>
           )}
         </div>
@@ -304,10 +304,10 @@ export function DataTable<TData, TValue>({
               variant="outline"
               size="sm"
               onClick={onRefresh}
-              className="h-8 text-xs font-normal border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer rounded-md"
+              className="h-9 text-xs font-medium border-slate-200 text-slate-700 bg-white hover:bg-slate-100 cursor-pointer rounded-lg shadow-2xs"
             >
               <RefreshCw className={cn("h-3.5 w-3.5 text-slate-500", loading && "animate-spin")} />
-              <span className="hidden sm:inline ml-1">Refresh</span>
+              <span className="hidden sm:inline ml-1.5">Refresh</span>
             </Button>
           )}
 
@@ -324,8 +324,8 @@ export function DataTable<TData, TValue>({
         />
       )}
 
-      {/* Main Table View Container */}
-      <div className="rounded-lg border border-slate-200/80 bg-white overflow-hidden shadow-none">
+      {/* Standalone Table Card Container */}
+      <div className="rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-xs">
         <div className="relative overflow-x-auto">
           <Table>
             <TableHeader className={cn("bg-slate-50", stickyHeader && "sticky top-0 z-10 shadow-xs")}>
