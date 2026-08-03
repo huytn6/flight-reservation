@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminService } from '@/services/admin';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
@@ -51,19 +50,19 @@ export const FlightsListPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status?.toUpperCase()) {
       case 'SCHEDULED':
-        return <Badge className="bg-blue-50 text-[#0065eb] border border-blue-200">Scheduled</Badge>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />Scheduled</span>;
       case 'BOARDING':
-        return <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">Boarding</Badge>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60"><span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />Boarding</span>;
       case 'DEPARTED':
-        return <Badge className="bg-blue-50 text-blue-700 border border-blue-200">In Flight</Badge>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-200/60"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" />In Flight</span>;
       case 'ARRIVED':
-        return <Badge className="bg-slate-100 text-slate-700 border border-slate-200">Arrived</Badge>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60"><span className="w-1.5 h-1.5 rounded-full bg-slate-400" />Arrived</span>;
       case 'CANCELLED':
-        return <Badge className="bg-red-50 text-red-700 border border-red-200">Cancelled</Badge>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60"><span className="w-1.5 h-1.5 rounded-full bg-red-600" />Cancelled</span>;
       case 'DELAYED':
-        return <Badge className="bg-amber-50 text-amber-700 border border-amber-200">Delayed</Badge>;
+        return <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50/80 px-2 py-0.5 rounded-md border border-amber-200/60"><span className="w-1.5 h-1.5 rounded-full bg-amber-600" />Delayed</span>;
       default:
-        return <Badge variant="outline">{status || 'SCHEDULED'}</Badge>;
+        return <span className="text-xs text-slate-600">{status || 'SCHEDULED'}</span>;
     }
   };
 
@@ -72,9 +71,9 @@ export const FlightsListPage: React.FC = () => {
       accessorKey: 'flight_number',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Flight #" />,
       cell: ({ row }) => (
-        <Badge className="font-mono text-xs font-bold bg-blue-50 text-[#0065eb] border border-blue-200 px-2 py-0.5">
+        <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.flight_number}
-        </Badge>
+        </span>
       ),
     },
     {

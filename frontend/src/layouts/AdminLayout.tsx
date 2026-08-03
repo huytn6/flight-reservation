@@ -109,8 +109,8 @@ export const AdminLayout: React.FC = () => {
         <Sidebar collapsible="icon" className="bg-white text-slate-800 border-r border-slate-200/80">
           
           {/* Top Brand Header */}
-          <SidebarHeader className="p-3.5 border-b border-slate-200/80 bg-white">
-            <div className="flex items-center gap-2.5 px-1">
+          <SidebarHeader className="p-3 border-b border-slate-200/80 bg-white group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
+            <div className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
               <div className="w-8 h-8 bg-[#0065eb] rounded-lg flex items-center justify-center font-bold text-white shadow-sm shrink-0">
                 <Shield className="w-4 h-4 text-white" />
               </div>
@@ -125,30 +125,30 @@ export const AdminLayout: React.FC = () => {
           </SidebarHeader>
 
           {/* Grouped Sidebar Navigation Content */}
-          <SidebarContent className="p-2 bg-white">
+          <SidebarContent className="p-2 bg-white group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:py-2">
             {navGroups.map((group, idx) => (
-              <SidebarGroup key={idx} className="py-1">
+              <SidebarGroup key={idx} className="py-1 group-data-[collapsible=icon]:py-0.5">
                 <SidebarGroupLabel className="text-[10px] font-semibold text-slate-400 tracking-wider uppercase px-2 mb-1 group-data-[collapsible=icon]:hidden">
                   {group.group}
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
-                  <SidebarMenu>
+                  <SidebarMenu className="group-data-[collapsible=icon]:items-center">
                     {group.items.map((item) => {
                       const Icon = item.icon;
                       const isActive = location.pathname === item.path;
                       return (
-                        <SidebarMenuItem key={item.path}>
+                        <SidebarMenuItem key={item.path} className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
                           <SidebarMenuButton
                             asChild
                             isActive={isActive}
                             tooltip={item.label}
-                            className={`h-9 px-2.5 rounded-none text-xs transition-colors cursor-pointer ${
+                            className={`h-9 px-2.5 rounded-lg text-xs transition-colors cursor-pointer group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center ${
                               isActive
                                 ? 'bg-blue-50 text-[#0065eb] font-semibold shadow-none'
                                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 font-normal'
                             }`}
                           >
-                            <Link to={item.path}>
+                            <Link to={item.path} className="flex items-center gap-2.5 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
                               <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#0065eb]' : 'text-slate-500'}`} />
                               <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
                             </Link>
@@ -170,7 +170,7 @@ export const AdminLayout: React.FC = () => {
           </SidebarContent>
 
           {/* Bottom Infrastructure & User Panel */}
-          <SidebarFooter className="p-3 border-t border-slate-200/80 flex flex-col gap-2 bg-white">
+          <SidebarFooter className="p-3 border-t border-slate-200/80 flex flex-col gap-2 bg-white group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:items-center">
             {/* System Health Pulse */}
             <div className="p-2 bg-slate-50 border border-slate-200/80 rounded-md flex items-center justify-between text-[11px] group-data-[collapsible=icon]:hidden">
               <div className="flex items-center gap-2">
@@ -184,9 +184,9 @@ export const AdminLayout: React.FC = () => {
             </div>
 
             {/* User Card & Logout */}
-            <div className="flex items-center justify-between p-2 bg-slate-50 rounded-md border border-slate-200/80">
-              <div className="flex items-center gap-2 min-w-0">
-                <Avatar className="w-6 h-6 bg-[#0065eb] text-white font-bold text-[10px] shrink-0">
+            <div className="flex items-center justify-between p-2 bg-slate-50 rounded-md border border-slate-200/80 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:justify-center">
+              <div className="flex items-center gap-2 min-w-0 group-data-[collapsible=icon]:justify-center">
+                <Avatar className="w-7 h-7 bg-[#0065eb] text-white font-bold text-[10px] shrink-0">
                   <AvatarFallback className="bg-[#0065eb] text-white text-[10px]">
                     {user?.full_name?.charAt(0).toUpperCase() || 'A'}
                   </AvatarFallback>

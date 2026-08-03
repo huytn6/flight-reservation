@@ -121,7 +121,7 @@ export const StaffTickets: React.FC = () => {
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-bold text-slate-900 truncate">{t.subject}</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#0065eb] border border-blue-200 shrink-0">{t.status}</span>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200/80 shrink-0">{t.status}</span>
                   </div>
                   <span className="text-[10px] text-slate-400">{new Date(t.created_at).toLocaleString()}</span>
                 </div>

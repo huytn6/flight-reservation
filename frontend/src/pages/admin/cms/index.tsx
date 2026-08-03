@@ -53,9 +53,9 @@ export const CmsListPage: React.FC = () => {
       accessorKey: 'key',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Slug Key" />,
       cell: ({ row }) => (
-        <Badge className="font-mono text-xs font-bold bg-blue-50 text-[#0065eb] border border-blue-200 px-2 py-0.5">
+        <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
           {row.original.key}
-        </Badge>
+        </span>
       ),
     },
     {

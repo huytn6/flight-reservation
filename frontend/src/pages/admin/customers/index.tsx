@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { adminService } from '@/services/admin';
 import type { AuthUser } from '@/types/auth';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -58,9 +57,13 @@ export const CustomersListPage: React.FC = () => {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Account Status" />,
       cell: ({ row }) => (
         row.original.status === 'ACTIVE' ? (
-          <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">Active</Badge>
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Active
+          </span>
         ) : (
-          <Badge className="bg-red-50 text-red-700 border border-red-200">Suspended</Badge>
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50/80 px-2 py-0.5 rounded-md border border-red-200/60">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600" /> Suspended
+          </span>
         )
       ),
     },
