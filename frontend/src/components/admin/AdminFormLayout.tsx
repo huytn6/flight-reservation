@@ -35,7 +35,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
   const defaultSubmitText = mode === 'create' ? 'Tạo mới' : 'Lưu thay đổi';
 
   return (
-    <div className="w-full space-y-5 font-sans relative">
+    <div className="w-full space-y-4 font-sans relative">
       <form onSubmit={onSubmit} className="w-full flex flex-col min-h-0">
         {/* Integrated Page Header matching Reference Image Layout */}
         <AdminPageHeader
@@ -54,7 +54,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
                 variant="outline"
                 onClick={() => navigate(backPath)}
                 disabled={loading}
-                className="text-xs font-normal text-slate-600 hover:bg-slate-50 border-slate-200 cursor-pointer h-8.5 px-3.5 rounded-md"
+                className="text-xs font-normal text-slate-600 hover:bg-slate-50 border-slate-200/70 shadow-none cursor-pointer h-8.5 px-3.5 rounded-md"
               >
                 Hủy bỏ
               </Button>
@@ -64,7 +64,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
                   variant="secondary"
                   onClick={onSaveDraft}
                   disabled={loading}
-                  className="text-xs font-normal text-slate-700 bg-slate-100 hover:bg-slate-200 cursor-pointer h-8.5 px-3.5 rounded-md"
+                  className="text-xs font-normal text-slate-700 bg-slate-100 hover:bg-slate-200/80 shadow-none cursor-pointer h-8.5 px-3.5 rounded-md"
                 >
                   Lưu nháp
                 </Button>
@@ -74,7 +74,7 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
         />
 
         {/* 2-Column Grid: 8 cols (Main Form) + 4 cols (Right Context Panel) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start mt-3">
           
           {/* Main Form Column */}
           <div className="lg:col-span-8 flex flex-col gap-4">
@@ -86,10 +86,10 @@ export const AdminFormLayout: React.FC<AdminFormLayoutProps> = ({
             {sidebarContent ? (
               sidebarContent
             ) : (
-              <Card className="bg-white border-slate-200/80 shadow-none rounded-lg p-4 space-y-3">
+              <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                   <span className="text-xs font-medium text-slate-900">Trạng Thái Thao Tác</span>
-                  <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-blue-50 text-[#0065eb] border border-blue-200">
+                  <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded bg-blue-50 text-[#0065eb] border border-blue-100">
                     {mode === 'create' ? 'Tạo mới' : 'Chỉnh sửa'}
                   </span>
                 </div>

@@ -29,17 +29,17 @@ export const CmsForm: React.FC<CmsFormProps> = ({
   };
 
   return (
-    <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0 font-sans">
+    <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0 font-sans">
       <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
         <CardTitle className="text-xs font-semibold text-slate-900">
-          Thông Tin Trang Bài Viết CMS
+          Thông Tin Trang Bài Viết Quản Trị Nội Dung
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-3.5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           <div className="space-y-1">
             <Label htmlFor="key" className="text-xs font-medium text-slate-700">
-              Mã Đường Dẫn (Slug Key) <span className="text-red-500">*</span>
+              Mã Đường Dẫn Tĩnh (Slug Key) <span className="text-red-500">*</span>
             </Label>
             <Input
               id="key"
@@ -49,7 +49,7 @@ export const CmsForm: React.FC<CmsFormProps> = ({
               placeholder="VD: dieukhoan-sudung"
               required
               disabled={mode === 'edit'}
-              className="font-mono text-xs bg-white border-slate-200 h-8.5"
+              className="font-mono text-xs bg-white border-slate-200/60 shadow-none h-8.5"
             />
           </div>
 
@@ -62,16 +62,16 @@ export const CmsForm: React.FC<CmsFormProps> = ({
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="VD: Điều Khoản Dịch Vụ"
+              placeholder="VD: Điều Khoản Dịch Vụ Khách Hàng"
               required
-              className="text-xs bg-white border-slate-200 h-8.5"
+              className="text-xs bg-white border-slate-200/60 shadow-none h-8.5"
             />
           </div>
         </div>
 
         <div className="space-y-1">
           <Label htmlFor="body" className="text-xs font-medium text-slate-700">
-            Nội Dung Chi Tiết (Markdown / HTML) <span className="text-red-500">*</span>
+            Nội Dung Bài Viết Chi Tiết <span className="text-red-500">*</span>
           </Label>
           <Textarea
             id="body"
@@ -79,16 +79,16 @@ export const CmsForm: React.FC<CmsFormProps> = ({
             rows={9}
             value={formData.body}
             onChange={handleChange}
-            placeholder="Nhập nội dung bài viết..."
+            placeholder="Nhập nội dung chi tiết của bài viết..."
             required
-            className="text-xs bg-white border-slate-200 font-mono"
+            className="text-xs bg-white border-slate-200/60 shadow-none font-sans"
           />
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-slate-100">
           <div>
             <p className="text-xs font-medium text-slate-900">Xuất Bản Công Khai</p>
-            <p className="text-[11px] text-slate-500">Hiển thị bài viết trên trang chủ storefront.</p>
+            <p className="text-[11px] text-slate-500">Hiển thị bài viết trực tiếp cho người dùng xem.</p>
           </div>
           <Switch
             checked={formData.is_published}

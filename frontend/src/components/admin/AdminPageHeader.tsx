@@ -34,7 +34,7 @@ export const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
   const IconComponent = primaryAction?.icon || Save;
 
   return (
-    <div className="flex flex-col gap-3 pb-4 border-b border-slate-200/80 font-sans">
+    <div className="flex flex-col gap-3 pb-3 border-b border-slate-100 font-sans">
       {/* Optional Breadcrumbs */}
       {breadcrumbs.length > 0 && (
         <nav className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
@@ -66,7 +66,7 @@ export const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
               variant="outline"
               size="icon"
               onClick={() => navigate(backPath)}
-              className="w-8 h-8 border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer rounded-md shrink-0 mt-0.5 shadow-2xs font-normal"
+              className="w-8 h-8 border-slate-200/70 text-slate-700 hover:bg-slate-100 cursor-pointer rounded-md shrink-0 mt-0.5 shadow-none font-normal"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
             </Button>
@@ -93,7 +93,7 @@ export const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
                 type={primaryAction.onClick ? "button" : "submit"}
                 onClick={primaryAction.onClick}
                 disabled={primaryAction.disabled}
-                className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-normal h-8.5 px-4 rounded-md flex items-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
+                className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-normal h-8.5 px-4 rounded-md flex items-center gap-1.5 cursor-pointer shadow-none transition-colors border-0"
               >
                 <IconComponent className="w-3.5 h-3.5" />
                 <span>{primaryAction.label}</span>

@@ -54,7 +54,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
   return (
     <div className="flex flex-col gap-4 font-sans">
       {/* Card 1: Thông tin chuyến bay & Lịch trình */}
-      <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0">
+      <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0">
         <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
           <CardTitle className="text-xs font-semibold text-slate-900">
             Hành Trình & Lịch Khởi Hành
@@ -72,7 +72,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               onChange={(e) => setFormData((prev) => ({ ...prev, flight_number: e.target.value.toUpperCase() }))}
               placeholder="VD: VN210, VJ123"
               required
-              className="uppercase font-mono text-xs bg-white border-slate-200 h-8.5"
+              className="uppercase font-mono text-xs bg-white border-slate-200/60 shadow-none h-8.5"
             />
           </div>
 
@@ -84,7 +84,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.airline_id}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, airline_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
+              <SelectTrigger className="text-xs bg-white border-slate-200/60 shadow-none h-8.5">
                 <SelectValue placeholder="Chọn hãng bay..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -99,13 +99,13 @@ export const FlightForm: React.FC<FlightFormProps> = ({
 
           <div className="space-y-1">
             <Label className="text-xs font-medium text-slate-700">
-              Sân Bay Cất Cánh (Origin) <span className="text-red-500">*</span>
+              Sân Bay Cất Cánh (Điểm Khởi Hành) <span className="text-red-500">*</span>
             </Label>
             <Select
               value={formData.departure_airport_id}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, departure_airport_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
+              <SelectTrigger className="text-xs bg-white border-slate-200/60 shadow-none h-8.5">
                 <SelectValue placeholder="Chọn sân bay cất cánh..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -120,13 +120,13 @@ export const FlightForm: React.FC<FlightFormProps> = ({
 
           <div className="space-y-1">
             <Label className="text-xs font-medium text-slate-700">
-              Sân Bay Hạ Cánh (Destination) <span className="text-red-500">*</span>
+              Sân Bay Hạ Cánh (Điểm Đến) <span className="text-red-500">*</span>
             </Label>
             <Select
               value={formData.arrival_airport_id}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, arrival_airport_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
+              <SelectTrigger className="text-xs bg-white border-slate-200/60 shadow-none h-8.5">
                 <SelectValue placeholder="Chọn sân bay hạ cánh..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -164,7 +164,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
       </Card>
 
       {/* Card 2: Phân công tàu bay & Trạng thái */}
-      <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0">
+      <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0">
         <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
           <CardTitle className="text-xs font-semibold text-slate-900">
             Tàu Bay & Trạng Thái Vận Hành
@@ -179,7 +179,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.aircraft_type_id || ''}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, aircraft_type_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
+              <SelectTrigger className="text-xs bg-white border-slate-200/60 shadow-none h-8.5">
                 <SelectValue placeholder="Chọn dòng máy bay..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -200,16 +200,16 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.status || 'SCHEDULED'}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, status: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
+              <SelectTrigger className="text-xs bg-white border-slate-200/60 shadow-none h-8.5">
                 <SelectValue placeholder="Chọn trạng thái..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
                 <SelectItem value="SCHEDULED">Đã lên lịch</SelectItem>
-                <SelectItem value="BOARDING">Đang lên máy bay</SelectItem>
-                <SelectItem value="DEPARTED">Đang bay</SelectItem>
-                <SelectItem value="ARRIVED">Đã hạ cánh</SelectItem>
-                <SelectItem value="CANCELLED">Đã hủy</SelectItem>
-                <SelectItem value="DELAYED">Bị trễ</SelectItem>
+                <SelectItem value="BOARDING">Đang cho lên máy bay</SelectItem>
+                <SelectItem value="DEPARTED">Đang thực hiện chuyến bay</SelectItem>
+                <SelectItem value="ARRIVED">Đã hạ cánh an toàn</SelectItem>
+                <SelectItem value="CANCELLED">Đã hủy chuyến</SelectItem>
+                <SelectItem value="DELAYED">Tạm hoãn (Bị trễ)</SelectItem>
               </SelectContent>
             </Select>
           </div>

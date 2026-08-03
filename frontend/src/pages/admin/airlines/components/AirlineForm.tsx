@@ -20,7 +20,7 @@ export const AirlineForm: React.FC<AirlineFormProps> = ({
   mode,
 }) => {
   return (
-    <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0 font-sans">
+    <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0 font-sans">
       <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
         <CardTitle className="text-xs font-semibold text-slate-900">
           Thông Tin Hãng Bay
@@ -40,7 +40,7 @@ export const AirlineForm: React.FC<AirlineFormProps> = ({
             maxLength={2}
             required
             disabled={mode === 'edit'}
-            className="uppercase font-mono text-xs bg-white border-slate-200 h-8.5"
+            className="uppercase font-mono text-xs bg-white border-slate-200/60 shadow-none h-8.5"
           />
         </div>
 
@@ -55,7 +55,7 @@ export const AirlineForm: React.FC<AirlineFormProps> = ({
             onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             placeholder="VD: Vietnam Airlines, VietJet Air"
             required
-            className="text-xs bg-white border-slate-200 h-8.5"
+            className="text-xs bg-white border-slate-200/60 shadow-none h-8.5"
           />
         </div>
       </CardContent>

@@ -29,7 +29,7 @@ export const AirportForm: React.FC<AirportFormProps> = ({
   };
 
   return (
-    <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0 font-sans">
+    <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0 font-sans">
       <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
         <CardTitle className="text-xs font-semibold text-slate-900">
           Thông Tin Sân Bay
@@ -49,7 +49,7 @@ export const AirportForm: React.FC<AirportFormProps> = ({
             maxLength={3}
             required
             disabled={mode === 'edit'}
-            className="uppercase font-mono text-xs bg-white border-slate-200 h-8.5"
+            className="uppercase font-mono text-xs bg-white border-slate-200/70 h-8.5 shadow-none"
           />
         </div>
 
@@ -64,7 +64,7 @@ export const AirportForm: React.FC<AirportFormProps> = ({
             onChange={handleChange}
             placeholder="VD: Sân bay Quốc tế Tân Sơn Nhất"
             required
-            className="text-xs bg-white border-slate-200 h-8.5"
+            className="text-xs bg-white border-slate-200/70 h-8.5 shadow-none"
           />
         </div>
 
@@ -79,7 +79,7 @@ export const AirportForm: React.FC<AirportFormProps> = ({
             onChange={handleChange}
             placeholder="VD: Hồ Chí Minh"
             required
-            className="text-xs bg-white border-slate-200 h-8.5"
+            className="text-xs bg-white border-slate-200/70 h-8.5 shadow-none"
           />
         </div>
 
@@ -94,7 +94,7 @@ export const AirportForm: React.FC<AirportFormProps> = ({
             onChange={handleChange}
             placeholder="VD: Việt Nam"
             required
-            className="text-xs bg-white border-slate-200 h-8.5"
+            className="text-xs bg-white border-slate-200/70 h-8.5 shadow-none"
           />
         </div>
 
@@ -109,7 +109,7 @@ export const AirportForm: React.FC<AirportFormProps> = ({
             onChange={(e) => setFormData((prev) => ({ ...prev, country_code: e.target.value.toUpperCase() }))}
             placeholder="VD: VN"
             maxLength={2}
-            className="uppercase font-mono text-xs bg-white border-slate-200 h-8.5"
+            className="uppercase font-mono text-xs bg-white border-slate-200/70 h-8.5 shadow-none"
           />
         </div>
 
@@ -123,7 +123,7 @@ export const AirportForm: React.FC<AirportFormProps> = ({
             value={formData.timezone}
             onChange={handleChange}
             placeholder="VD: Asia/Ho_Chi_Minh"
-            className="font-mono text-xs bg-white border-slate-200 h-8.5"
+            className="font-mono text-xs bg-white border-slate-200/70 h-8.5 shadow-none"
           />
         </div>
       </CardContent>

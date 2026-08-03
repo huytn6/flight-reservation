@@ -70,7 +70,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full h-9 justify-start text-left font-sans text-xs border-slate-200 bg-white hover:bg-slate-50 cursor-pointer font-normal",
+            "w-full h-8.5 justify-start text-left font-sans text-xs border-slate-200/60 bg-white hover:bg-slate-50 cursor-pointer font-normal shadow-none",
             !value && "text-slate-400",
             className
           )}
@@ -85,7 +85,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 bg-white border-slate-200 shadow-md rounded-lg" align="start">
+      <PopoverContent className="w-auto p-0 bg-white border-slate-200/60 shadow-xs rounded-lg" align="start">
         <Calendar
           mode="single"
           selected={isDateValid ? dateValue : undefined}
@@ -101,7 +101,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <select
               value={hours}
               onChange={(e) => handleTimeChange('hours', e.target.value)}
-              className="h-7 text-xs font-mono bg-white border border-slate-200 rounded px-1.5 cursor-pointer focus:outline-none focus:border-[#0065eb]"
+              className="h-7 text-xs font-mono bg-white border border-slate-200/60 rounded px-1.5 cursor-pointer focus:outline-none focus:border-[#0065eb]"
             >
               {Array.from({ length: 24 }).map((_, i) => {
                 const val = String(i).padStart(2, '0');
@@ -112,7 +112,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             <select
               value={minutes}
               onChange={(e) => handleTimeChange('minutes', e.target.value)}
-              className="h-7 text-xs font-mono bg-white border border-slate-200 rounded px-1.5 cursor-pointer focus:outline-none focus:border-[#0065eb]"
+              className="h-7 text-xs font-mono bg-white border border-slate-200/60 rounded px-1.5 cursor-pointer focus:outline-none focus:border-[#0065eb]"
             >
               {Array.from({ length: 12 }).map((_, i) => {
                 const val = String(i * 5).padStart(2, '0');

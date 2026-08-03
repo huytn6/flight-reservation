@@ -28,7 +28,7 @@ export const StaffForm: React.FC<StaffFormProps> = ({
   };
 
   return (
-    <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0 font-sans">
+    <Card className="bg-white border border-slate-200/60 shadow-none rounded-lg py-0 font-sans">
       <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
         <CardTitle className="text-xs font-semibold text-slate-900">
           Thông Tin Tài Khoản Nhân Viên
@@ -46,13 +46,13 @@ export const StaffForm: React.FC<StaffFormProps> = ({
             onChange={handleChange}
             placeholder="VD: Nguyễn Văn Anh"
             required
-            className="text-xs bg-white border-slate-200 h-8.5"
+            className="text-xs bg-white border-slate-200/60 shadow-none h-8.5"
           />
         </div>
 
         <div className="space-y-1">
           <Label htmlFor="email" className="text-xs font-medium text-slate-700">
-            Email Công Việc (Tài Khoản) <span className="text-red-500">*</span>
+            Địa Chỉ Email Đăng Nhập <span className="text-red-500">*</span>
           </Label>
           <Input
             id="email"
@@ -63,7 +63,7 @@ export const StaffForm: React.FC<StaffFormProps> = ({
             placeholder="VD: anh.nguyen@company.com"
             required
             disabled={mode === 'edit'}
-            className="text-xs bg-white border-slate-200 font-mono h-8.5"
+            className="text-xs bg-white border-slate-200/60 shadow-none font-mono h-8.5"
           />
         </div>
 
@@ -80,25 +80,25 @@ export const StaffForm: React.FC<StaffFormProps> = ({
               onChange={handleChange}
               placeholder="••••••••"
               required={mode === 'create'}
-              className="text-xs bg-white border-slate-200 h-8.5"
+              className="text-xs bg-white border-slate-200/60 shadow-none h-8.5"
             />
           </div>
         )}
 
         <div className="space-y-1">
           <Label className="text-xs font-medium text-slate-700">
-            Vai Trò Quyền Hạn <span className="text-red-500">*</span>
+            Phân Quyền Hệ Thống <span className="text-red-500">*</span>
           </Label>
           <Select
             value={formData.role}
             onValueChange={(val: 'STAFF' | 'ADMIN') => setFormData((prev) => ({ ...prev, role: val }))}
           >
-            <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
+            <SelectTrigger className="text-xs bg-white border-slate-200/60 shadow-none h-8.5">
               <SelectValue placeholder="Chọn vai trò..." />
             </SelectTrigger>
             <SelectContent className="font-sans">
-              <SelectItem value="STAFF" className="text-xs">NHÂN VIÊN (STAFF)</SelectItem>
-              <SelectItem value="ADMIN" className="text-xs">QUẢN TRỊ VIÊN (ADMIN)</SelectItem>
+              <SelectItem value="STAFF" className="text-xs">Nhân viên vận hành</SelectItem>
+              <SelectItem value="ADMIN" className="text-xs">Quản trị viên toàn quyền</SelectItem>
             </SelectContent>
           </Select>
         </div>
