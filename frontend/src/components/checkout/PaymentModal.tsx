@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { paymentService, type Payment, type PaymentTransaction } from '@/services/payment';
+import { PaymentMethodEnum, PaymentStatusEnum } from '@/types/enums';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
@@ -18,7 +19,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [method, setMethod] = useState<'CARD' | 'MOMO' | 'BANK_TRANSFER'>('CARD');
+  const [method, setMethod] = useState<PaymentMethodEnum>(PaymentMethodEnum.CARD);
   const [payment, setPayment] = useState<Payment | null>(null);
   const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
         onSuccess();
       }, 1200);
     } catch (err: any) {
-      if (err.code === 'PAYMENT_ALREADY_PROCESSED' || err.message?.includes('SUCCESS')) {
+      if (err.code === 'PAYMENT_ALREADY_PROCESSED' || err.message?.includes(PaymentStatusEnum.SUCCESS)) {
         toast.success('Đơn hàng này đã được thanh toán thành công từ trước!');
         onSuccess();
       } else {
@@ -99,9 +100,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   };
 
   const paymentMethods = [
-    { code: 'CARD', label: 'Thẻ Quốc Tế', icon: <CreditCard className="w-5 h-5 text-[#0065eb]" /> },
-    { code: 'MOMO', label: 'Ví MoMo', icon: <Smartphone className="w-5 h-5 text-pink-600" /> },
-    { code: 'BANK_TRANSFER', label: 'Chuyển Khoản', icon: <Landmark className="w-5 h-5 text-emerald-600" /> },
+    { code: PaymentMethodEnum.CARD, label: 'Thẻ Quốc Tế', icon: <CreditCard className="w-5 h-5 text-[#0065eb]" /> },
+    { code: PaymentMethodEnum.MOMO, label: 'Ví MoMo', icon: <Smartphone className="w-5 h-5 text-pink-600" /> },
+    { code: PaymentMethodEnum.BANK_TRANSFER, label: 'Chuyển Khoản', icon: <Landmark className="w-5 h-5 text-emerald-600" /> },
   ];
 
   return (
@@ -129,7 +130,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <button
                   key={m.code}
                   type="button"
-                  onClick={() => setMethod(m.code as any)}
+                  onClick={() => setMethod(m.code)}
                   className={`p-3 rounded-xl border text-center flex flex-col items-center gap-2 transition-all cursor-pointer ${
                     method === m.code ? 'border-[#0065eb] bg-blue-50/80 text-[#0065eb] font-semibold' : 'border-slate-200/80 text-slate-700 hover:bg-slate-50'
                   }`}
@@ -158,13 +159,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <p className="text-slate-500 mt-0.5">Phương thức: <span className="font-medium text-slate-800">{payment.payment_method}</span></p>
               </div>
               <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                payment.status === 'SUCCESS' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : payment.status === 'FAILED' ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60'
+                payment.status === PaymentStatusEnum.SUCCESS ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : payment.status === PaymentStatusEnum.FAILED ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60'
               }`}>
-                {payment.status === 'SUCCESS' ? 'Thành công' : payment.status === 'FAILED' ? 'Thất bại' : 'Đang xử lý'}
+                {payment.status === PaymentStatusEnum.SUCCESS ? 'Thành công' : payment.status === PaymentStatusEnum.FAILED ? 'Thất bại' : 'Đang xử lý'}
               </span>
             </div>
 
-            {payment.status === 'SUCCESS' && (
+            {payment.status === PaymentStatusEnum.SUCCESS && (
               <div className="p-4 bg-emerald-50 border border-emerald-200/80 rounded-xl text-center flex flex-col items-center gap-2">
                 <CheckCircle2 className="w-8 h-8 text-emerald-600 animate-bounce" />
                 <p className="text-xs font-semibold text-emerald-800">Thanh Toán Thành Công!</p>
@@ -178,7 +179,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
             )}
 
-            {payment.status === 'PENDING' && (
+            {payment.status === PaymentStatusEnum.PENDING && (
               <div className="flex flex-col gap-2">
                 <p className="text-xs font-medium text-slate-700 text-center">Mô phỏng phản hồi từ cổng thanh toán:</p>
                 <div className="grid grid-cols-2 gap-2">
@@ -201,7 +202,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               </div>
             )}
 
-            {payment.status === 'FAILED' && (
+            {payment.status === PaymentStatusEnum.FAILED && (
               <Button
                 onClick={handleRetry}
                 disabled={loading}

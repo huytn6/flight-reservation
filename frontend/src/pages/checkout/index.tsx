@@ -16,6 +16,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { toast } from 'sonner';
 import { UserCheck, ShieldCheck, CalendarIcon } from 'lucide-react';
 
+import { PassengerTypeEnum } from '@/types/enums';
+
 const NATIONALITY_OPTIONS = [
   { code: 'VN', label: 'Việt Nam (VN)' },
   { code: 'US', label: 'Hoa Kỳ (US)' },
@@ -49,7 +51,7 @@ export const Checkout: React.FC = () => {
   });
 
   const [passengers, setPassengers] = useState<Partial<DraftPassenger>[]>([
-    { passenger_index: 0, passenger_type: 'ADULT', full_name: user?.full_name || '', nationality: 'VN' },
+    { passenger_index: 0, passenger_type: PassengerTypeEnum.ADULT, full_name: user?.full_name || '', nationality: 'VN' },
   ]);
 
   const [savedPassengers, setSavedPassengers] = useState<SavedPassenger[]>([]);
@@ -126,7 +128,7 @@ export const Checkout: React.FC = () => {
   const handleAddPassengerInput = () => {
     setPassengers((prev) => [
       ...prev,
-      { passenger_index: prev.length, passenger_type: 'ADULT', full_name: '', nationality: 'VN' },
+      { passenger_index: prev.length, passenger_type: PassengerTypeEnum.ADULT, full_name: '', nationality: 'VN' },
     ]);
   };
 

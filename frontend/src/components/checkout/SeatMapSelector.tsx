@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Armchair, UserCheck, X } from 'lucide-react';
 
+import { SeatStatusEnum } from '@/types/enums';
+
 interface SeatMapSelectorProps {
   draftId: string;
   segmentId: string;
@@ -52,7 +54,7 @@ export const SeatMapSelector: React.FC<SeatMapSelectorProps> = ({
   }, [silentFetchData]);
 
   const handleSeatClick = async (seat: SeatMapSeat) => {
-    if (seat.status !== 'AVAILABLE' && !seat.held_by_me) {
+    if (seat.status !== SeatStatusEnum.AVAILABLE && !seat.held_by_me) {
       toast.error(`Ghế ${seat.seat_number} đã có người đặt`);
       return;
     }
@@ -244,7 +246,7 @@ export const SeatMapSelector: React.FC<SeatMapSelectorProps> = ({
           {seatMap.seats.map((seat) => {
             const hold = activeHolds.find((h) => h.seat_id === seat.id);
             const isHeldByMe = seat.held_by_me || !!hold;
-            const isBlocked = seat.status !== 'AVAILABLE' && !isHeldByMe;
+            const isBlocked = seat.status !== SeatStatusEnum.AVAILABLE && !isHeldByMe;
             const paxIdx = hold ? hold.passenger_index : null;
 
             return (
