@@ -72,7 +72,7 @@ export const PriceAlerts: React.FC = () => {
         departure_date: departureDate,
         target_price: targetPrice,
       });
-      toast.success(`Đã tạo cảnh báo giá cho chặng ${origin.toUpperCase()} ✈ ${destination.toUpperCase()}`);
+      toast.success(`Đã tạo cảnh báo giá cho chặng ${origin.toUpperCase()} → ${destination.toUpperCase()}`);
       loadAll();
     } catch (err: any) {
       toast.error(err.message || 'Tạo cảnh báo giá thất bại');
@@ -93,7 +93,7 @@ export const PriceAlerts: React.FC = () => {
 
   const handleViewHistory = async (alert: PriceAlert) => {
     try {
-      setSelectedRouteLabel(`${alert.origin_iata} ✈ ${alert.destination_iata}`);
+      setSelectedRouteLabel(`${alert.origin_iata} → ${alert.destination_iata}`);
       const history = await priceAlertService.getHistory(alert.id);
       setHistoryModal(history || []);
     } catch (err: any) {

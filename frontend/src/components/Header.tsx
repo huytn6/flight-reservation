@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, User, LogOut, Ticket, Bell, Shield, LifeBuoy, Heart, Search } from 'lucide-react';
+import { ChevronDown, User, LogOut, Ticket, Bell, Shield, LifeBuoy, Heart, Search, Plane, Bookmark } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
 import { useEffect } from 'react';
 
@@ -53,10 +53,18 @@ export const Header = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-48 bg-white border border-slate-200 shadow-xl rounded-2xl p-1">
-              <DropdownMenuItem onClick={() => navigate('/flights/search')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">✈️ Search Flights</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/booking-lookup')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🔍 Lookup Booking (PNR)</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/price-alerts')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">🔔 Price Alerts</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/saved-flights')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer">❤️ Saved Flights</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/flights/search')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer flex items-center gap-2">
+                <Plane className="w-3.5 h-3.5 text-[#0065eb]" /> Tìm Kiếm Chuyến Bay
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/booking-lookup')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer flex items-center gap-2">
+                <Search className="w-3.5 h-3.5 text-blue-600" /> Tra Cứu Mã Đơn (PNR)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/price-alerts')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer flex items-center gap-2">
+                <Bell className="w-3.5 h-3.5 text-amber-500" /> Cảnh Báo Giá Vé
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/saved-flights')} className="px-3 py-2 text-xs font-semibold hover:bg-blue-50 rounded-xl cursor-pointer flex items-center gap-2">
+                <Bookmark className="w-3.5 h-3.5 text-[#0065eb]" /> Chuyến Bay Đã Lưu
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -68,7 +76,7 @@ export const Header = () => {
             variant="secondary" 
             className="hidden sm:flex bg-slate-100 text-slate-800 font-bold border border-slate-200/60 cursor-pointer hover:bg-slate-200/60 transition-colors px-2.5 py-1 rounded-full"
           >
-            VND 🇻🇳
+            VNĐ (VN)
           </Badge>
 
           <Link to="/booking-lookup" className="hidden md:flex items-center gap-1 hover:text-[#0065eb] transition-colors py-1.5 px-2 rounded-xl hover:bg-slate-100/60">
