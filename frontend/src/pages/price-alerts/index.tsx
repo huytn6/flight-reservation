@@ -17,7 +17,6 @@ import {
   History,
   Plane,
   CalendarIcon,
-  CheckCircle2,
   AlertCircle,
   Sliders,
 } from 'lucide-react';
