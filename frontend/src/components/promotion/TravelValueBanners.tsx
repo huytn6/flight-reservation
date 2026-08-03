@@ -1,9 +1,12 @@
 import React from 'react';
 import { Plane, Luggage, DollarSign, ShoppingBag, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const TravelValueBanners: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="max-w-[1240px] mx-auto px-4 md:px-8 space-y-6 mb-16">
+    <div className="max-w-[1240px] mx-auto px-4 md:px-8 space-y-6 mb-16 font-sans">
       
       {/* Top Section: 3-column Light Background Feature Banner */}
       <div className="bg-[#f2f6fa] rounded-3xl p-8 sm:p-12">
@@ -11,7 +14,6 @@ export const TravelValueBanners: React.FC = () => {
           
           {/* Column 1: Bundle & Save */}
           <div className="flex flex-col items-center">
-            {/* Icon */}
             <div className="relative mb-4 flex items-center justify-center h-14">
               <Luggage className="w-10 h-10 text-[#2b437e]" strokeWidth={1.8} />
               <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#0065eb] border-2 border-[#f2f6fa] flex items-center justify-center shadow-xs">
@@ -19,25 +21,24 @@ export const TravelValueBanners: React.FC = () => {
               </div>
             </div>
             
-            {/* Title */}
             <h3 className="font-serif text-2xl font-bold text-slate-900 mb-2 tracking-tight">
-              Bundle &amp; Save
+              Đặt Trọn Gói &amp; Tiết Kiệm
             </h3>
             
-            {/* Description */}
             <p className="text-slate-600 text-xs sm:text-sm max-w-[240px] mb-6 leading-relaxed">
-              Save whether you book your trip all at once, or over time
+              Tiết kiệm chi phí tối đa dù bạn đặt vé từng chặng hay chọn trọn gói dịch vụ
             </p>
             
-            {/* CTA Button */}
-            <button className="mt-auto border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer">
-              Get started
+            <button 
+              onClick={() => navigate('/flights/search')}
+              className="mt-auto border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer"
+            >
+              Bắt đầu ngay
             </button>
           </div>
 
           {/* Column 2: One-stop travel shop */}
           <div className="flex flex-col items-center">
-            {/* Icon */}
             <div className="relative mb-4 flex items-center justify-center h-14">
               <div className="relative flex items-center justify-center">
                 <Luggage className="w-9 h-9 text-[#2b437e] translate-x-1" strokeWidth={1.8} />
@@ -46,28 +47,26 @@ export const TravelValueBanners: React.FC = () => {
               </div>
             </div>
             
-            {/* Title */}
             <h3 className="font-serif text-2xl font-bold text-slate-900 mb-2 tracking-tight">
-              One-stop travel shop
+              Tất-Cả-Trong-Một
             </h3>
             
-            {/* Description */}
             <p className="text-slate-600 text-xs sm:text-sm max-w-[260px] mb-6 leading-relaxed">
-              Book flights, hotels, homes, cars and more - all in one place
+              Đặt vé máy bay, quản lý hành lý và dịch vụ chuyến bay tại một hệ thống duy nhất
             </p>
             
-            {/* CTA Button */}
-            <button className="mt-auto border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer">
-              Start planning
+            <button 
+              onClick={() => navigate('/flights/search')}
+              className="mt-auto border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer"
+            >
+              Lên kế hoạch
             </button>
           </div>
 
           {/* Column 3: One Key rewards */}
           <div className="flex flex-col items-center">
-            {/* Icon: OneKey Starburst Ring */}
             <div className="relative mb-4 flex items-center justify-center h-14">
               <div className="relative w-11 h-11 flex items-center justify-center">
-                {/* Ring of 8 yellow diamond specs */}
                 <div className="grid grid-cols-3 gap-1 rotate-45">
                   <div className="w-2 h-2 bg-[#f59e0b] rounded-xs"></div>
                   <div className="w-2 h-2 bg-[#f59e0b] rounded-xs"></div>
@@ -82,19 +81,19 @@ export const TravelValueBanners: React.FC = () => {
               </div>
             </div>
             
-            {/* Title */}
             <h3 className="font-serif text-2xl font-bold text-slate-900 mb-2 tracking-tight">
-              One Key rewards
+              Điểm Thưởng Thành Viên
             </h3>
             
-            {/* Description */}
             <p className="text-slate-600 text-xs sm:text-sm max-w-[260px] mb-6 leading-relaxed">
-              Unlock instant savings and earn OneKeyCash to spend on future travel
+              Tích lũy điểm thưởng thành viên trực tiếp trên từng vé máy bay đã đặt
             </p>
             
-            {/* CTA Button */}
-            <button className="mt-auto border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer">
-              Join for free
+            <button 
+              onClick={() => navigate('/register')}
+              className="mt-auto border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer"
+            >
+              Đăng ký miễn phí
             </button>
           </div>
 
@@ -107,50 +106,48 @@ export const TravelValueBanners: React.FC = () => {
         {/* Card 1: 15% off activities */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 flex flex-col justify-between items-start shadow-2xs hover:shadow-md transition-shadow">
           <div>
-            {/* Yellow Badge */}
             <span className="inline-block bg-[#ffdb00] text-slate-900 font-bold text-[11px] sm:text-xs px-2.5 py-1 rounded-md mb-3">
-              Featured
+              Nổi Bật
             </span>
             
-            {/* Title */}
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900 mb-2 tracking-tight">
-              15% off activities
+              Ưu đãi giảm 15% dịch vụ
             </h3>
             
-            {/* Description */}
             <p className="text-slate-600 text-xs sm:text-sm mb-6 leading-relaxed">
-              Complete your trip. Save an average of 15% on activities with Member Prices.
+              Hoàn thiện chuyến đi của bạn. Tiết kiệm trung bình 15% cho hành lý và dịch vụ đi kèm.
             </p>
           </div>
 
-          {/* CTA Button */}
-          <button className="border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer">
-            Book now
+          <button 
+            onClick={() => navigate('/flights/search')}
+            className="border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer"
+          >
+            Đặt ngay
           </button>
         </div>
 
         {/* Card 2: Popular city breaks */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 flex flex-col justify-between items-start shadow-2xs hover:shadow-md transition-shadow">
           <div>
-            {/* Yellow Badge */}
             <span className="inline-block bg-[#ffdb00] text-slate-900 font-bold text-[11px] sm:text-xs px-2.5 py-1 rounded-md mb-3">
-              Promotion
+              Khuyến Mãi
             </span>
             
-            {/* Title */}
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-slate-900 mb-2 tracking-tight">
-              Popular city breaks
+              Điểm Đến Hàng Đầu
             </h3>
             
-            {/* Description */}
             <p className="text-slate-600 text-xs sm:text-sm mb-6 leading-relaxed">
-              Save on hotels most loved by travelers like you
+              Khám phá các chặng bay nội địa &amp; quốc tế được khách hàng lựa chọn nhiều nhất
             </p>
           </div>
 
-          {/* CTA Button */}
-          <button className="border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer">
-            See all deals
+          <button 
+            onClick={() => navigate('/flights/search')}
+            className="border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer"
+          >
+            Xem tất cả ưu đãi
           </button>
         </div>
 

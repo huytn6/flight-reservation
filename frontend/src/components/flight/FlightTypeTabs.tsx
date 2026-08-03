@@ -14,14 +14,14 @@ export const FlightTypeTabs: React.FC<FlightTypeTabsProps> = ({
   return (
     <Tabs value={selectedType} onValueChange={(v) => onChange(v as FlightType)} className="mb-4">
       <TabsList className="bg-slate-100/80 p-1 rounded-xl">
-        <TabsTrigger value="roundtrip" className="rounded-lg text-xs sm:text-sm font-bold">
-          Roundtrip
+        <TabsTrigger value="roundtrip" className="rounded-lg text-xs sm:text-sm font-bold cursor-pointer">
+          Khứ Hồi
         </TabsTrigger>
-        <TabsTrigger value="one-way" className="rounded-lg text-xs sm:text-sm font-bold">
-          One-way
+        <TabsTrigger value="one-way" className="rounded-lg text-xs sm:text-sm font-bold cursor-pointer">
+          Một Chiều
         </TabsTrigger>
-        <TabsTrigger value="multi-city" className="rounded-lg text-xs sm:text-sm font-bold">
-          Multi-city
+        <TabsTrigger value="multi-city" className="rounded-lg text-xs sm:text-sm font-bold cursor-pointer">
+          Nhiều Thành Phố
         </TabsTrigger>
       </TabsList>
     </Tabs>

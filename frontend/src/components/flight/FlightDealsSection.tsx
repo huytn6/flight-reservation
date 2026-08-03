@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Plane } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface FlightDealsSectionProps {
   title?: string;
@@ -8,11 +9,21 @@ interface FlightDealsSectionProps {
 }
 
 export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
-  title = 'Flight deals from Ho Chi Minh City',
+  title = 'Ưu Đãi Vé Máy Bay Từ TP. Hồ Chí Minh',
   onExploreClick,
 }) => {
+  const navigate = useNavigate();
+
+  const handleExplore = () => {
+    if (onExploreClick) {
+      onExploreClick();
+    } else {
+      navigate('/flights/search');
+    }
+  };
+
   return (
-    <div className="max-w-[1240px] mx-auto px-4 md:px-8 mb-16">
+    <div className="max-w-[1240px] mx-auto px-4 md:px-8 mb-16 font-sans">
       {/* Title */}
       <h2 className="text-xl sm:text-2xl font-bold text-[#141d38] mb-4 tracking-tight">
         {title}
@@ -43,13 +54,13 @@ export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
           </div>
         </div>
 
-        {/* Center CTA Button "Explore all flight deals" */}
+        {/* Center CTA Button "Khám Phá Tất Cả Ưu Đãi Chuyến Bay" */}
         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
           <Button 
-            onClick={onExploreClick}
+            onClick={handleExplore}
             className="pointer-events-auto bg-[#29425a] hover:bg-[#1c3044] text-white text-xs sm:text-sm font-semibold rounded-full px-6 py-3 shadow-xl transition-all border border-slate-600/30 cursor-pointer"
           >
-            Explore all flight deals
+            Khám Phá Tất Cả Ưu Đãi Chuyến Bay
           </Button>
         </div>
 
@@ -62,12 +73,6 @@ export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
           <span className="text-base font-bold tracking-tighter text-[#34A853]">l</span>
           <span className="text-base font-bold tracking-tighter text-[#EA4335]">e</span>
         </div>
-
-        {/* Map Data Copyright Bottom Right */}
-        <div className="absolute bottom-3 right-4 z-20 text-[11px] font-medium text-gray-700 bg-white/80 backdrop-blur-xs px-2.5 py-0.5 rounded-md shadow-xs pointer-events-none">
-          Map data ©2026
-        </div>
-
       </div>
     </div>
   );

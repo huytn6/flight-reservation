@@ -15,30 +15,30 @@ const FALLBACK_ACTIVITIES: RecentActivityItem[] = [
   {
     id: '1',
     type: 'flight',
-    title: 'Flights to Hanoi',
-    subtitle: 'From Ho Chi Minh City',
-    dateRange: 'Aug 14 - Aug 21',
+    title: 'Vé máy bay đi Hà Nội',
+    subtitle: 'Khởi hành từ TP. Hồ Chí Minh',
+    dateRange: 'Tháng 8 / 2026',
   },
   {
     id: '2',
     type: 'flight',
-    title: 'Flights to Da Nang',
-    subtitle: 'From Ho Chi Minh City',
-    dateRange: 'Aug 15 - Aug 22',
+    title: 'Vé máy bay đi Đà Nẵng',
+    subtitle: 'Khởi hành từ TP. Hồ Chí Minh',
+    dateRange: 'Tháng 8 / 2026',
   },
   {
     id: '3',
     type: 'flight',
-    title: 'Flights to Bangkok',
-    subtitle: 'From Ho Chi Minh City',
-    dateRange: 'Aug 18 - Aug 25',
+    title: 'Vé máy bay đi Bangkok',
+    subtitle: 'Khởi hành từ TP. Hồ Chí Minh',
+    dateRange: 'Tháng 8 / 2026',
   },
   {
     id: '4',
     type: 'flight',
-    title: 'Flights to Singapore',
-    subtitle: 'From Ho Chi Minh City',
-    dateRange: 'Aug 20 - Aug 27',
+    title: 'Vé máy bay đi Singapore',
+    subtitle: 'Khởi hành từ TP. Hồ Chí Minh',
+    dateRange: 'Tháng 8 / 2026',
   },
 ];
 
@@ -48,7 +48,7 @@ interface RecentActivitySectionProps {
 }
 
 export const RecentActivitySection: React.FC<RecentActivitySectionProps> = ({
-  title = 'Your recent activity',
+  title = 'Hoạt Động Tìm Kiếm & Đặt Vé Gần Đây',
   onSelectActivity,
 }) => {
   const { isAuthenticated } = useAuthStore();
@@ -63,9 +63,9 @@ export const RecentActivitySection: React.FC<RecentActivitySectionProps> = ({
             items.slice(0, 4).map((b: any) => ({
               id: b.id,
               type: 'flight',
-              title: `Booking #${b.booking_code || b.id.substring(0, 8)}`,
-              subtitle: `${b.status || 'CONFIRMED'} • $${b.total_amount || 0}`,
-              dateRange: new Date(b.created_at || Date.now()).toLocaleDateString(),
+              title: `Mã đơn PNR: ${b.pnr || b.id.substring(0, 8)}`,
+              subtitle: `Trạng thái: ${b.status || 'CONFIRMED'} • ${Number(b.total_amount || 0).toLocaleString('vi-VN')} VNĐ`,
+              dateRange: new Date(b.created_at || Date.now()).toLocaleDateString('vi-VN'),
             }))
           );
         }

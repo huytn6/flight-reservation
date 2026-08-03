@@ -8,13 +8,13 @@ import { TravelValueBanners } from '@/components/promotion/TravelValueBanners';
 export const Home: React.FC = () => {
   return (
     <>
-      <HeroBanner title="The one place you go to go places" />
+      <HeroBanner title="Nơi duy nhất bạn cần để chinh phục mọi điểm đến" />
       
       <BookingSearchCard />
 
       <RecentActivitySection />
 
-      <FlightDealsSection title="Popular Destinations from Ho Chi Minh City" />
+      <FlightDealsSection title="Điểm Đến Phổ Biến Từ TP. Hồ Chí Minh" />
 
       <TravelValueBanners />
     </>
