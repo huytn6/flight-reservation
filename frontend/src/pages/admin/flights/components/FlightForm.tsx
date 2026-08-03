@@ -3,6 +3,8 @@ import { adminService } from '@/services/admin';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plane, Calendar, ShieldAlert } from 'lucide-react';
 
 export interface FlightFormData {
   flight_number: string;
@@ -55,165 +57,194 @@ export const FlightForm: React.FC<FlightFormProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="space-y-2">
-          <Label htmlFor="flight_number" className="text-xs font-semibold text-slate-700">
-            Flight Number <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="flight_number"
-            name="flight_number"
-            value={formData.flight_number}
-            onChange={(e) => setFormData((prev) => ({ ...prev, flight_number: e.target.value.toUpperCase() }))}
-            placeholder="e.g. VN210, VJ123, QH202"
-            required
-            className="uppercase tracking-wider font-mono text-sm bg-white border-slate-200"
-          />
-        </div>
+    <div className="flex flex-col gap-4 font-sans">
+      {/* Card 1: Số Hiệu & Hãng Khai Thác */}
+      <Card className="bg-white border-slate-200/80 shadow-2xs rounded-xl overflow-hidden">
+        <CardHeader className="p-4 bg-slate-50/60 border-b border-slate-200/80">
+          <CardTitle className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Plane className="w-3.5 h-3.5 text-[#0065eb]" />
+            Số Hiệu & Hãng Bay Khai Thác
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="flight_number" className="text-xs font-semibold text-slate-700">
+              Số Hiệu Chuyến Bay <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="flight_number"
+              name="flight_number"
+              value={formData.flight_number}
+              onChange={(e) => setFormData((prev) => ({ ...prev, flight_number: e.target.value.toUpperCase() }))}
+              placeholder="VD: VN210, VJ123"
+              required
+              className="uppercase tracking-wider font-mono text-xs bg-white border-slate-200 h-9"
+            />
+          </div>
 
-        <div className="space-y-2">
-          <Label className="text-xs font-semibold text-slate-700">
-            Operating Airline <span className="text-red-500">*</span>
-          </Label>
-          <Select
-            value={formData.airline_id}
-            onValueChange={(val) => setFormData((prev) => ({ ...prev, airline_id: val }))}
-          >
-            <SelectTrigger className="text-sm bg-white border-slate-200">
-              <SelectValue placeholder="Select Operating Airline" />
-            </SelectTrigger>
-            <SelectContent>
-              {airlines.map((al) => (
-                <SelectItem key={al.id} value={al.id}>
-                  {al.name} ({al.iata_code})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-slate-700">
+              Hãng Hàng Không <span className="text-red-500">*</span>
+            </Label>
+            <Select
+              value={formData.airline_id}
+              onValueChange={(val) => setFormData((prev) => ({ ...prev, airline_id: val }))}
+            >
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+                <SelectValue placeholder="Chọn hãng hàng không..." />
+              </SelectTrigger>
+              <SelectContent className="font-sans">
+                {airlines.map((al) => (
+                  <SelectItem key={al.id} value={al.id} className="text-xs">
+                    {al.name} ({al.iata_code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="space-y-2">
-          <Label className="text-xs font-semibold text-slate-700">
-            Departure Airport <span className="text-red-500">*</span>
-          </Label>
-          <Select
-            value={formData.departure_airport_id}
-            onValueChange={(val) => setFormData((prev) => ({ ...prev, departure_airport_id: val }))}
-          >
-            <SelectTrigger className="text-sm bg-white border-slate-200">
-              <SelectValue placeholder="Select Origin Airport" />
-            </SelectTrigger>
-            <SelectContent>
-              {airports.map((ap) => (
-                <SelectItem key={ap.id} value={ap.id}>
-                  {ap.city} ({ap.iata_code}) - {ap.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Card 2: Hành Trình Bay & Lịch Khởi Hành */}
+      <Card className="bg-white border-slate-200/80 shadow-2xs rounded-xl overflow-hidden">
+        <CardHeader className="p-4 bg-slate-50/60 border-b border-slate-200/80">
+          <CardTitle className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Calendar className="w-3.5 h-3.5 text-[#0065eb]" />
+            Hành Trình Bay & Giờ Cất / Hạ Cánh
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">
+                Sân Bay Cất Cánh (Origin) <span className="text-red-500">*</span>
+              </Label>
+              <Select
+                value={formData.departure_airport_id}
+                onValueChange={(val) => setFormData((prev) => ({ ...prev, departure_airport_id: val }))}
+              >
+                <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+                  <SelectValue placeholder="Chọn sân bay cất cánh..." />
+                </SelectTrigger>
+                <SelectContent className="font-sans">
+                  {airports.map((ap) => (
+                    <SelectItem key={ap.id} value={ap.id} className="text-xs">
+                      {ap.city} ({ap.iata_code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        <div className="space-y-2">
-          <Label className="text-xs font-semibold text-slate-700">
-            Arrival Airport <span className="text-red-500">*</span>
-          </Label>
-          <Select
-            value={formData.arrival_airport_id}
-            onValueChange={(val) => setFormData((prev) => ({ ...prev, arrival_airport_id: val }))}
-          >
-            <SelectTrigger className="text-sm bg-white border-slate-200">
-              <SelectValue placeholder="Select Destination Airport" />
-            </SelectTrigger>
-            <SelectContent>
-              {airports.map((ap) => (
-                <SelectItem key={ap.id} value={ap.id}>
-                  {ap.city} ({ap.iata_code}) - {ap.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">
+                Sân Bay Hạ Cánh (Destination) <span className="text-red-500">*</span>
+              </Label>
+              <Select
+                value={formData.arrival_airport_id}
+                onValueChange={(val) => setFormData((prev) => ({ ...prev, arrival_airport_id: val }))}
+              >
+                <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+                  <SelectValue placeholder="Chọn sân bay hạ cánh..." />
+                </SelectTrigger>
+                <SelectContent className="font-sans">
+                  {airports.map((ap) => (
+                    <SelectItem key={ap.id} value={ap.id} className="text-xs">
+                      {ap.city} ({ap.iata_code})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="space-y-2">
-          <Label htmlFor="departure_time" className="text-xs font-semibold text-slate-700">
-            Departure Schedule (Date & Time) <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="departure_time"
-            name="departure_time"
-            type="datetime-local"
-            value={formData.departure_time}
-            onChange={handleChange}
-            required
-            className="text-sm bg-white border-slate-200 font-mono"
-          />
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="departure_time" className="text-xs font-semibold text-slate-700">
+                Thời Gian Cất Cánh <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="departure_time"
+                name="departure_time"
+                type="datetime-local"
+                value={formData.departure_time}
+                onChange={handleChange}
+                required
+                className="text-xs bg-white border-slate-200 font-mono h-9"
+              />
+            </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="arrival_time" className="text-xs font-semibold text-slate-700">
-            Arrival Schedule (Date & Time) <span className="text-red-500">*</span>
-          </Label>
-          <Input
-            id="arrival_time"
-            name="arrival_time"
-            type="datetime-local"
-            value={formData.arrival_time}
-            onChange={handleChange}
-            required
-            className="text-sm bg-white border-slate-200 font-mono"
-          />
-        </div>
-      </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="arrival_time" className="text-xs font-semibold text-slate-700">
+                Thời Gian Hạ Cánh <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="arrival_time"
+                name="arrival_time"
+                type="datetime-local"
+                value={formData.arrival_time}
+                onChange={handleChange}
+                required
+                className="text-xs bg-white border-slate-200 font-mono h-9"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="space-y-2">
-          <Label className="text-xs font-semibold text-slate-700">
-            Assigned Aircraft Model
-          </Label>
-          <Select
-            value={formData.aircraft_type_id || ''}
-            onValueChange={(val) => setFormData((prev) => ({ ...prev, aircraft_type_id: val }))}
-          >
-            <SelectTrigger className="text-sm bg-white border-slate-200">
-              <SelectValue placeholder="Select Aircraft Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {aircraftTypes.map((ac) => (
-                <SelectItem key={ac.id} value={ac.id}>
-                  {ac.model} ({ac.code} - {ac.capacity} seats)
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      {/* Card 3: Tàu Bay Phân Công & Trạng Thái */}
+      <Card className="bg-white border-slate-200/80 shadow-2xs rounded-xl overflow-hidden">
+        <CardHeader className="p-4 bg-slate-50/60 border-b border-slate-200/80">
+          <CardTitle className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <ShieldAlert className="w-3.5 h-3.5 text-[#0065eb]" />
+            Dòng Máy Bay Phân Công & Trạng Thái
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-slate-700">
+              Dòng Máy Bay Đội Bay
+            </Label>
+            <Select
+              value={formData.aircraft_type_id || ''}
+              onValueChange={(val) => setFormData((prev) => ({ ...prev, aircraft_type_id: val }))}
+            >
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+                <SelectValue placeholder="Chọn dòng máy bay..." />
+              </SelectTrigger>
+              <SelectContent className="font-sans">
+                {aircraftTypes.map((ac) => (
+                  <SelectItem key={ac.id} value={ac.id} className="text-xs">
+                    {ac.model} ({ac.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="space-y-2">
-          <Label className="text-xs font-semibold text-slate-700">
-            Flight Operational Status
-          </Label>
-          <Select
-            value={formData.status || 'SCHEDULED'}
-            onValueChange={(val) => setFormData((prev) => ({ ...prev, status: val }))}
-          >
-            <SelectTrigger className="text-sm bg-white border-slate-200">
-              <SelectValue placeholder="Select Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="SCHEDULED">SCHEDULED (Scheduled)</SelectItem>
-              <SelectItem value="BOARDING">BOARDING (Now Boarding)</SelectItem>
-              <SelectItem value="DEPARTED">DEPARTED (In Flight)</SelectItem>
-              <SelectItem value="ARRIVED">ARRIVED (Landed)</SelectItem>
-              <SelectItem value="CANCELLED">CANCELLED (Flight Cancelled)</SelectItem>
-              <SelectItem value="DELAYED">DELAYED (Delayed)</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-slate-700">
+              Trạng Thái Vận Hành
+            </Label>
+            <Select
+              value={formData.status || 'SCHEDULED'}
+              onValueChange={(val) => setFormData((prev) => ({ ...prev, status: val }))}
+            >
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+                <SelectValue placeholder="Chọn trạng thái..." />
+              </SelectTrigger>
+              <SelectContent className="font-sans">
+                <SelectItem value="SCHEDULED">Đã lên lịch</SelectItem>
+                <SelectItem value="BOARDING">Đang lên máy bay</SelectItem>
+                <SelectItem value="DEPARTED">Đang bay</SelectItem>
+                <SelectItem value="ARRIVED">Đã hạ cánh</SelectItem>
+                <SelectItem value="CANCELLED">Đã hủy</SelectItem>
+                <SelectItem value="DELAYED">Bị trễ</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
