@@ -5,6 +5,7 @@ import type { AuthUser } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Eye } from 'lucide-react';
 import { toast } from 'sonner';
@@ -107,18 +108,13 @@ export const CustomersListPage: React.FC = () => {
   ], [navigate]);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Registered Customers
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            View registered traveler profiles, booking histories, and account status controls.
-          </p>
-        </div>
-      </div>
+    <div className="space-y-6 font-sans">
+      {/* Standardized Enterprise Page Header */}
+      <AdminPageHeader
+        title="Registered Customers"
+        description="View registered traveler profiles, booking histories, and account status controls."
+        breadcrumbs={[{ label: 'Customers' }]}
+      />
 
       <EnterpriseDataTable
         columns={columns}

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { adminService } from '@/services/admin';
 import type { AuthUser } from '@/types/auth';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, UserCheck } from 'lucide-react';
+import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const StaffListPage: React.FC = () => {
@@ -47,9 +47,9 @@ export const StaffListPage: React.FC = () => {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
       cell: ({ row }) => (
         row.original.role === 'ADMIN' ? (
-          <Badge className="bg-purple-50 text-purple-700 border border-purple-200">ADMIN</Badge>
+          <span className="font-mono text-[11px] font-semibold text-blue-700 bg-blue-50/80 px-2 py-0.5 rounded border border-blue-200/60">ADMIN</span>
         ) : (
-          <Badge className="bg-blue-50 text-blue-700 border border-blue-200">STAFF</Badge>
+          <span className="font-mono text-[11px] font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/60">STAFF</span>
         )
       ),
     },
@@ -61,7 +61,7 @@ export const StaffListPage: React.FC = () => {
           variant="ghost"
           size="icon"
           onClick={() => navigate(`/admin/staff/${row.original.id}/edit`)}
-          className="w-7 h-7 text-slate-500 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+          className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
         >
           <Edit2 className="w-3.5 h-3.5" />
         </Button>
@@ -70,27 +70,17 @@ export const StaffListPage: React.FC = () => {
   ], [navigate]);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <UserCheck className="w-5 h-5 text-[#0065eb]" />
-            Staff & Administrators
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage system administrative privileges, staff operator accounts, and roles.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => navigate('/admin/staff/new')}
-          className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-semibold h-9 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-xs"
-        >
-          <Plus className="w-4 h-4" />
-          Add Staff Account
-        </Button>
-      </div>
+    <div className="space-y-6 font-sans">
+      {/* Standardized Enterprise Page Header */}
+      <AdminPageHeader
+        title="Staff & Administrators"
+        description="Manage system administrative privileges, staff operator accounts, and roles."
+        breadcrumbs={[{ label: 'Staff Accounts' }]}
+        primaryAction={{
+          label: 'Add Staff Account',
+          onClick: () => navigate('/admin/staff/new'),
+        }}
+      />
 
       <EnterpriseDataTable
         columns={columns}

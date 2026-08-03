@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AircraftListPage: React.FC = () => {
@@ -109,26 +110,17 @@ export const AircraftListPage: React.FC = () => {
   ], [navigate]);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Aircraft Fleet Management
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage fleet models, passenger seating capacities, and manufacturer specifications.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => navigate('/admin/aircraft/new')}
-          className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-semibold h-9 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-xs"
-        >
-          <Plus className="w-4 h-4" />
-          Add Aircraft Type
-        </Button>
-      </div>
+    <div className="space-y-6 font-sans">
+      {/* Standardized Enterprise Page Header */}
+      <AdminPageHeader
+        title="Aircraft Fleet"
+        description="Manage fleet models, passenger seating capacities, and manufacturer specifications."
+        breadcrumbs={[{ label: 'Aircraft Fleet' }]}
+        primaryAction={{
+          label: 'Add Aircraft Type',
+          onClick: () => navigate('/admin/aircraft/new'),
+        }}
+      />
 
       <EnterpriseDataTable
         columns={columns}

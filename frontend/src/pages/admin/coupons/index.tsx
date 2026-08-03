@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CouponsListPage: React.FC = () => {
@@ -62,7 +63,7 @@ export const CouponsListPage: React.FC = () => {
       accessorKey: 'discount_type',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
       cell: ({ row }) => (
-        <Badge variant="outline" className="text-[11px]">
+        <Badge variant="outline" className="text-[11px] font-normal border-slate-200 text-slate-600">
           {row.original.discount_type}
         </Badge>
       ),
@@ -84,7 +85,7 @@ export const CouponsListPage: React.FC = () => {
       cell: ({ row }) => (
         <div className="text-[11px] text-slate-500 font-mono">
           <span>{row.original.valid_from?.substring(0, 10)}</span>
-          <span className="mx-1.5">→</span>
+          <span className="mx-1.5 text-slate-400">→</span>
           <span>{row.original.valid_until?.substring(0, 10)}</span>
         </div>
       ),
@@ -116,26 +117,17 @@ export const CouponsListPage: React.FC = () => {
   ], [navigate]);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Coupons & Promotions
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage promotional discount vouchers, percent discounts, and validity periods.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => navigate('/admin/coupons/new')}
-          className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-semibold h-9 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-xs"
-        >
-          <Plus className="w-4 h-4" />
-          Create Coupon
-        </Button>
-      </div>
+    <div className="space-y-6 font-sans">
+      {/* Standardized Enterprise Page Header */}
+      <AdminPageHeader
+        title="Coupons & Promotions"
+        description="Manage promotional discount vouchers, percent discounts, and validity periods."
+        breadcrumbs={[{ label: 'Coupons & Promos' }]}
+        primaryAction={{
+          label: 'Create Coupon',
+          onClick: () => navigate('/admin/coupons/new'),
+        }}
+      />
 
       <EnterpriseDataTable
         columns={columns}

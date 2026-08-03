@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const CmsListPage: React.FC = () => {
@@ -72,11 +73,11 @@ export const CmsListPage: React.FC = () => {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Publish Status" />,
       cell: ({ row }) => (
         row.original.is_published ? (
-          <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
-            Published
-          </Badge>
+          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Published
+          </span>
         ) : (
-          <Badge variant="outline" className="text-slate-500 text-xs">
+          <Badge variant="outline" className="text-slate-500 text-xs font-normal">
             Draft
           </Badge>
         )
@@ -109,26 +110,17 @@ export const CmsListPage: React.FC = () => {
   ], [navigate]);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            CMS Content & Pages
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage storefront articles, terms of service, support guides, and dynamic copy.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => navigate('/admin/cms/new')}
-          className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-semibold h-9 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-xs"
-        >
-          <Plus className="w-4 h-4" />
-          Create CMS Page
-        </Button>
-      </div>
+    <div className="space-y-6 font-sans">
+      {/* Standardized Enterprise Page Header */}
+      <AdminPageHeader
+        title="CMS Content & Pages"
+        description="Manage storefront articles, terms of service, support guides, and dynamic copy."
+        breadcrumbs={[{ label: 'CMS Content Pages' }]}
+        primaryAction={{
+          label: 'Create CMS Page',
+          onClick: () => navigate('/admin/cms/new'),
+        }}
+      />
 
       <EnterpriseDataTable
         columns={columns}

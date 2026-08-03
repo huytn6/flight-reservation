@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const AirportsListPage: React.FC = () => {
@@ -111,26 +112,17 @@ export const AirportsListPage: React.FC = () => {
   ], [navigate]);
 
   return (
-    <div className="space-y-6">
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-            Airports Management
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage global airport catalog, IATA location codes, and timezones.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => navigate('/admin/airports/new')}
-          className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-semibold h-9 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-xs"
-        >
-          <Plus className="w-4 h-4" />
-          Add New Airport
-        </Button>
-      </div>
+    <div className="space-y-6 font-sans">
+      {/* Standardized Enterprise Page Header */}
+      <AdminPageHeader
+        title="Airports Catalog"
+        description="Manage global airport location codes, city destinations, and timezones."
+        breadcrumbs={[{ label: 'Airports Catalog' }]}
+        primaryAction={{
+          label: 'Add New Airport',
+          onClick: () => navigate('/admin/airports/new'),
+        }}
+      />
 
       {/* DataTable */}
       <EnterpriseDataTable

@@ -3,6 +3,7 @@ import { adminService } from '@/services/admin';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { ChartRadialGrid, ChartRadialShape, ChartPieDonutText } from '@/components/charts';
@@ -113,45 +114,41 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 font-sans">
       
-      {/* Top Control Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-lg border border-slate-200/80 shadow-none">
-        <div className="flex flex-col gap-1">
+      {/* Standardized Enterprise Page Header */}
+      <AdminPageHeader
+        title="Dashboard Overview"
+        description="Real-time financial analytics, ticket volume velocity, and flight fleet distribution metrics."
+        secondaryActions={
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">System Control Center</h1>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] font-mono uppercase px-2 py-0.5 rounded">
-              ● Live Status
-            </Badge>
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="h-9 text-xs w-32 bg-white border-slate-200/80 rounded-lg">
+                <SelectValue placeholder="Time range" />
+              </SelectTrigger>
+              <SelectContent className="rounded-lg">
+                <SelectItem value="24h">Last 24 Hours</SelectItem>
+                <SelectItem value="7d">Last 7 Days</SelectItem>
+                <SelectItem value="30d">Last 30 Days</SelectItem>
+                <SelectItem value="qtd">Quarter to Date</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadDashboard}
+              className="h-9 text-xs font-normal border-slate-200/80 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer rounded-lg px-3"
+            >
+              <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+              Refresh
+            </Button>
           </div>
-          <p className="text-xs text-slate-500 font-normal">
-            Real-time analytics, revenue trend curves, booking velocity charts, and infrastructure node health.
-          </p>
-        </div>
-
-        {/* Action Controls */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="h-8 text-xs w-32 bg-slate-50 border-slate-200 rounded-md">
-              <SelectValue placeholder="Time range" />
-            </SelectTrigger>
-            <SelectContent className="rounded-md">
-              <SelectItem value="24h">Last 24 Hours</SelectItem>
-              <SelectItem value="7d">Last 7 Days</SelectItem>
-              <SelectItem value="30d">Last 30 Days</SelectItem>
-              <SelectItem value="qtd">Quarter to Date</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button variant="outline" size="sm" onClick={loadDashboard} className="h-8 text-xs font-normal border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 cursor-pointer rounded-md">
-            <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
-            Refresh
-          </Button>
-
-          <Button size="sm" onClick={() => toast.success('Operational report exported to CSV')} className="h-8 text-xs font-medium bg-[#0065eb] hover:bg-blue-700 text-white cursor-pointer rounded-md shadow-none">
-            <Download className="w-3.5 h-3.5 mr-1.5" />
-            Export Data
-          </Button>
-        </div>
-      </div>
+        }
+        primaryAction={{
+          label: 'Export Data',
+          onClick: () => toast.success('Operational report exported to CSV'),
+          icon: Download,
+        }}
+      />
 
       {/* Row 1: KPI Hero Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
