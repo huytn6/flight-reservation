@@ -6,16 +6,16 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#f4f7fa] border-t border-slate-200/80 pt-10 pb-8 mt-16 font-sans">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8">
         
-        {/* Expedia Group Logo -> Navigate Home / */}
+        {/* Expedia Logo */}
         <div className="mb-6">
           <Link to="/" className="inline-flex items-center gap-1.5 focus:outline-none cursor-pointer">
-            <div className="w-5 h-5 bg-[#ffdb00] flex items-center justify-center rounded-md shadow-2xs font-bold text-slate-900">
+            <div className="w-5 h-5 bg-[#0065eb] flex items-center justify-center rounded-md font-bold text-white">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 17L17 7" />
                 <path d="M7 7h10v10" />
               </svg>
             </div>
-            <span className="text-lg font-bold tracking-tight text-[#141d38] font-sans">
+            <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">
               expedia group
             </span>
           </Link>
@@ -24,64 +24,46 @@ export const Footer: React.FC = () => {
         {/* 4-Column Links Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-[11px] sm:text-[12px]">
           
-          {/* Column 1: Company */}
+          {/* Column 1: Công ty */}
           <div className="flex flex-col gap-1.5">
-            <h4 className="font-bold text-[#141d38] text-xs sm:text-sm mb-1">Company</h4>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">About</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Jobs</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">List your property</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Partnerships</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Newsroom</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Investor Relations</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Advertising</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Affiliate Marketing</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Feedback</a>
+            <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Về Chúng Tôi</h4>
+            <Link to="/pages/about" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Giới thiệu Expedia</Link>
+            <Link to="/pages/careers" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cơ hội nghề nghiệp</Link>
+            <Link to="/pages/news" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Truyền thông & Tin tức</Link>
+            <Link to="/pages/partners" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Đối tác đối soát hãng bay</Link>
           </div>
 
-          {/* Column 2: Explore */}
+          {/* Column 2: Khám phá & Tiện ích */}
           <div className="flex flex-col gap-1.5">
-            <h4 className="font-bold text-[#141d38] text-xs sm:text-sm mb-1">Explore</h4>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">United States of America travel guide</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Hotels in United States of America</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Vacation rentals in United States of America</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Vacation packages in United States of America</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Domestic flights</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Car rentals in United States of America</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">All accommodation types</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Rewards with One Key</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">One Key credit cards</a>
+            <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Dịch Vụ Bay</h4>
+            <Link to="/check-in" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Check-in trực tuyến 24h</Link>
+            <Link to="/flight-status" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Tra cứu tình trạng chuyến bay</Link>
+            <Link to="/my-bookings" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quản lý vé & Chuyến đi</Link>
+            <Link to="/price-alerts" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cảnh báo giá rẻ tự động</Link>
           </div>
 
-          {/* Column 3: Policies */}
+          {/* Column 3: Điều khoản & Chính sách */}
           <div className="flex flex-col gap-1.5">
-            <h4 className="font-bold text-[#141d38] text-xs sm:text-sm mb-1">Policies</h4>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Privacy</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cookies</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Terms of use</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">One Key™ terms and conditions</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Vrbo terms and conditions</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Accessibility</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Your privacy choices</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Content guidelines and reporting content</a>
+            <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Chính Sách</h4>
+            <Link to="/pages/privacy" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Chính sách bảo mật</Link>
+            <Link to="/pages/terms" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Điều khoản sử dụng dịch vụ</Link>
+            <Link to="/pages/cookies" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quy định về Cookie</Link>
+            <Link to="/pages/baggage-rules" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quy định hành lý & Hoàn vé</Link>
           </div>
 
-          {/* Column 4: Help */}
+          {/* Column 4: Trợ giúp */}
           <div className="flex flex-col gap-1.5">
-            <h4 className="font-bold text-[#141d38] text-xs sm:text-sm mb-1">Help</h4>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Support</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cancel your hotel or vacation rental booking</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cancel your flight</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Refund basics</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Use an Expedia coupon</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">International travel documents</a>
-            <a href="#" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Your rights as a flights traveler</a>
+            <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Trung Tâm Trợ Giúp</h4>
+            <Link to="/support" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Gửi yêu cầu hỗ trợ (Support Desk)</Link>
+            <Link to="/booking-lookup" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Tra cứu mã đặt chỗ PNR</Link>
+            <Link to="/pages/refund-faq" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Hướng dẫn hoàn tiền</Link>
           </div>
 
         </div>
 
         {/* Bottom Copyright Notice */}
         <div className="border-t border-slate-200/90 mt-10 pt-6 text-center text-[10px] sm:text-[11px] text-slate-500 font-normal leading-relaxed">
-          © 2026 Expedia, Inc., an Expedia Group company. All rights reserved. Expedia and the Expedia Logo are trademarks or registered trademarks of Expedia, Inc. CST# 2029030-50.
+          © 2026 Expedia, Inc. Bản quyền thuộc về hệ thống đặt vé máy bay trực tuyến Expedia Group.
         </div>
 
       </div>

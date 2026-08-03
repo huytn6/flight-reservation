@@ -7,6 +7,13 @@ import { ProtectedRoute, GuestGuard } from '@/components/auth/Guards';
 
 import { Home } from '@/pages/home';
 import { SignIn } from '@/pages/sign-in';
+import { RegisterPage } from '@/pages/register';
+import { ForgotPasswordPage } from '@/pages/forgot-password';
+import { ResetPasswordPage } from '@/pages/reset-password';
+import { CheckInPage } from '@/pages/check-in';
+import { FlightStatusPage } from '@/pages/flight-status';
+import { PublicCmsPage } from '@/pages/public-cms';
+
 import { FlightResults } from '@/pages/flight-results';
 import { ReviewTrip } from '@/pages/review-trip';
 import { Checkout } from '@/pages/checkout';
@@ -87,6 +94,18 @@ export const router = createBrowserRouter([
       {
         path: 'booking-lookup',
         element: <BookingLookup />,
+      },
+      {
+        path: 'check-in',
+        element: <CheckInPage />,
+      },
+      {
+        path: 'flight-status',
+        element: <FlightStatusPage />,
+      },
+      {
+        path: 'pages/:slug',
+        element: <PublicCmsPage />,
       },
       {
         path: 'checkout',
@@ -237,6 +256,38 @@ export const router = createBrowserRouter([
         element: (
           <GuestGuard>
             <SignIn />
+          </GuestGuard>
+        ),
+      },
+      {
+        path: 'register',
+        element: (
+          <GuestGuard>
+            <RegisterPage />
+          </GuestGuard>
+        ),
+      },
+      {
+        path: 'signup',
+        element: (
+          <GuestGuard>
+            <RegisterPage />
+          </GuestGuard>
+        ),
+      },
+      {
+        path: 'forgot-password',
+        element: (
+          <GuestGuard>
+            <ForgotPasswordPage />
+          </GuestGuard>
+        ),
+      },
+      {
+        path: 'reset-password',
+        element: (
+          <GuestGuard>
+            <ResetPasswordPage />
           </GuestGuard>
         ),
       },

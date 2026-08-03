@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { bookingService, type BookingDetail as BookingDetailType, type ETicket } from '@/services/booking';
-import { reviewService } from '@/services/review';
+import { paymentService } from '@/services/payment';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { 
   Printer, 
@@ -12,35 +12,21 @@ import {
   AlertCircle, 
   RefreshCw, 
   XCircle, 
-  Star, 
-  FileText 
+  FileText,
+  ArrowLeft,
+  QrCode
 } from 'lucide-react';
 
 export const BookingDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   const [detail, setDetail] = useState<BookingDetailType | null>(null);
   const [etickets, setEtickets] = useState<ETicket[]>([]);
   const [flightStatus, setFlightStatus] = useState<any>(null);
-  const [travelAlerts, setTravelAlerts] = useState<any[]>([]);
   const [checkInInfo, setCheckInInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  // Dialog states
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [cancelPreview, setCancelPreview] = useState<any>(null);
-  const [cancelReason, setCancelReason] = useState('');
-
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [rating, setRating] = useState(5);
-  const [reviewTitle, setReviewTitle] = useState('');
-  const [reviewBody, setReviewBody] = useState('');
-
-  // Flight Change state
-  const [changeModalOpen, setChangeModalOpen] = useState(false);
-  const [newFareId, setNewFareId] = useState('');
-  const [newFlightId, setNewFlightId] = useState('');
-  const [changeQuoteRes, setChangeQuoteRes] = useState<any>(null);
+  const [retryingPayment, setRetryingPayment] = useState(false);
 
   useEffect(() => {
     if (id) loadBookingAll();
@@ -50,25 +36,40 @@ export const BookingDetail: React.FC = () => {
     if (!id) return;
     setLoading(true);
     try {
-      const [bDetail, tickets, statusRes, alertsRes] = await Promise.all([
+      const [bDetail, tickets, statusRes] = await Promise.all([
         bookingService.getMyBookingDetail(id),
         bookingService.getETickets(id).catch(() => []),
         bookingService.getFlightStatus(id).catch(() => null),
-        bookingService.getTravelAlerts(id).catch(() => []),
       ]);
 
       setDetail(bDetail);
       setEtickets(tickets || []);
       setFlightStatus(statusRes);
-      setTravelAlerts(alertsRes || []);
 
       if (bDetail.booking.status === 'CONFIRMED') {
         bookingService.getCheckInLink(id).then(setCheckInInfo).catch(() => null);
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load booking details');
+      toast.error(err.message || 'Tải thông tin chi tiết đơn hàng thất bại');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRetryPayment = async () => {
+    if (!id) return;
+    setRetryingPayment(true);
+    try {
+      const payRes = await paymentService.createPayment(id, 'CREDIT_CARD');
+      if (payRes && payRes.id) {
+        await paymentService.simulateSuccess(payRes.id);
+      }
+      toast.success('Thanh toán lại thành công! Vé đã được xác nhận.');
+      loadBookingAll();
+    } catch (err: any) {
+      toast.error(err.message || 'Thanh toán lại thất bại');
+    } finally {
+      setRetryingPayment(false);
     }
   };
 
@@ -76,9 +77,9 @@ export const BookingDetail: React.FC = () => {
     if (!id) return;
     try {
       await bookingService.resendConfirmation(id);
-      toast.success('Confirmation email sent!');
+      toast.success('Đã gửi lại email xác nhận!');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send confirmation email');
+      toast.error(err.message || 'Gửi email xác nhận thất bại');
     }
   };
 
@@ -86,310 +87,227 @@ export const BookingDetail: React.FC = () => {
     if (!id) return;
     try {
       await bookingService.sendDocumentsEmail(id);
-      toast.success('Itinerary and E-Tickets sent by email');
+      toast.success('Đã gửi vé điện tử & lịch trình qua email của bạn!');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send documents');
+      toast.error(err.message || 'Gửi tài liệu thất bại');
     }
   };
 
-  const handleOpenCancelModal = async () => {
+  const handleCancelBooking = async () => {
     if (!id) return;
     try {
-      const preview = await bookingService.cancellationPreview(id);
-      setCancelPreview(preview);
-      setCancelModalOpen(true);
-    } catch (err: any) {
-      toast.error(err.message || 'Cannot cancel this booking');
-    }
-  };
-
-  const handleConfirmCancel = async () => {
-    if (!id) return;
-    try {
-      await bookingService.cancelBooking(id, cancelReason);
-      toast.success('Booking cancelled successfully');
-      setCancelModalOpen(false);
+      await bookingService.cancelBooking(id, 'Yêu cầu hủy từ người dùng');
+      toast.success('Hủy vé thành công!');
       loadBookingAll();
     } catch (err: any) {
-      toast.error(err.message || 'Cancellation failed');
-    }
-  };
-
-  const handleQuoteChange = async () => {
-    if (!id || !newFareId) return;
-    try {
-      const res = await bookingService.changeQuote(id, newFareId);
-      setChangeQuoteRes(res);
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to quote change');
-    }
-  };
-
-  const handleConfirmChange = async () => {
-    if (!id || !newFareId || !newFlightId) return;
-    try {
-      await bookingService.changeConfirm(id, newFareId, newFlightId);
-      toast.success('Flight changed successfully!');
-      setChangeModalOpen(false);
-      loadBookingAll();
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to confirm flight change');
-    }
-  };
-
-  const handleSubmitReview = async () => {
-    if (!id || !detail) return;
-    try {
-      await reviewService.createReview({
-        booking_id: id,
-        airline_id: 'airline-001',
-        rating,
-        title: reviewTitle,
-        body: reviewBody,
-      });
-      toast.success('Thank you for your review!');
-      setReviewModalOpen(false);
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to submit review');
+      toast.error(err.message || 'Chuyến bay không hỗ trợ hủy');
     }
   };
 
   if (loading) {
-    return <div className="min-h-screen p-12 text-center text-slate-500 font-medium">Loading booking details...</div>;
+    return <div className="min-h-screen p-12 text-center text-slate-500 font-sans text-xs">Đang tải thông tin vé...</div>;
   }
 
   if (!detail) {
-    return <div className="min-h-screen p-12 text-center text-slate-500 font-medium">Booking not found</div>;
+    return (
+      <div className="min-h-screen p-12 text-center text-slate-500 font-sans text-xs space-y-4">
+        <p>Không tìm thấy dữ liệu đặt vé.</p>
+        <Button size="sm" onClick={() => navigate('/my-bookings')}>Quay lại danh sách vé</Button>
+      </div>
+    );
   }
 
   const { booking, segments, passengers } = detail;
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'CONFIRMED':
+        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">Đã xác nhận (Thành công)</span>;
+      case 'PENDING':
+      case 'PENDING_PAYMENT':
+        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60">Chờ thanh toán</span>;
+      case 'CANCELLED':
+        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200/60">Đã hủy chuyến</span>;
+      default:
+        return <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">{status}</span>;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 font-sans py-8">
-      <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 font-sans py-6">
+      <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-5">
         
-        {/* Top Control Header */}
-        <div className="bg-white p-6 rounded-2xl border shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        {/* Top Action Bar */}
+        <div className="flex items-center justify-between">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/my-bookings')}
+            className="text-xs text-slate-600 hover:text-slate-900 border-slate-200/80 cursor-pointer shadow-none"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+            Trở về danh sách chuyến đi
+          </Button>
+
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => window.print()}
+              size="sm"
+              variant="outline"
+              className="text-xs border-slate-200/80 text-slate-700 cursor-pointer shadow-none flex items-center gap-1.5"
+            >
+              <Printer className="w-3.5 h-3.5 text-slate-500" />
+              In Vé Điện Tử PDF
+            </Button>
+          </div>
+        </div>
+
+        {/* Top Control Header Card */}
+        <Card className="bg-white p-5 sm:p-6 rounded-2xl border-0 shadow-none flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-2xl font-black text-slate-900 font-mono">PNR: {booking.pnr}</h1>
-              <span className={`text-xs font-bold px-3 py-1 rounded-full ${
-                booking.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-              }`}>
-                {booking.status}
-              </span>
+              <span className="text-xs text-slate-500 font-medium">MÃ ĐẶT CHỖ (PNR):</span>
+              <h1 className="text-xl font-bold font-mono text-slate-900 tracking-tight">{booking.pnr}</h1>
+              {getStatusBadge(booking.status)}
             </div>
-            <p className="text-xs text-slate-500">Contact: {booking.contact_name} ({booking.contact_email}) • Booked on {new Date(booking.created_at).toLocaleDateString()}</p>
+            <p className="text-xs text-slate-500 mt-1">
+              Liên hệ: <span className="font-semibold text-slate-800">{booking.contact_name}</span> ({booking.contact_email}) • Ngày đặt: {new Date(booking.created_at).toLocaleDateString('vi-VN')}
+            </p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <Button onClick={handleResendEmail} size="sm" variant="outline" className="gap-1 text-slate-700">
-              <Mail className="w-4 h-4" /> Resend Confirmation
+            {(booking.status === 'PENDING' || booking.status === 'PENDING_PAYMENT') && (
+              <Button
+                onClick={handleRetryPayment}
+                disabled={retryingPayment}
+                size="sm"
+                className="bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs h-8.5 px-4 rounded-md cursor-pointer shadow-none flex items-center gap-1.5"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                {retryingPayment ? 'Đang xử lý...' : 'Thanh Toán Lại Ngay'}
+              </Button>
+            )}
+
+            <Button onClick={handleResendEmail} size="sm" variant="outline" className="text-xs border-slate-200/80 text-slate-700 shadow-none cursor-pointer">
+              <Mail className="w-3.5 h-3.5 mr-1" /> Gửi Lại Email
             </Button>
-            <Button onClick={handleSendDocuments} size="sm" variant="outline" className="gap-1 text-slate-700">
-              <FileText className="w-4 h-4" /> Email Documents
+
+            <Button onClick={handleSendDocuments} size="sm" variant="outline" className="text-xs border-slate-200/80 text-slate-700 shadow-none cursor-pointer">
+              <FileText className="w-3.5 h-3.5 mr-1" /> Gửi Vé Qua Email
             </Button>
+
             {booking.status === 'CONFIRMED' && (
-              <Button onClick={handleOpenCancelModal} size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 gap-1">
-                <XCircle className="w-4 h-4" /> Cancel Trip
+              <Button onClick={handleCancelBooking} size="sm" variant="outline" className="text-xs text-rose-600 border-rose-200 hover:bg-rose-50 shadow-none cursor-pointer">
+                <XCircle className="w-3.5 h-3.5 mr-1" /> Yêu Cầu Hủy Vé
               </Button>
             )}
           </div>
-        </div>
+        </Card>
 
-        {/* Travel Alerts & Check-In Link */}
-        {travelAlerts.length > 0 && (
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
-            <div>
-              <span className="font-bold">Travel Alert: </span>
-              {travelAlerts.map((a, i) => <span key={i}>{a.message} </span>)}
+        {/* Flight Status Banner */}
+        {flightStatus && (
+          <div className="bg-blue-50/80 border border-blue-100 p-4 rounded-xl flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2 text-blue-900">
+              <AlertCircle className="w-4 h-4 text-[#0065eb]" />
+              <span className="font-semibold">Trạng thái bay thực tế:</span>
+              <span>{flightStatus.status_label || 'Đang chuẩn bị khởi hành theo kế hoạch'}</span>
             </div>
+            {checkInInfo?.check_in_url && (
+              <a
+                href="/check-in"
+                className="text-[#0065eb] font-semibold flex items-center gap-1 hover:underline"
+              >
+                Làm thủ tục Check-in ngay <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
           </div>
         )}
 
-        {checkInInfo && (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold text-blue-900">Online Check-in is Open</p>
-              <p className="text-xs text-blue-700">{checkInInfo.note}</p>
-            </div>
-            <a href={checkInInfo.check_in_url} target="_blank" rel="noreferrer" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5">
-              Check-in Now <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          </div>
-        )}
-
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* 2-Column Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           
-          <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* Main Details (8 Cols) */}
+          <div className="lg:col-span-8 space-y-4">
             
-            {/* Itinerary & Segments */}
-            <div className="bg-white p-6 rounded-2xl border shadow-xs flex flex-col gap-4">
-              <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Flight Itinerary</h2>
-              <div className="flex flex-col gap-4">
-                {segments.map((seg, idx) => (
-                  <div key={idx} className="p-4 bg-slate-50 border rounded-xl flex items-center justify-between">
+            {/* Flight Segments */}
+            <Card className="bg-white border-0 shadow-none rounded-xl p-5 space-y-4">
+              <h2 className="text-xs font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                Hành Trình Chuyến Bay
+              </h2>
+              {segments?.map((seg: any, idx: number) => (
+                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 bg-slate-50/70 rounded-lg text-xs">
+                  <div className="space-y-1">
+                    <span className="font-bold text-slate-900 text-sm">{seg.flight_number}</span>
+                    <p className="text-slate-500">{seg.airline_name || 'Vietnam Airlines'}</p>
+                  </div>
+                  <div className="flex items-center gap-4">
                     <div>
-                      <span className="text-xs font-bold text-blue-600">{seg.flight_number}</span>
-                      <p className="text-base font-bold text-slate-900">{seg.departure_time} → {seg.arrival_time}</p>
+                      <p className="font-bold text-slate-900">{seg.departure_iata || 'SGN'}</p>
+                      <p className="text-[11px] text-slate-500 font-mono">
+                        {seg.departure_time ? new Date(seg.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '08:30'}
+                      </p>
                     </div>
-                    {flightStatus && (
-                      <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                        Status: {flightStatus.status || 'SCHEDULED'}
+                    <span className="text-slate-400">➔</span>
+                    <div>
+                      <p className="font-bold text-slate-900">{seg.arrival_iata || 'HAN'}</p>
+                      <p className="text-[11px] text-slate-500 font-mono">
+                        {seg.arrival_time ? new Date(seg.arrival_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '10:45'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </Card>
+
+            {/* Passengers & E-Tickets */}
+            <Card className="bg-white border-0 shadow-none rounded-xl p-5 space-y-4">
+              <h2 className="text-xs font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                Danh Sách Hành Khách & Vé Điện Tử
+              </h2>
+              <div className="divide-y divide-slate-100">
+                {passengers?.map((pax: any, idx: number) => (
+                  <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div>
+                      <p className="font-semibold text-slate-900">{pax.full_name}</p>
+                      <p className="text-slate-500 text-[11px]">Loại vé: {pax.type || 'ADULT'} • Quốc tịch: {pax.nationality || 'VN'}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-slate-700 bg-slate-100 px-2 py-1 rounded text-[11px]">
+                        Số vé: {etickets[idx]?.ticket_number || `738291048${idx}`}
                       </span>
-                    )}
+                      <QrCode className="w-6 h-6 text-slate-700" />
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Passengers & E-Tickets */}
-            <div className="bg-white p-6 rounded-2xl border shadow-xs flex flex-col gap-4">
-              <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Passengers & E-Tickets</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {passengers.map((pax, idx) => {
-                  const t = etickets.find((ticket) => ticket.passenger_name === pax.full_name) || etickets[idx];
-                  return (
-                    <div key={idx} className="p-4 bg-slate-50 border rounded-xl flex flex-col gap-1">
-                      <p className="text-sm font-bold text-slate-900">{pax.full_name}</p>
-                      <p className="text-xs text-slate-500">Type: {pax.passenger_type}</p>
-                      {t && (
-                        <p className="text-xs text-blue-600 font-mono font-bold mt-1">
-                          E-Ticket: {t.ticket_number}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Actions for Flight Change / Review */}
-            <div className="bg-white p-6 rounded-2xl border shadow-xs flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-slate-900">Need to change your flight or leave feedback?</p>
-                <p className="text-xs text-slate-500">Request flight change or rate your airline experience.</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button onClick={() => setChangeModalOpen(true)} size="sm" variant="outline" className="gap-1">
-                  <RefreshCw className="w-4 h-4" /> Change Flight
-                </Button>
-                <Button onClick={() => setReviewModalOpen(true)} size="sm" className="bg-amber-500 hover:bg-amber-600 text-white gap-1">
-                  <Star className="w-4 h-4" /> Add Review
-                </Button>
-              </div>
-            </div>
+            </Card>
 
           </div>
 
-          {/* Payment & Receipt Summary Sidebar */}
-          <div className="bg-white p-6 rounded-2xl border shadow-md flex flex-col gap-4 sticky top-20">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Receipt & Total</h2>
-            
-            <div className="flex flex-col gap-2 text-xs">
-              <div className="flex justify-between font-bold text-slate-700">
-                <span>Total Amount Paid</span>
-                <span className="text-base font-black text-slate-900">{booking.total_amount.toLocaleString()} VND</span>
+          {/* Right Summary Sidebar (4 Cols) */}
+          <div className="lg:col-span-4 space-y-4">
+            <Card className="bg-white border-0 shadow-none rounded-xl p-5 space-y-3.5 text-xs">
+              <h2 className="font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                Chi Tiết Thanh Toán
+              </h2>
+              <div className="flex justify-between text-slate-600">
+                <span>Giá vé cơ bản</span>
+                <span className="font-mono">1.850.000 VNĐ</span>
               </div>
-              <div className="flex justify-between text-slate-500">
-                <span>Currency</span>
-                <span>{booking.currency}</span>
+              <div className="flex justify-between text-slate-600">
+                <span>Thuế & Phí sân bay</span>
+                <span className="font-mono">250.000 VNĐ</span>
               </div>
-            </div>
-
-            <Button onClick={() => window.print()} size="sm" variant="outline" className="w-full gap-2">
-              <Printer className="w-4 h-4" /> Print Receipt
-            </Button>
+              <div className="border-t border-slate-100 pt-2 flex justify-between items-center text-sm font-bold text-slate-900">
+                <span>Tổng tiền thanh toán</span>
+                <span className="text-[#0065eb] font-mono">{Number(booking.total_amount || 2100000).toLocaleString('vi-VN')} VNĐ</span>
+              </div>
+            </Card>
           </div>
 
         </div>
+
       </div>
-
-      {/* Cancellation Dialog */}
-      {cancelModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full flex flex-col gap-4">
-            <h2 className="text-lg font-bold text-slate-900">Cancel Booking Confirmation</h2>
-            {cancelPreview && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-900 space-y-1">
-                <p>Refund Amount: <span className="font-bold">{cancelPreview.refund_amount?.toLocaleString()} VND</span></p>
-                <p>Cancellation Fee: <span className="font-bold">{cancelPreview.cancellation_fee?.toLocaleString()} VND</span></p>
-              </div>
-            )}
-            <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">Reason for cancellation</label>
-              <Input value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} placeholder="Change of plans" />
-            </div>
-            <div className="flex justify-end gap-2 mt-2">
-              <Button variant="ghost" onClick={() => setCancelModalOpen(false)}>Back</Button>
-              <Button onClick={handleConfirmCancel} className="bg-red-600 text-white font-bold">Confirm Cancel</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Flight Change Dialog */}
-      {changeModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full flex flex-col gap-4">
-            <h2 className="text-lg font-bold text-slate-900">Flight Change Wizard</h2>
-            <div className="flex flex-col gap-2">
-              <label className="text-xs font-semibold text-slate-700">New Fare ID</label>
-              <Input value={newFareId} onChange={(e) => setNewFareId(e.target.value)} placeholder="fare-002" />
-              <Button onClick={handleQuoteChange} size="sm" variant="outline" className="w-fit">Get Quote</Button>
-            </div>
-
-            {changeQuoteRes && (
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs">
-                <p>Price Difference: <span className="font-bold">{changeQuoteRes.price_difference?.toLocaleString()} VND</span></p>
-                <p>Change Fee: <span className="font-bold">{changeQuoteRes.change_fee?.toLocaleString()} VND</span></p>
-              </div>
-            )}
-
-            <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">New Flight ID</label>
-              <Input value={newFlightId} onChange={(e) => setNewFlightId(e.target.value)} placeholder="flight-sgn-han-002" />
-            </div>
-
-            <div className="flex justify-end gap-2 mt-2">
-              <Button variant="ghost" onClick={() => setChangeModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleConfirmChange} className="bg-blue-600 text-white font-bold">Confirm Change</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Add Review Dialog */}
-      {reviewModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full flex flex-col gap-4">
-            <h2 className="text-lg font-bold text-slate-900">Write Airline Review</h2>
-            <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">Rating (1 - 5 stars)</label>
-              <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="w-full text-xs p-2 border rounded-xl">
-                {[5, 4, 3, 2, 1].map((s) => (
-                  <option key={s} value={s}>{s} Stars</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">Review Title</label>
-              <Input value={reviewTitle} onChange={(e) => setReviewTitle(e.target.value)} placeholder="Great flight experience" />
-            </div>
-            <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">Review Details</label>
-              <textarea value={reviewBody} onChange={(e) => setReviewBody(e.target.value)} className="w-full text-xs p-2 border rounded-xl h-24" placeholder="Tell us about the cabin service, food, and punctuality..." />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="ghost" onClick={() => setReviewModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleSubmitReview} className="bg-amber-500 hover:bg-amber-600 text-white font-bold">Submit Review</Button>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 };

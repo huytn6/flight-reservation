@@ -5,7 +5,7 @@ export interface Booking {
   id: string;
   user_id: string;
   pnr: string;
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+  status: 'PENDING' | 'PENDING_PAYMENT' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
   total_amount: number;
   currency: string;
   contact_name: string;
@@ -13,6 +13,9 @@ export interface Booking {
   contact_phone: string;
   created_at: string;
   updated_at?: string;
+  base_price?: number;
+  tax_fee?: number;
+  total_price?: number;
 }
 
 export interface BookingDetail {
