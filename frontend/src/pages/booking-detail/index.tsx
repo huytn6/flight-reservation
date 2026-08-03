@@ -119,6 +119,10 @@ export const BookingDetail: React.FC = () => {
 
   const { booking, segments, passengers } = detail;
 
+  const totalAmount = Number(booking.total_amount || 0);
+  const taxFee = Math.round(totalAmount * 0.1);
+  const basePrice = totalAmount - taxFee;
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'CONFIRMED':
@@ -234,29 +238,33 @@ export const BookingDetail: React.FC = () => {
               <h2 className="text-xs font-semibold text-slate-900 border-b border-slate-100 pb-2">
                 Hành Trình Chuyến Bay
               </h2>
-              {segments?.map((seg: any, idx: number) => (
-                <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 bg-slate-50/70 rounded-lg text-xs">
-                  <div className="space-y-1">
-                    <span className="font-bold text-slate-900 text-sm">{seg.flight_number}</span>
-                    <p className="text-slate-500">{seg.airline_name || 'Vietnam Airlines'}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <p className="font-bold text-slate-900">{seg.departure_iata || 'SGN'}</p>
-                      <p className="text-[11px] text-slate-500 font-mono">
-                        {seg.departure_time ? new Date(seg.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '08:30'}
-                      </p>
+              {segments?.length > 0 ? (
+                segments.map((seg: any, idx: number) => (
+                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 bg-slate-50/70 rounded-lg text-xs">
+                    <div className="space-y-1">
+                      <span className="font-bold text-slate-900 text-sm">{seg.flight_number || 'Chuyến bay'}</span>
+                      <p className="text-slate-500">{seg.airline_name || 'Hãng hàng không'}</p>
                     </div>
-                    <span className="text-slate-400">➔</span>
-                    <div>
-                      <p className="font-bold text-slate-900">{seg.arrival_iata || 'HAN'}</p>
-                      <p className="text-[11px] text-slate-500 font-mono">
-                        {seg.arrival_time ? new Date(seg.arrival_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '10:45'}
-                      </p>
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <p className="font-bold text-slate-900">{seg.departure_iata || '---'}</p>
+                        <p className="text-[11px] text-slate-500 font-mono">
+                          {seg.departure_time ? new Date(seg.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : 'Chưa cập nhật'}
+                        </p>
+                      </div>
+                      <span className="text-slate-400">➔</span>
+                      <div>
+                        <p className="font-bold text-slate-900">{seg.arrival_iata || '---'}</p>
+                        <p className="text-[11px] text-slate-500 font-mono">
+                          {seg.arrival_time ? new Date(seg.arrival_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : 'Chưa cập nhật'}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">Thông tin hành trình đã được lưu hệ thống.</p>
+              )}
             </Card>
 
             {/* Passengers & E-Tickets */}
@@ -269,11 +277,11 @@ export const BookingDetail: React.FC = () => {
                   <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                     <div>
                       <p className="font-semibold text-slate-900">{pax.full_name}</p>
-                      <p className="text-slate-500 text-[11px]">Loại vé: {pax.type || 'ADULT'} • Quốc tịch: {pax.nationality || 'VN'}</p>
+                      <p className="text-slate-500 text-[11px]">Loại vé: {pax.type || pax.passenger_type || 'ADULT'} • Quốc tịch: {pax.nationality || 'VN'}</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="font-mono text-slate-700 bg-slate-100 px-2 py-1 rounded text-[11px]">
-                        Số vé: {etickets[idx]?.ticket_number || `738291048${idx}`}
+                        Số vé: {etickets[idx]?.ticket_number || `TK-${booking.pnr}-${idx + 1}`}
                       </span>
                       <QrCode className="w-6 h-6 text-slate-700" />
                     </div>
@@ -292,15 +300,15 @@ export const BookingDetail: React.FC = () => {
               </h2>
               <div className="flex justify-between text-slate-600">
                 <span>Giá vé cơ bản</span>
-                <span className="font-mono">1.850.000 VNĐ</span>
+                <span className="font-mono">{basePrice.toLocaleString('vi-VN')} VNĐ</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Thuế & Phí sân bay</span>
-                <span className="font-mono">250.000 VNĐ</span>
+                <span className="font-mono">{taxFee.toLocaleString('vi-VN')} VNĐ</span>
               </div>
               <div className="border-t border-slate-100 pt-2 flex justify-between items-center text-sm font-bold text-slate-900">
                 <span>Tổng tiền thanh toán</span>
-                <span className="text-[#0065eb] font-mono">{Number(booking.total_amount || 2100000).toLocaleString('vi-VN')} VNĐ</span>
+                <span className="text-[#0065eb] font-mono">{totalAmount.toLocaleString('vi-VN')} VNĐ</span>
               </div>
             </Card>
           </div>

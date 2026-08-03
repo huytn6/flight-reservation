@@ -28,9 +28,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     try {
       const res = await paymentService.createPayment(bookingId, method);
       setPayment(res);
-      toast.success('Payment session initiated');
+      toast.success('Khởi tạo phiên thanh toán thành công!');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to initiate payment');
+      toast.error(err.message || 'Khởi tạo thanh toán thất bại');
     } finally {
       setLoading(false);
     }
@@ -42,13 +42,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     try {
       const res = await paymentService.simulateSuccess(payment.id);
       setPayment(res);
-      toast.success('Payment succeeded!');
+      toast.success('Thanh toán thành công! Vé đã được xác nhận.');
       loadTransactions(payment.id);
       setTimeout(() => {
         onSuccess();
-      }, 1500);
+      }, 1200);
     } catch (err: any) {
-      toast.error(err.message || 'Simulation failed');
+      toast.error(err.message || 'Xác nhận thanh toán thất bại');
     } finally {
       setLoading(false);
     }
@@ -60,10 +60,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     try {
       const res = await paymentService.simulateFailure(payment.id);
       setPayment(res);
-      toast.error('Payment failed!');
+      toast.error('Thanh toán thất bại!');
       loadTransactions(payment.id);
     } catch (err: any) {
-      toast.error(err.message || 'Simulation failed');
+      toast.error(err.message || 'Xử lý thất bại');
     } finally {
       setLoading(false);
     }
@@ -75,10 +75,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     try {
       const res = await paymentService.retryPayment(payment.id);
       setPayment(res);
-      toast.info('Payment retried');
+      toast.info('Đã thử lại phiên thanh toán');
       loadTransactions(payment.id);
     } catch (err: any) {
-      toast.error(err.message || 'Retry failed');
+      toast.error(err.message || 'Thử lại thất bại');
     } finally {
       setLoading(false);
     }
@@ -95,39 +95,40 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-white border border-slate-200 shadow-2xl rounded-2xl p-6">
+      <DialogContent className="sm:max-w-md bg-white border-0 shadow-xl rounded-2xl p-6 font-sans">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-slate-900">
-              <CreditCard className="w-5 h-5 text-blue-600" /> Payment Processing
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-slate-900">
+              <CreditCard className="w-4 h-4 text-[#0065eb]" /> Cổng Thanh Toán An Toàn
             </DialogTitle>
-            <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
-              {amount.toLocaleString()} VND
+            <span className="text-xs font-mono font-bold text-[#0065eb] bg-blue-50 px-2.5 py-1 rounded-md border border-blue-100">
+              {Number(amount || 0).toLocaleString('vi-VN')} VNĐ
             </span>
           </div>
           <DialogDescription className="text-xs text-slate-500 mt-1">
-            Complete your booking payment via supported gateways.
+            Chọn phương thức thanh toán để hoàn tất đơn đặt vé máy bay của bạn.
           </DialogDescription>
         </DialogHeader>
 
         {!payment ? (
           <div className="flex flex-col gap-4 mt-2">
-            <p className="text-xs font-medium text-slate-700">Select payment method:</p>
+            <p className="text-xs font-medium text-slate-700">Chọn phương thức thanh toán:</p>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { code: 'CARD', label: 'Credit Card', icon: '💳' },
-                { code: 'MOMO', label: 'MoMo Wallet', icon: '📱' },
-                { code: 'BANK_TRANSFER', label: 'Bank Transfer', icon: '🏦' },
+                { code: 'CARD', label: 'Thẻ Quốc Tế', icon: '💳' },
+                { code: 'MOMO', label: 'Ví MoMo', icon: '📱' },
+                { code: 'BANK_TRANSFER', label: 'Chuyển Khoản', icon: '🏦' },
               ].map((m) => (
                 <button
                   key={m.code}
+                  type="button"
                   onClick={() => setMethod(m.code as any)}
-                  className={`p-3 rounded-xl border text-center flex flex-col items-center gap-1 transition-all cursor-pointer ${
-                    method === m.code ? 'border-blue-600 bg-blue-50/80 text-blue-900 font-bold' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                  className={`p-3 rounded-xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                    method === m.code ? 'border-[#0065eb] bg-blue-50/80 text-[#0065eb] font-semibold' : 'border-slate-200/80 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <span className="text-xl">{m.icon}</span>
-                  <span className="text-[11px]">{m.label}</span>
+                  <span className="text-[11px] font-medium">{m.label}</span>
                 </button>
               ))}
             </div>
@@ -135,43 +136,43 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             <Button
               onClick={handleInitPayment}
               disabled={loading}
-              className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-bold py-2.5 rounded-full mt-2"
+              className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs py-2.5 rounded-lg mt-2 cursor-pointer shadow-none h-9.5"
             >
-              {loading ? 'Initiating...' : 'Proceed to Payment'}
+              {loading ? 'Đang khởi tạo cổng thanh toán...' : 'Tiến Hành Thanh Toán Ngay'}
             </Button>
           </div>
         ) : (
           <div className="flex flex-col gap-4 mt-2">
-            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
               <div>
-                <p className="text-xs text-slate-500">Payment ID: <span className="font-mono text-slate-800">{payment.id.substring(0, 8)}...</span></p>
-                <p className="text-xs text-slate-500">Method: <span className="font-bold text-slate-800">{payment.payment_method}</span></p>
+                <p className="text-slate-500">Mã giao dịch: <span className="font-mono text-slate-800 font-semibold">{payment.id.substring(0, 8)}...</span></p>
+                <p className="text-slate-500 mt-0.5">Phương thức: <span className="font-medium text-slate-800">{payment.payment_method}</span></p>
               </div>
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-                payment.status === 'SUCCESS' ? 'bg-emerald-100 text-emerald-700' : payment.status === 'FAILED' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+              <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                payment.status === 'SUCCESS' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : payment.status === 'FAILED' ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60'
               }`}>
-                {payment.status}
+                {payment.status === 'SUCCESS' ? 'Thành công' : payment.status === 'FAILED' ? 'Thất bại' : 'Đang xử lý'}
               </span>
             </div>
 
             {payment.status === 'PENDING' && (
               <div className="flex flex-col gap-2">
-                <p className="text-xs font-bold text-slate-700 text-center">Simulate Payment Gateway Response:</p>
+                <p className="text-xs font-medium text-slate-700 text-center">Mô phỏng phản hồi từ cổng thanh toán:</p>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
                     onClick={handleSimulateSuccess}
                     disabled={loading}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1 rounded-xl"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-normal text-xs gap-1 rounded-lg cursor-pointer shadow-none h-9"
                   >
-                    <CheckCircle2 className="w-4 h-4" /> Success
+                    <CheckCircle2 className="w-4 h-4" /> Thành Công
                   </Button>
                   <Button
                     onClick={handleSimulateFailure}
                     disabled={loading}
                     variant="outline"
-                    className="border-red-200 text-red-600 hover:bg-red-50 font-bold gap-1 rounded-xl"
+                    className="border-rose-200 text-rose-600 hover:bg-rose-50 font-normal text-xs gap-1 rounded-lg cursor-pointer shadow-none h-9"
                   >
-                    <XCircle className="w-4 h-4" /> Failure
+                    <XCircle className="w-4 h-4" /> Thất Bại
                   </Button>
                 </div>
               </div>
@@ -181,20 +182,20 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               <Button
                 onClick={handleRetry}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold gap-2 rounded-xl"
+                className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs gap-2 rounded-lg cursor-pointer shadow-none h-9.5"
               >
-                <RefreshCw className="w-4 h-4" /> Retry Payment
+                <RefreshCw className="w-4 h-4" /> Thử Thử Lại Thanh Toán
               </Button>
             )}
 
             {transactions.length > 0 && (
-              <div className="border-t border-slate-200 pt-3">
-                <p className="text-xs font-bold text-slate-700 mb-2">Transaction History:</p>
+              <div className="border-t border-slate-100 pt-3">
+                <p className="text-xs font-semibold text-slate-700 mb-2">Lịch sử giao dịch:</p>
                 <div className="max-h-32 overflow-y-auto space-y-1 text-[11px]">
                   {transactions.map((tx) => (
-                    <div key={tx.id} className="p-2 bg-slate-100 rounded-lg flex justify-between">
+                    <div key={tx.id} className="p-2 bg-slate-50 rounded-md flex justify-between">
                       <span>{tx.transaction_type} ({tx.status})</span>
-                      <span className="font-bold">{tx.amount.toLocaleString()} VND</span>
+                      <span className="font-mono font-semibold">{Number(tx.amount || 0).toLocaleString('vi-VN')} VNĐ</span>
                     </div>
                   ))}
                 </div>
