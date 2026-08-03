@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRight, Plus } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ChevronRight, ArrowLeft, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export interface BreadcrumbItem {
@@ -12,10 +12,12 @@ export interface AdminPageHeaderProps {
   title: string;
   description?: string;
   breadcrumbs?: BreadcrumbItem[];
+  backPath?: string;
   primaryAction?: {
     label: string;
-    onClick: () => void;
+    onClick?: () => void;
     icon?: React.ComponentType<{ className?: string }>;
+    disabled?: boolean;
   };
   secondaryActions?: React.ReactNode;
 }
@@ -24,14 +26,16 @@ export const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
   title,
   description,
   breadcrumbs = [],
+  backPath,
   primaryAction,
   secondaryActions,
 }) => {
-  const IconComponent = primaryAction?.icon || Plus;
+  const navigate = useNavigate();
+  const IconComponent = primaryAction?.icon || Save;
 
   return (
-    <div className="flex flex-col gap-3 pb-2 border-b border-slate-200/60">
-      {/* Breadcrumbs */}
+    <div className="flex flex-col gap-3 pb-4 border-b border-slate-200/80 font-sans">
+      {/* Optional Breadcrumbs */}
       {breadcrumbs.length > 0 && (
         <nav className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
           <Link to="/admin" className="hover:text-slate-900 transition-colors">
@@ -45,37 +49,54 @@ export const AdminPageHeader: React.FC<AdminPageHeaderProps> = ({
                   {item.label}
                 </Link>
               ) : (
-                <span className="text-slate-900 font-semibold">{item.label}</span>
+                <span className="text-slate-900 font-normal">{item.label}</span>
               )}
             </React.Fragment>
           ))}
         </nav>
       )}
 
-      {/* Title Bar & Actions */}
+      {/* Main Header Bar: [ Back Button ] Title & Subtitle (Left) <---> [ Actions ] (Right) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            {title}
-          </h1>
-          {description && (
-            <p className="text-xs text-slate-500 mt-1 font-normal">
-              {description}
-            </p>
+        {/* Left Side: Back Button + Title + Description */}
+        <div className="flex items-start gap-3">
+          {backPath && (
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => navigate(backPath)}
+              className="w-8 h-8 border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer rounded-md shrink-0 mt-0.5 shadow-2xs font-normal"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </Button>
           )}
+
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              {title}
+            </h1>
+            {description && (
+              <p className="text-xs text-slate-500 mt-1 font-normal leading-relaxed">
+                {description}
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Single Primary Action + Secondary Actions */}
+        {/* Right Side: Header Action Buttons */}
         {(primaryAction || secondaryActions) && (
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
             {secondaryActions}
             {primaryAction && (
               <Button
+                type={primaryAction.onClick ? "button" : "submit"}
                 onClick={primaryAction.onClick}
-                className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-semibold h-9 px-4 rounded-lg flex items-center gap-2 cursor-pointer shadow-xs transition-colors"
+                disabled={primaryAction.disabled}
+                className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-normal h-8.5 px-4 rounded-md flex items-center gap-1.5 cursor-pointer shadow-2xs transition-colors"
               >
-                <IconComponent className="w-4 h-4" />
-                {primaryAction.label}
+                <IconComponent className="w-3.5 h-3.5" />
+                <span>{primaryAction.label}</span>
               </Button>
             )}
           </div>

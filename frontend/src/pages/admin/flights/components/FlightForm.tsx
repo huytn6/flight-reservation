@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DateTimePicker } from '@/components/admin/DateTimePicker';
 
 export interface FlightFormData {
   flight_number: string;
@@ -50,22 +51,17 @@ export const FlightForm: React.FC<FlightFormProps> = ({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   return (
     <div className="flex flex-col gap-4 font-sans">
       {/* Card 1: Thông tin chuyến bay & Lịch trình */}
-      <Card className="bg-white border-slate-200/80 shadow-none rounded-lg overflow-hidden">
-        <CardHeader className="p-4 sm:p-5 bg-white border-b border-slate-100">
+      <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0">
+        <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
           <CardTitle className="text-xs font-semibold text-slate-900">
             Hành Trình & Lịch Khởi Hành
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="space-y-1">
             <Label htmlFor="flight_number" className="text-xs font-medium text-slate-700">
               Số Hiệu Chuyến Bay <span className="text-red-500">*</span>
             </Label>
@@ -76,11 +72,11 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               onChange={(e) => setFormData((prev) => ({ ...prev, flight_number: e.target.value.toUpperCase() }))}
               placeholder="VD: VN210, VJ123"
               required
-              className="uppercase font-mono text-xs bg-white border-slate-200 h-9"
+              className="uppercase font-mono text-xs bg-white border-slate-200 h-8.5"
             />
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <Label className="text-xs font-medium text-slate-700">
               Hãng Hàng Không <span className="text-red-500">*</span>
             </Label>
@@ -88,7 +84,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.airline_id}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, airline_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
                 <SelectValue placeholder="Chọn hãng bay..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -101,7 +97,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <Label className="text-xs font-medium text-slate-700">
               Sân Bay Cất Cánh (Origin) <span className="text-red-500">*</span>
             </Label>
@@ -109,7 +105,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.departure_airport_id}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, departure_airport_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
                 <SelectValue placeholder="Chọn sân bay cất cánh..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -122,7 +118,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <Label className="text-xs font-medium text-slate-700">
               Sân Bay Hạ Cánh (Destination) <span className="text-red-500">*</span>
             </Label>
@@ -130,7 +126,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.arrival_airport_id}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, arrival_airport_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
                 <SelectValue placeholder="Chọn sân bay hạ cánh..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -143,47 +139,39 @@ export const FlightForm: React.FC<FlightFormProps> = ({
             </Select>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="departure_time" className="text-xs font-medium text-slate-700">
+          <div className="space-y-1">
+            <Label className="text-xs font-medium text-slate-700">
               Thời Gian Cất Cánh <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="departure_time"
-              name="departure_time"
-              type="datetime-local"
+            <DateTimePicker
               value={formData.departure_time}
-              onChange={handleChange}
-              required
-              className="text-xs bg-white border-slate-200 font-mono h-9"
+              onChange={(val) => setFormData((prev) => ({ ...prev, departure_time: val }))}
+              placeholder="Chọn ngày & giờ cất cánh..."
             />
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="arrival_time" className="text-xs font-medium text-slate-700">
+          <div className="space-y-1">
+            <Label className="text-xs font-medium text-slate-700">
               Thời Gian Hạ Cánh <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="arrival_time"
-              name="arrival_time"
-              type="datetime-local"
+            <DateTimePicker
               value={formData.arrival_time}
-              onChange={handleChange}
-              required
-              className="text-xs bg-white border-slate-200 font-mono h-9"
+              onChange={(val) => setFormData((prev) => ({ ...prev, arrival_time: val }))}
+              placeholder="Chọn ngày & giờ hạ cánh..."
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Card 2: Phân công tàu bay & Trạng thái */}
-      <Card className="bg-white border-slate-200/80 shadow-none rounded-lg overflow-hidden">
-        <CardHeader className="p-4 sm:p-5 bg-white border-b border-slate-100">
+      <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0">
+        <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
           <CardTitle className="text-xs font-semibold text-slate-900">
             Tàu Bay & Trạng Thái Vận Hành
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
+        <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className="space-y-1">
             <Label className="text-xs font-medium text-slate-700">
               Dòng Máy Bay
             </Label>
@@ -191,7 +179,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.aircraft_type_id || ''}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, aircraft_type_id: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
                 <SelectValue placeholder="Chọn dòng máy bay..." />
               </SelectTrigger>
               <SelectContent className="font-sans">
@@ -204,7 +192,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <Label className="text-xs font-medium text-slate-700">
               Trạng Thái Chuyến Bay
             </Label>
@@ -212,7 +200,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               value={formData.status || 'SCHEDULED'}
               onValueChange={(val) => setFormData((prev) => ({ ...prev, status: val }))}
             >
-              <SelectTrigger className="text-xs bg-white border-slate-200 h-9">
+              <SelectTrigger className="text-xs bg-white border-slate-200 h-8.5">
                 <SelectValue placeholder="Chọn trạng thái..." />
               </SelectTrigger>
               <SelectContent className="font-sans">

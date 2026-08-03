@@ -22,14 +22,14 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
   mode,
 }) => {
   return (
-    <Card className="bg-white border-slate-200/80 shadow-none rounded-lg overflow-hidden font-sans">
-      <CardHeader className="p-4 sm:p-5 bg-white border-b border-slate-100">
+    <Card className="bg-white border border-slate-200/80 shadow-none rounded-lg py-0 font-sans">
+      <CardHeader className="px-4 py-3 bg-white border-b border-slate-100">
         <CardTitle className="text-xs font-semibold text-slate-900">
           Thông Tin Loại Máy Bay
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
+      <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <div className="space-y-1">
           <Label htmlFor="code" className="text-xs font-medium text-slate-700">
             Mã Loại Tàu Bay (ICAO) <span className="text-red-500">*</span>
           </Label>
@@ -41,11 +41,11 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
             placeholder="VD: A320, A321, B787"
             required
             disabled={mode === 'edit'}
-            className="uppercase font-mono text-xs bg-white border-slate-200 h-9"
+            className="uppercase font-mono text-xs bg-white border-slate-200 h-8.5"
           />
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <Label htmlFor="model" className="text-xs font-medium text-slate-700">
             Tên Dòng Máy Bay <span className="text-red-500">*</span>
           </Label>
@@ -56,11 +56,11 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
             onChange={(e) => setFormData((prev) => ({ ...prev, model: e.target.value }))}
             placeholder="VD: Airbus A321-200"
             required
-            className="text-xs bg-white border-slate-200 h-9"
+            className="text-xs bg-white border-slate-200 h-8.5"
           />
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <Label htmlFor="manufacturer" className="text-xs font-medium text-slate-700">
             Nhà Sản Xuất <span className="text-red-500">*</span>
           </Label>
@@ -71,11 +71,11 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
             onChange={(e) => setFormData((prev) => ({ ...prev, manufacturer: e.target.value }))}
             placeholder="VD: Airbus, Boeing"
             required
-            className="text-xs bg-white border-slate-200 h-9"
+            className="text-xs bg-white border-slate-200 h-8.5"
           />
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <Label htmlFor="capacity" className="text-xs font-medium text-slate-700">
             Sức Chứa Ghế Ngồi <span className="text-red-500">*</span>
           </Label>
@@ -88,7 +88,7 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
             placeholder="VD: 180, 220"
             required
             min={1}
-            className="font-mono text-xs bg-white border-slate-200 h-9"
+            className="font-mono text-xs bg-white border-slate-200 h-8.5"
           />
         </div>
       </CardContent>
