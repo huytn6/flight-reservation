@@ -108,17 +108,16 @@ export const AdminLayout: React.FC = () => {
         <Sidebar collapsible="icon" className="bg-white text-slate-800 border-r border-slate-200/80">
           
           {/* Top Brand Header */}
-          <SidebarHeader className="p-3 border-b border-slate-200/80 bg-white group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
+          <SidebarHeader className="p-3 border-b border-slate-100 bg-white group-data-[collapsible=icon]:p-2 group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
             <div className="flex items-center gap-2.5 px-1 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full">
-              <div className="w-8 h-8 bg-[#0065eb] rounded-lg flex items-center justify-center font-bold text-white shadow-sm shrink-0">
-                <Shield className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 bg-[#0065eb] rounded-lg flex items-center justify-center font-bold text-white shrink-0">
+                <Plane className="w-4 h-4 text-white" />
               </div>
               <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-                <span className="text-xs font-bold text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
-                  Expedia ERP
-                  <span className="text-[8px] bg-blue-50 text-[#0065eb] border border-blue-200 px-1 py-0.2 rounded font-semibold">PROD</span>
+                <span className="text-xs font-semibold text-slate-900 tracking-tight leading-none">
+                  Quản Trị Chuyến Bay
                 </span>
-                <span className="text-[10px] text-slate-500 font-normal mt-0.5">Hệ thống Quản trị Bay</span>
+                <span className="text-[10px] text-slate-500 font-normal mt-1">Hệ thống quản lý đặt vé</span>
               </div>
             </div>
           </SidebarHeader>
@@ -202,7 +201,7 @@ export const AdminLayout: React.FC = () => {
         <SidebarInset className="flex-1 flex flex-col min-w-0 bg-slate-50/50">
           
           {/* Top Sticky Header */}
-          <header className="h-14 bg-white border-b border-slate-200/80 sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between shadow-2xs">
+          <header className="h-14 bg-white border-b border-slate-100 sticky top-0 z-30 px-4 sm:px-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-slate-700 hover:bg-slate-100 cursor-pointer" />
               <Separator orientation="vertical" className="h-4 bg-slate-200" />
