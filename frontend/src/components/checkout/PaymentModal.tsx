@@ -4,7 +4,7 @@ import { PaymentMethodEnum, PaymentStatusEnum } from '@/types/enums';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { CreditCard, Smartphone, Landmark, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+import { CreditCard, Smartphone, Landmark, Check, XCircle, RefreshCw } from 'lucide-react';
 
 interface PaymentModalProps {
   bookingId: string;
@@ -167,7 +167,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {payment.status === PaymentStatusEnum.SUCCESS && (
               <div className="p-4 bg-emerald-50 border border-emerald-200/80 rounded-xl text-center flex flex-col items-center gap-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-600 animate-bounce" />
+                <Check className="w-7 h-7 text-emerald-600 stroke-[3] animate-bounce" />
                 <p className="text-xs font-semibold text-emerald-800">Thanh Toán Thành Công!</p>
                 <p className="text-[11px] text-emerald-600">Vé máy bay của bạn đã được phát hành thành công.</p>
                 <Button
@@ -188,7 +188,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     disabled={loading}
                     className="bg-emerald-600 hover:bg-emerald-700 text-white font-normal text-xs gap-1 rounded-lg cursor-pointer shadow-none h-9"
                   >
-                    <CheckCircle2 className="w-4 h-4" /> Thành Công
+                    <Check className="w-4 h-4 stroke-[2.5]" /> Thành Công
                   </Button>
                   <Button
                     onClick={handleSimulateFailure}
