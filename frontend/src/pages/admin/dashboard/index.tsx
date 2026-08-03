@@ -25,19 +25,11 @@ import {
   Activity, 
   RefreshCw, 
   Download, 
-  Server, 
-  Database, 
-  Clock, 
-  ShieldCheck,
-  ChevronRight,
-  Zap,
   BarChart3
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 
 export const AdminDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const [summary, setSummary] = useState<any>(null);
   const [bookingMetrics, setBookingMetrics] = useState<any[]>([]);
   const [flightMetrics, setFlightMetrics] = useState<any[]>([]);
@@ -75,22 +67,6 @@ export const AdminDashboard: React.FC = () => {
       </div>
     );
   }
-
-  // System Infrastructure Health Nodes
-  const systemHealthNodes = [
-    { name: 'Core API Gateway', status: 'Operational', latency: '12ms', uptime: '99.98%', icon: Server },
-    { name: 'PostgreSQL Primary DB', status: 'Healthy', latency: '4ms', uptime: '100%', icon: Database },
-    { name: 'Redis Cache Layer', status: 'Healthy', latency: '1ms', uptime: '99.99%', icon: Zap },
-    { name: 'Payment Processing Node', status: 'Operational', latency: '45ms', uptime: '99.95%', icon: ShieldCheck },
-  ];
-
-  // Recent Live Activity Timeline Events
-  const recentActivities = [
-    { time: '10 mins ago', user: 'System Auto-Job', action: 'Triggered 14 price drop alert emails', type: 'SYSTEM' },
-    { time: '25 mins ago', user: 'Nguyen Admin', action: 'Updated seat map layout for Flight VN-210', type: 'ADMIN' },
-    { time: '1 hour ago', user: 'Customer #402', action: 'Booked Round-trip SGN → HAN (2 Passengers)', type: 'BOOKING' },
-    { time: '2 hours ago', user: 'Tran Staff', action: 'Approved refund request #REF-902 (850,000 VND)', type: 'STAFF' },
-  ];
 
   // Fallback Data if metrics array is empty
   const chartData = bookingMetrics.length > 0 ? bookingMetrics : [
@@ -401,75 +377,6 @@ export const AdminDashboard: React.FC = () => {
           footerTrendText="92% On-time dispatch rate"
           footerSubText="Live operational status breakdown"
         />
-
-      </div>
-
-      {/* Row 4: Infrastructure Health & Live Activity Trail */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Node Health Status */}
-        <Card className="bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
-          <CardHeader className="p-0">
-            <CardTitle className="text-xs font-semibold text-slate-900 flex items-center justify-between">
-              <span className="flex items-center gap-1.5">
-                <Server className="w-4 h-4 text-[#0065eb]" /> Infrastructure Node Status
-              </span>
-              <span className="text-[10px] font-mono text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                ALL OK
-              </span>
-            </CardTitle>
-          </CardHeader>
-
-          <CardContent className="p-0 flex flex-col gap-2 mt-1">
-            {systemHealthNodes.map((node, i) => {
-              const Icon = node.icon;
-              return (
-                <div key={i} className="p-2.5 bg-slate-50/70 border-0 rounded-md flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4 text-slate-500" />
-                    <div>
-                      <p className="font-medium text-slate-800 text-[11px]">{node.name}</p>
-                      <p className="text-[10px] text-slate-400">Latency: {node.latency}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-[10px] font-semibold text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded">
-                      {node.status}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-
-        {/* Live System Audit Feed */}
-        <Card className="bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-3">
-          <CardHeader className="p-0 flex flex-row items-center justify-between">
-            <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-slate-700" /> Live Audit Trail Feed
-            </CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/admin/audit')} className="text-xs font-medium text-[#0065eb] hover:text-blue-700 cursor-pointer h-6 px-1.5">
-              Audit Log <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-            </Button>
-          </CardHeader>
-
-          <CardContent className="p-0 flex flex-col gap-2.5 mt-1">
-            {recentActivities.map((act, i) => (
-              <div key={i} className="flex items-start gap-2.5 p-2 rounded hover:bg-slate-50/80 transition-colors border-b border-slate-100 last:border-none">
-                <div className="w-2 h-2 rounded-full bg-[#0065eb] mt-1.5 shrink-0" />
-                <div className="flex flex-col gap-0.5 min-w-0">
-                  <p className="text-xs text-slate-800 font-normal leading-tight">{act.action}</p>
-                  <div className="flex items-center gap-2 text-[10px] text-slate-400">
-                    <span className="font-semibold text-slate-600">{act.user}</span>
-                    <span>•</span>
-                    <span>{act.time}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
 
       </div>
     </div>
