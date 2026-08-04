@@ -17,7 +17,7 @@ export const SignIn: React.FC = () => {
           size="icon"
           onClick={() => navigate(-1)}
           className="w-9 h-9 rounded-full hover:bg-slate-200/60 transition-colors text-slate-700 cursor-pointer"
-          aria-label="Go back"
+          aria-label="Quay lại"
         >
           <ArrowLeft className="w-4 h-4" />
         </Button>
@@ -42,10 +42,10 @@ export const SignIn: React.FC = () => {
         {/* Card Header Title */}
         <div className="text-center flex flex-col gap-1">
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Sign in to your account
+            Đăng nhập tài khoản của bạn
           </h1>
           <p className="text-xs text-slate-500 font-normal leading-relaxed">
-            Access your flight bookings, saved trips, and account details.
+            Quản lý vé máy bay, lịch trình chuyến đi và thông tin tài khoản của bạn.
           </p>
         </div>
 
@@ -56,7 +56,7 @@ export const SignIn: React.FC = () => {
 
       {/* Footer */}
       <div className="py-2 text-center text-[11px] text-slate-400">
-        © 2026 Expedia, Inc. All rights reserved.
+        © 2026 Expedia, Inc. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
       </div>
     </div>
   );
