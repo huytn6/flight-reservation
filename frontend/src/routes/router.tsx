@@ -69,6 +69,7 @@ import { BookingDetailPage } from '@/pages/admin/bookings/detail/index';
 
 import { Forbidden } from '@/pages/forbidden';
 import { NotFound } from '@/pages/not-found';
+import { Unauthorized } from '@/pages/unauthorized';
 
 export const router = createBrowserRouter([
   {
@@ -293,6 +294,10 @@ export const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: '/401',
+    element: <Unauthorized />,
   },
   {
     path: '/403',
