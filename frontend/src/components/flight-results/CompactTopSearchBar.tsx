@@ -134,37 +134,37 @@ export const CompactTopSearchBar: React.FC = () => {
     <div className="bg-slate-50 pt-4 pb-2 font-sans">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-3">
         
-        {/* Flight Type Sub-tabs (Roundtrip / One-way / Multi-city) */}
-        <div className="flex items-center gap-6 border-b border-gray-100 pb-2 text-xs font-bold">
+        {/* Flight Type Sub-tabs (Khứ Hồi / Một Chiều / Nhiều Thành Phố) */}
+        <div className="flex items-center gap-6 border-b border-gray-100 pb-2 text-sm sm:text-base font-normal">
           <button
             onClick={() => setFlightType('roundtrip')}
             className={`pb-2 transition-all cursor-pointer ${
               flightType === 'roundtrip'
-                ? 'text-[#0065eb] border-b-2 border-[#0065eb]'
-                : 'text-slate-700 hover:text-slate-900'
+                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 font-normal'
             }`}
           >
-            Roundtrip
+            Khứ Hồi
           </button>
           <button
             onClick={() => setFlightType('one-way')}
             className={`pb-2 transition-all cursor-pointer ${
               flightType === 'one-way'
-                ? 'text-[#0065eb] border-b-2 border-[#0065eb]'
-                : 'text-slate-700 hover:text-slate-900'
+                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 font-normal'
             }`}
           >
-            One-way
+            Một Chiều
           </button>
           <button
             onClick={() => setFlightType('multi-city')}
             className={`pb-2 transition-all cursor-pointer ${
               flightType === 'multi-city'
-                ? 'text-[#0065eb] border-b-2 border-[#0065eb]'
-                : 'text-slate-700 hover:text-slate-900'
+                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 font-normal'
             }`}
           >
-            Multi-city
+            Nhiều Thành Phố
           </button>
         </div>
 
