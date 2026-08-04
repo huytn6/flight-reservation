@@ -42,9 +42,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     setLoading(true);
     try {
       const res = await paymentService.simulateSuccess(payment.id);
-      setPayment(res);
+      setPayment((prev) => (prev ? { ...prev, ...res } : res));
       toast.success('Thanh toán thành công! Vé đã được xác nhận.');
-      loadTransactions(payment.id);
+      if (payment?.id) {
+        loadTransactions(payment.id);
+      }
       setTimeout(() => {
         onSuccess();
       }, 1200);
@@ -65,9 +67,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     setLoading(true);
     try {
       const res = await paymentService.simulateFailure(payment.id);
-      setPayment(res);
+      setPayment((prev) => (prev ? { ...prev, ...res } : res));
       toast.error('Thanh toán thất bại!');
-      loadTransactions(payment.id);
+      if (payment?.id) {
+        loadTransactions(payment.id);
+      }
     } catch (err: any) {
       toast.error(err.message || 'Xử lý thất bại');
     } finally {
@@ -80,9 +84,11 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     setLoading(true);
     try {
       const res = await paymentService.retryPayment(payment.id);
-      setPayment(res);
+      setPayment((prev) => (prev ? { ...prev, ...res } : res));
       toast.info('Đã thử lại phiên thanh toán');
-      loadTransactions(payment.id);
+      if (payment?.id) {
+        loadTransactions(payment.id);
+      }
     } catch (err: any) {
       toast.error(err.message || 'Thử lại thất bại');
     } finally {
@@ -155,8 +161,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           <div className="flex flex-col gap-4 mt-2">
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
               <div>
-                <p className="text-slate-500">Mã giao dịch: <span className="font-mono text-slate-800 font-semibold">{payment.id.substring(0, 8)}...</span></p>
-                <p className="text-slate-500 mt-0.5">Phương thức: <span className="font-medium text-slate-800">{payment.payment_method}</span></p>
+                <p className="text-slate-500">Mã giao dịch: <span className="font-mono text-slate-800 font-semibold">{payment.id ? payment.id.substring(0, 8) : 'GIAODICH'}...</span></p>
+                <p className="text-slate-500 mt-0.5">Phương thức: <span className="font-medium text-slate-800">{payment.payment_method || 'Thẻ Quốc Tế'}</span></p>
               </div>
               <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                 payment.status === PaymentStatusEnum.SUCCESS ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : payment.status === PaymentStatusEnum.FAILED ? 'bg-rose-50 text-rose-700 border border-rose-200/60' : 'bg-amber-50 text-amber-700 border border-amber-200/60'

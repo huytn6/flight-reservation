@@ -70,11 +70,13 @@ import { BookingDetailPage } from '@/pages/admin/bookings/detail/index';
 import { Forbidden } from '@/pages/forbidden';
 import { NotFound } from '@/pages/not-found';
 import { Unauthorized } from '@/pages/unauthorized';
+import { ErrorPage } from '@/pages/error';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -190,6 +192,7 @@ export const router = createBrowserRouter([
         <AdminLayout />
       </ProtectedRoute>
     ),
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
