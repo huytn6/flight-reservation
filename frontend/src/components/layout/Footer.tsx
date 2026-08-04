@@ -63,7 +63,8 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Copyright Notice */}
         <div className="border-t border-slate-200/90 mt-10 pt-6 text-center text-[10px] sm:text-[11px] text-slate-500 font-normal leading-relaxed">
-          © 2026 Expedia, Inc. Bản quyền thuộc về hệ thống đặt vé máy bay trực tuyến Expedia Group.
+          <p className="font-semibold text-slate-700">Hệ thống đặt vé máy bay trực tuyến – Đồ án Nhóm 2</p>
+          <p>© 2026 TRẦN NGỌC HUY (25410232) • ĐẶNG VĂN HẬU (25410203) • NGUYỄN THANH DUY (25410194) • NGUYỄN THỊ HỒNG MINH (25410256)</p>
         </div>
 
       </div>

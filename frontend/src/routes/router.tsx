@@ -69,11 +69,14 @@ import { BookingDetailPage } from '@/pages/admin/bookings/detail/index';
 
 import { Forbidden } from '@/pages/forbidden';
 import { NotFound } from '@/pages/not-found';
+import { Unauthorized } from '@/pages/unauthorized';
+import { ErrorPage } from '@/pages/error';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -189,58 +192,60 @@ export const router = createBrowserRouter([
         <AdminLayout />
       </ProtectedRoute>
     ),
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         element: <AdminDashboard />,
       },
-      // Support Tickets
+      // Support Tickets (Staff & Admin)
       { path: 'tickets', element: <StaffTickets /> },
-      // Flights
+
+      // Flights (Staff & Admin)
       { path: 'flights', element: <FlightsListPage /> },
       { path: 'flights/new', element: <FlightCreatePage /> },
       { path: 'flights/:id', element: <FlightDetailPage /> },
       { path: 'flights/:id/edit', element: <FlightEditPage /> },
 
-      // Airports
-      { path: 'airports', element: <AirportsListPage /> },
-      { path: 'airports/new', element: <AirportCreatePage /> },
-      { path: 'airports/:id/edit', element: <AirportEditPage /> },
+      // Airports (Admin Only)
+      { path: 'airports', element: <ProtectedRoute allowedRoles={['ADMIN']}><AirportsListPage /></ProtectedRoute> },
+      { path: 'airports/new', element: <ProtectedRoute allowedRoles={['ADMIN']}><AirportCreatePage /></ProtectedRoute> },
+      { path: 'airports/:id/edit', element: <ProtectedRoute allowedRoles={['ADMIN']}><AirportEditPage /></ProtectedRoute> },
 
-      // Airlines
-      { path: 'airlines', element: <AirlinesListPage /> },
-      { path: 'airlines/new', element: <AirlineCreatePage /> },
-      { path: 'airlines/:id/edit', element: <AirlineEditPage /> },
+      // Airlines (Admin Only)
+      { path: 'airlines', element: <ProtectedRoute allowedRoles={['ADMIN']}><AirlinesListPage /></ProtectedRoute> },
+      { path: 'airlines/new', element: <ProtectedRoute allowedRoles={['ADMIN']}><AirlineCreatePage /></ProtectedRoute> },
+      { path: 'airlines/:id/edit', element: <ProtectedRoute allowedRoles={['ADMIN']}><AirlineEditPage /></ProtectedRoute> },
 
-      // Aircraft
-      { path: 'aircraft', element: <AircraftListPage /> },
-      { path: 'aircraft/new', element: <AircraftCreatePage /> },
-      { path: 'aircraft/:id/edit', element: <AircraftEditPage /> },
+      // Aircraft (Admin Only)
+      { path: 'aircraft', element: <ProtectedRoute allowedRoles={['ADMIN']}><AircraftListPage /></ProtectedRoute> },
+      { path: 'aircraft/new', element: <ProtectedRoute allowedRoles={['ADMIN']}><AircraftCreatePage /></ProtectedRoute> },
+      { path: 'aircraft/:id/edit', element: <ProtectedRoute allowedRoles={['ADMIN']}><AircraftEditPage /></ProtectedRoute> },
 
-      // Coupons & Marketing
-      { path: 'coupons', element: <CouponsListPage /> },
-      { path: 'coupons/new', element: <CouponCreatePage /> },
-      { path: 'coupons/:id/edit', element: <CouponEditPage /> },
+      // Coupons & Marketing (Admin Only)
+      { path: 'coupons', element: <ProtectedRoute allowedRoles={['ADMIN']}><CouponsListPage /></ProtectedRoute> },
+      { path: 'coupons/new', element: <ProtectedRoute allowedRoles={['ADMIN']}><CouponCreatePage /></ProtectedRoute> },
+      { path: 'coupons/:id/edit', element: <ProtectedRoute allowedRoles={['ADMIN']}><CouponEditPage /></ProtectedRoute> },
 
-      // CMS Pages
-      { path: 'cms', element: <CmsListPage /> },
-      { path: 'cms/new', element: <CmsCreatePage /> },
-      { path: 'cms/:id/edit', element: <CmsEditPage /> },
+      // CMS Pages (Admin Only)
+      { path: 'cms', element: <ProtectedRoute allowedRoles={['ADMIN']}><CmsListPage /></ProtectedRoute> },
+      { path: 'cms/new', element: <ProtectedRoute allowedRoles={['ADMIN']}><CmsCreatePage /></ProtectedRoute> },
+      { path: 'cms/:id/edit', element: <ProtectedRoute allowedRoles={['ADMIN']}><CmsEditPage /></ProtectedRoute> },
 
-      // Customers & Staff
-      { path: 'customers', element: <CustomersListPage /> },
-      { path: 'customers/:id', element: <CustomerDetailPage /> },
+      // Customers & Staff (Admin Only)
+      { path: 'customers', element: <ProtectedRoute allowedRoles={['ADMIN']}><CustomersListPage /></ProtectedRoute> },
+      { path: 'customers/:id', element: <ProtectedRoute allowedRoles={['ADMIN']}><CustomerDetailPage /></ProtectedRoute> },
 
-      { path: 'staff', element: <StaffListPage /> },
-      { path: 'staff/new', element: <StaffCreatePage /> },
-      { path: 'staff/:id/edit', element: <StaffEditPage /> },
+      { path: 'staff', element: <ProtectedRoute allowedRoles={['ADMIN']}><StaffListPage /></ProtectedRoute> },
+      { path: 'staff/new', element: <ProtectedRoute allowedRoles={['ADMIN']}><StaffCreatePage /></ProtectedRoute> },
+      { path: 'staff/:id/edit', element: <ProtectedRoute allowedRoles={['ADMIN']}><StaffEditPage /></ProtectedRoute> },
 
-      // Bookings & Financial
+      // Bookings & Financial (Staff & Admin)
       { path: 'bookings', element: <BookingsListPage /> },
       { path: 'bookings/:id', element: <BookingDetailPage /> },
 
-      // Audit Logs
-      { path: 'audit', element: <AdminAudit /> },
+      // Audit Logs (Admin Only)
+      { path: 'audit', element: <ProtectedRoute allowedRoles={['ADMIN']}><AdminAudit /></ProtectedRoute> },
 
       // Legacy Aliases
       { path: 'catalog', element: <Navigate to="/admin/flights" replace /> },
@@ -292,6 +297,10 @@ export const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: '/401',
+    element: <Unauthorized />,
   },
   {
     path: '/403',

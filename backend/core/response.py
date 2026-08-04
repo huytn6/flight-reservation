@@ -4,8 +4,11 @@ import uuid
 
 def _json_default(obj):
     from datetime import datetime, date
+    from decimal import Decimal
     if isinstance(obj, (datetime, date)):
         return obj.isoformat()
+    if isinstance(obj, Decimal):
+        return float(obj)
     raise TypeError(f'Object of type {type(obj).__name__} is not JSON serializable')
 
 

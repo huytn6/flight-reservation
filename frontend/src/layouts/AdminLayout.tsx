@@ -16,7 +16,8 @@ import {
   Plus,
   ExternalLink,
   UserCheck,
-  LifeBuoy
+  LifeBuoy,
+  ChevronRight
 } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
 import { Button } from '@/components/ui/button';
@@ -55,48 +56,57 @@ export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Grouped Nav Items for Enterprise SaaS / ERP Hierarchy
+  const userRole = user?.role || 'STAFF';
+
+  // Grouped Nav Items for Enterprise SaaS / ERP Hierarchy with Role Permissions
   const navGroups = [
     {
       group: 'THỐNG KÊ & TỔNG QUAN',
       items: [
-        { path: '/admin', label: 'Tổng quan Dashboard', icon: LayoutDashboard, badge: null },
+        { path: '/admin', label: 'Tổng quan Dashboard', icon: LayoutDashboard, badge: null, roles: ['ADMIN', 'STAFF'] },
       ],
     },
     {
       group: 'CHUYẾN BAY & ĐỘI BAY',
       items: [
-        { path: '/admin/flights', label: 'Quản lý Chuyến bay', icon: Plane, badge: null },
-        { path: '/admin/airports', label: 'Danh mục Sân bay', icon: Building2, badge: null },
-        { path: '/admin/airlines', label: 'Danh mục Hãng bay', icon: PlaneTakeoff, badge: null },
-        { path: '/admin/aircraft', label: 'Đội tàu bay', icon: Plane, badge: null },
+        { path: '/admin/flights', label: 'Quản lý Chuyến bay', icon: Plane, badge: null, roles: ['ADMIN', 'STAFF'] },
+        { path: '/admin/airports', label: 'Danh mục Sân bay', icon: Building2, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/airlines', label: 'Danh mục Hãng bay', icon: PlaneTakeoff, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/aircraft', label: 'Đội tàu bay', icon: Plane, badge: null, roles: ['ADMIN'] },
       ],
     },
     {
       group: 'KINH DOANH & DOANH THU',
       items: [
-        { path: '/admin/bookings', label: 'Quản lý Đặt vé', icon: CreditCard, badge: null },
-        { path: '/admin/tickets', label: 'Hỗ trợ khách hàng', icon: LifeBuoy, badge: null },
-        { path: '/admin/coupons', label: 'Mã giảm giá', icon: Tag, badge: null },
-        { path: '/admin/cms', label: 'Quản lý Nội dung CMS', icon: FileText, badge: null },
+        { path: '/admin/bookings', label: 'Quản lý Đặt vé', icon: CreditCard, badge: null, roles: ['ADMIN', 'STAFF'] },
+        { path: '/admin/tickets', label: 'Hỗ trợ khách hàng', icon: LifeBuoy, badge: null, roles: ['ADMIN', 'STAFF'] },
+        { path: '/admin/coupons', label: 'Mã giảm giá', icon: Tag, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/cms', label: 'Quản lý Nội dung CMS', icon: FileText, badge: null, roles: ['ADMIN'] },
       ],
     },
     {
       group: 'TÀI KHOẢN & BẢO MẬT',
       items: [
-        { path: '/admin/customers', label: 'Tài khoản Khách hàng', icon: Users, badge: null },
-        { path: '/admin/staff', label: 'Tài khoản Nhân viên', icon: UserCheck, badge: null },
-        { path: '/admin/audit', label: 'Nhật ký Hệ thống', icon: FileText, badge: null },
+        { path: '/admin/customers', label: 'Tài khoản Khách hàng', icon: Users, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/staff', label: 'Tài khoản Nhân viên', icon: UserCheck, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/audit', label: 'Nhật ký Hệ thống', icon: FileText, badge: null, roles: ['ADMIN'] },
       ],
     },
   ];
+
+  const visibleNavGroups = navGroups
+    .map((g) => ({
+      ...g,
+      items: g.items.filter((item) => item.roles.includes(userRole as any)),
+    }))
+    .filter((g) => g.items.length > 0);
 
   const handleLogout = () => {
     logout();
     navigate('/signin');
   };
 
-  const allNavItems = navGroups.flatMap(g => g.items);
+  const allNavItems = visibleNavGroups.flatMap(g => g.items);
   const currentNav = allNavItems.find((item) => item.path === location.pathname) || allNavItems[0];
 
   return (
@@ -114,7 +124,7 @@ export const AdminLayout: React.FC = () => {
               </div>
               <div className="flex flex-col group-data-[collapsible=icon]:hidden">
                 <span className="text-xs font-semibold text-slate-900 tracking-tight leading-none">
-                  Quản Trị Chuyến Bay
+                  {userRole === 'ADMIN' ? 'Quản Trị Hệ Thống' : 'Cổng Vận Hành Nhân Viên'}
                 </span>
                 <span className="text-[10px] text-slate-500 font-normal mt-1">Hệ thống quản lý đặt vé</span>
               </div>
@@ -123,7 +133,7 @@ export const AdminLayout: React.FC = () => {
 
           {/* Grouped Sidebar Navigation Content */}
           <SidebarContent className="p-2 bg-white group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:py-2">
-            {navGroups.map((group, idx) => (
+            {visibleNavGroups.map((group, idx) => (
               <SidebarGroup key={idx} className="py-1 group-data-[collapsible=icon]:py-0.5">
                 <SidebarGroupLabel className="text-[10px] font-semibold text-slate-400 tracking-wider uppercase px-2 mb-1 group-data-[collapsible=icon]:hidden">
                   {group.group}
@@ -159,38 +169,67 @@ export const AdminLayout: React.FC = () => {
             ))}
           </SidebarContent>
 
-          {/* Bottom User Panel */}
-          <SidebarFooter className="p-3 border-t border-slate-200/80 flex flex-col gap-2 bg-white group-data-[collapsible=icon]:p-1.5 group-data-[collapsible=icon]:items-center">
-            {/* User Card & Logout */}
-            <div className="flex items-center justify-between p-2 bg-slate-50 rounded-md border border-slate-200/80 group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:justify-center">
-              <div className="flex items-center gap-2 min-w-0 group-data-[collapsible=icon]:justify-center">
-                <Avatar className="w-7 h-7 bg-[#0065eb] text-white font-bold text-[10px] shrink-0">
-                  <AvatarFallback className="bg-[#0065eb] text-white text-[10px]">
-                    {user?.full_name?.charAt(0).toUpperCase() || 'A'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-                  <span className="text-xs font-semibold text-slate-900 truncate">{user?.full_name || 'Admin'}</span>
-                  <span className="text-[9px] text-[#0065eb] font-mono">SYS_ADMIN</span>
-                </div>
-              </div>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={handleLogout}
-                      className="text-slate-400 hover:text-red-600 p-1 rounded-md hover:bg-slate-200/60 transition-colors cursor-pointer group-data-[collapsible=icon]:hidden"
-                    >
-                      <LogOut className="w-3.5 h-3.5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="text-xs bg-slate-900 text-white border-slate-800">
-                    Đăng xuất
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+          {/* Bottom User Panel with Dropdown Menu (Flat Clean Style without Border & Shadow) */}
+          <SidebarFooter className="p-2.5 bg-white border-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between p-2 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer outline-none border-0 shadow-none group-data-[collapsible=icon]:p-1 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:bg-transparent"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Avatar className="w-8 h-8 bg-[#0065eb] text-white font-bold text-xs shrink-0">
+                      <AvatarFallback className="bg-[#0065eb] text-white text-xs">
+                        {user?.full_name?.charAt(0).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col text-left truncate group-data-[collapsible=icon]:hidden">
+                      <span className="text-xs font-semibold text-slate-900 truncate leading-tight">
+                        {user?.full_name || 'User'}
+                      </span>
+                      <span className="text-[9px] text-[#0065eb] font-mono font-bold uppercase mt-0.5">
+                        {userRole === 'ADMIN' ? 'SYS_ADMIN' : 'STAFF_OPERATOR'}
+                      </span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0 group-data-[collapsible=icon]:hidden" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="right" align="end" className="w-56 bg-white rounded-xl border-0 shadow-none p-1.5 font-sans z-50">
+                <DropdownMenuLabel className="px-2 py-2">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-xs font-bold text-slate-900 truncate">{user?.full_name || 'User'}</span>
+                    <span className="text-[11px] text-slate-500 font-normal truncate">{user?.email}</span>
+                    <span className="inline-block mt-1 text-[9px] font-bold text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded-md w-max uppercase font-mono">
+                      {userRole === 'ADMIN' ? 'Administrator' : 'Staff Operator'}
+                    </span>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-slate-100 my-1" />
+                <DropdownMenuItem 
+                  onClick={() => navigate('/profile')} 
+                  className="text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg px-2 py-2 flex items-center gap-2 cursor-pointer"
+                >
+                  <UserIcon className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Hồ sơ cá nhân</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => navigate('/')} 
+                  className="text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg px-2 py-2 flex items-center gap-2 cursor-pointer"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Quay lại trang khách hàng</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-slate-100 my-1" />
+                <DropdownMenuItem 
+                  onClick={handleLogout} 
+                  className="text-xs text-rose-600 hover:bg-rose-50 rounded-lg px-2 py-2 flex items-center gap-2 cursor-pointer font-medium"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Đăng xuất</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarFooter>
 
           <SidebarRail />

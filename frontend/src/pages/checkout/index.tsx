@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { UserCheck, ShieldCheck, CalendarIcon } from 'lucide-react';
 
 import { PassengerTypeEnum } from '@/types/enums';
+import { DateOfBirthPicker } from '@/components/common/DateOfBirthPicker';
 
 const NATIONALITY_OPTIONS = [
   { code: 'VN', label: 'Việt Nam (VN)' },
@@ -172,9 +173,9 @@ export const Checkout: React.FC = () => {
     } catch (err: any) {
       const msg = err.message || '';
       if (
-        msg.includes('active') || 
-        msg.includes('expired') || 
-        err.code === 'DRAFT_NOT_ACTIVE' || 
+        msg.includes('active') ||
+        msg.includes('expired') ||
+        err.code === 'DRAFT_NOT_ACTIVE' ||
         err.code === 'DRAFT_EXPIRED'
       ) {
         toast.error('Đơn hàng nháp này đã hoàn tất đặt vé hoặc hết hạn. Đang chuyển về trang tìm kiếm...');
@@ -194,7 +195,7 @@ export const Checkout: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 font-sans py-8">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-6">
-        
+
         {/* Header */}
         <div className="border-b border-slate-200/80 pb-4">
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Thanh Toán & Thông Tin Hành Khách</h1>
@@ -202,10 +203,10 @@ export const Checkout: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
+
           {/* Left Column (8 cols): 1. Interactive Seat Selection FIRST, 2. Contact Info, 3. Passenger Info */}
           <div className="lg:col-span-8 flex flex-col gap-6">
-            
+
             {/* 1. Interactive Seat Selection Map (MOVED UP TO TOP) */}
             {flightId && (
               <SeatMapSelector
@@ -253,7 +254,7 @@ export const Checkout: React.FC = () => {
                 <div key={idx} className="p-4 bg-slate-50 rounded-xl flex flex-col gap-3 text-xs">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-slate-900">Hành Khách {idx + 1} ({pax.passenger_type || 'ADULT'})</span>
-                    
+
                     {/* Saved passenger autofill options */}
                     {savedPassengers.length > 0 && (
                       <div className="flex items-center gap-1.5">
@@ -291,37 +292,18 @@ export const Checkout: React.FC = () => {
                       />
                     </div>
 
-                    {/* Date of Birth Picker using shadcn Popover + Calendar */}
-                    <div>
-                      <label className="text-[11px] font-medium text-slate-600 block mb-1">Ngày sinh</label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full justify-start text-left font-normal text-xs h-9 bg-white border-slate-200 shadow-none cursor-pointer"
-                          >
-                            <CalendarIcon className="mr-2 h-3.5 w-3.5 text-slate-400" />
-                            {pax.date_of_birth ? pax.date_of_birth : 'Chọn ngày sinh'}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 bg-white border border-slate-200 shadow-xl rounded-xl" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={pax.date_of_birth ? new Date(pax.date_of_birth) : undefined}
-                            onSelect={(d) => {
-                              if (d) {
-                                const iso = d.toISOString().split('T')[0];
-                                setPassengers((prev) => {
-                                  const next = [...prev];
-                                  next[idx] = { ...next[idx], date_of_birth: iso };
-                                  return next;
-                                });
-                              }
-                            }}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
+                    {/* Date of Birth Picker */}
+                    <DateOfBirthPicker
+                      label="Ngày sinh"
+                      value={pax.date_of_birth}
+                      onChange={(iso) => {
+                        setPassengers((prev) => {
+                          const next = [...prev];
+                          next[idx] = { ...next[idx], date_of_birth: iso };
+                          return next;
+                        });
+                      }}
+                    />
 
                     {/* Nationality using shadcn Select */}
                     <div>

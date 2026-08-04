@@ -263,7 +263,7 @@ def admin_delete_aircraft(handler, at_id):
 @route('GET', '/admin/flights')
 def admin_list_flights(handler):
     db = get_db()
-    auth.require_admin(handler, db)
+    auth.require_staff(handler, db)
     page, size = req.get_pagination(handler)
     date_filter = req.get_query_param(handler, 'date', '')
     rows = flight_repo.list_flights_admin(db, date_filter)
@@ -408,7 +408,7 @@ def admin_update_seat(handler, flight_id, seat_id):
 @route('GET', '/admin/bookings')
 def admin_list_bookings(handler):
     db = get_db()
-    auth.require_admin(handler, db)
+    auth.require_staff(handler, db)
     page, size = req.get_pagination(handler)
     status = req.get_query_param(handler, 'status', '')
     rows = booking_repo.list_all_bookings(db, status or None)
@@ -418,7 +418,7 @@ def admin_list_bookings(handler):
 @route('GET', '/admin/bookings/{booking_id}')
 def admin_get_booking(handler, booking_id):
     db = get_db()
-    auth.require_admin(handler, db)
+    auth.require_staff(handler, db)
     booking = booking_repo.find_booking(db, booking_id)
     if not booking:
         from core.exceptions import NotFoundError
@@ -429,7 +429,7 @@ def admin_get_booking(handler, booking_id):
 @route('PATCH', '/admin/bookings/{booking_id}/status')
 def admin_update_booking_status(handler, booking_id):
     db = get_db()
-    user = auth.require_admin(handler, db)
+    user = auth.require_staff(handler, db)
     data = req.parse_json_body(handler)
     val.require_fields(data, 'status')
     booking = booking_repo.find_booking(db, booking_id)
@@ -649,7 +649,7 @@ def admin_delete_content(handler, content_id):
 @route('GET', '/admin/dashboard/summary')
 def admin_dashboard_summary(handler):
     db = get_db()
-    auth.require_admin(handler, db)
+    auth.require_staff(handler, db)
     total_bookings = db.execute("SELECT COUNT(*) as cnt FROM bookings").fetchone()['cnt']
     confirmed = db.execute(
         "SELECT COUNT(*) as cnt FROM bookings WHERE status='CONFIRMED'"
@@ -672,7 +672,7 @@ def admin_dashboard_summary(handler):
 @route('GET', '/admin/dashboard/bookings')
 def admin_dashboard_bookings(handler):
     db = get_db()
-    auth.require_admin(handler, db)
+    auth.require_staff(handler, db)
     rows = db.execute(
         "SELECT DATE(created_at) as date, COUNT(*) as count, SUM(total_amount) as revenue "
         "FROM bookings GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30"
@@ -683,7 +683,7 @@ def admin_dashboard_bookings(handler):
 @route('GET', '/admin/dashboard/revenue')
 def admin_dashboard_revenue(handler):
     db = get_db()
-    auth.require_admin(handler, db)
+    auth.require_staff(handler, db)
     rows = db.execute(
         "SELECT DATE(created_at) as date, SUM(amount) as revenue "
         "FROM payments WHERE status='SUCCESS' GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30"
@@ -694,7 +694,7 @@ def admin_dashboard_revenue(handler):
 @route('GET', '/admin/dashboard/flights')
 def admin_dashboard_flights(handler):
     db = get_db()
-    auth.require_admin(handler, db)
+    auth.require_staff(handler, db)
     rows = db.execute("SELECT status, COUNT(*) as count FROM flights GROUP BY status").fetchall()
     response.success(handler, [dict(r) for r in rows])
 

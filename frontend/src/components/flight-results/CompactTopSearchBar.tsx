@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
-import { MapPin, Calendar as CalendarIcon, User, ArrowLeftRight, Building2 } from 'lucide-react';
+import { MapPin, ArrowLeftRight, Building2 } from 'lucide-react';
 import { useFlightSearch } from '@/hooks/use-flight-search';
 import { catalogService } from '@/services/catalog';
 import type { Airport } from '@/types/airport';
+import { DateRangePickerPopover } from '@/components/flight/DateRangePickerPopover';
+import { PassengerSelectorPopover } from '@/components/flight/PassengerSelectorPopover';
 
 export const CompactTopSearchBar: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
   const {
     flightType,
     setFlightType,
@@ -16,12 +22,21 @@ export const CompactTopSearchBar: React.FC = () => {
     goingTo,
     setGoingTo,
     dateRange,
+    setDateRange,
     passengers,
+    updateAdults,
+    updateChildren,
+    updateInfantsLap,
+    updateInfantsSeat,
+    setCabinClass,
     handleSwap,
   } = useFlightSearch();
 
   const [leavingOpen, setLeavingOpen] = useState(false);
   const [goingOpen, setGoingOpen] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
+  const [travelersOpen, setTravelersOpen] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [airports, setAirports] = useState<Airport[]>([]);
 
@@ -41,7 +56,71 @@ export const CompactTopSearchBar: React.FC = () => {
     }).catch(() => {});
   }, []);
 
-  const totalTravelers = passengers.adults + passengers.children + passengers.infantsLap + passengers.infantsSeat;
+  // Sync state from URL query params when page loads or URL changes
+  useEffect(() => {
+    const originCode = searchParams.get('origin') || searchParams.get('leavingFrom');
+    const originCity = searchParams.get('leavingFromCity');
+    const destCode = searchParams.get('destination') || searchParams.get('goingTo');
+    const destCity = searchParams.get('goingToCity');
+    const startD = searchParams.get('startDate');
+    const endD = searchParams.get('endDate');
+    const trip = searchParams.get('trip') || searchParams.get('trip_type');
+    const cabin = searchParams.get('cabinClass');
+
+    if (trip) {
+      if (trip.toLowerCase().includes('one')) setFlightType('one-way');
+      else if (trip.toLowerCase().includes('multi')) setFlightType('multi-city');
+      else setFlightType('roundtrip');
+    }
+
+    if (originCode) {
+      setLeavingFrom({
+        code: originCode,
+        city: originCity || originCode,
+        name: `${originCity || originCode} Airport`,
+        sublabel: `${originCode}, Vietnam`,
+      });
+    }
+    if (destCode) {
+      setGoingTo({
+        code: destCode,
+        city: destCity || destCode,
+        name: `${destCity || destCode} Airport`,
+        sublabel: `${destCode}, Vietnam`,
+      });
+    }
+    if (startD && endD) {
+      const startNum = parseInt(startD, 10);
+      const endNum = parseInt(endD, 10);
+      if (!isNaN(startNum) && !isNaN(endNum)) {
+        setDateRange({
+          ...dateRange,
+          startDate: startNum,
+          endDate: endNum,
+        });
+      }
+    }
+    if (cabin) {
+      setCabinClass(cabin);
+    }
+  }, [searchParams]);
+
+  const handleSearchSubmit = () => {
+    const queryParams = new URLSearchParams({
+      trip: flightType,
+      leavingFrom: leavingFrom?.code || 'SGN',
+      leavingFromCity: leavingFrom?.city || 'Ho Chi Minh City',
+      goingTo: goingTo?.code || 'HAN',
+      goingToCity: goingTo?.city || 'Hanoi',
+      startDate: dateRange.startDate.toString(),
+      endDate: dateRange.endDate.toString(),
+      adults: passengers.adults.toString(),
+      children: passengers.children.toString(),
+      cabinClass: passengers.cabinClass,
+    }).toString();
+
+    navigate(`/Flights-Search?${queryParams}`);
+  };
 
   const filteredAirports = airports.filter(
     (a) =>
@@ -53,37 +132,37 @@ export const CompactTopSearchBar: React.FC = () => {
     <div className="bg-slate-50 pt-4 pb-2 font-sans">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-3">
         
-        {/* Flight Type Sub-tabs (Roundtrip / One-way / Multi-city) */}
-        <div className="flex items-center gap-6 border-b border-gray-100 pb-2 text-xs font-bold">
+        {/* Flight Type Sub-tabs (Khứ Hồi / Một Chiều / Nhiều Thành Phố) */}
+        <div className="flex items-center gap-6 border-b border-gray-100 pb-2 text-sm sm:text-base font-normal">
           <button
             onClick={() => setFlightType('roundtrip')}
             className={`pb-2 transition-all cursor-pointer ${
               flightType === 'roundtrip'
-                ? 'text-[#0065eb] border-b-2 border-[#0065eb]'
-                : 'text-slate-700 hover:text-slate-900'
+                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 font-normal'
             }`}
           >
-            Roundtrip
+            Khứ Hồi
           </button>
           <button
             onClick={() => setFlightType('one-way')}
             className={`pb-2 transition-all cursor-pointer ${
               flightType === 'one-way'
-                ? 'text-[#0065eb] border-b-2 border-[#0065eb]'
-                : 'text-slate-700 hover:text-slate-900'
+                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 font-normal'
             }`}
           >
-            One-way
+            Một Chiều
           </button>
           <button
             onClick={() => setFlightType('multi-city')}
             className={`pb-2 transition-all cursor-pointer ${
               flightType === 'multi-city'
-                ? 'text-[#0065eb] border-b-2 border-[#0065eb]'
-                : 'text-slate-700 hover:text-slate-900'
+                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 font-normal'
             }`}
           >
-            Multi-city
+            Nhiều Thành Phố
           </button>
         </div>
 
@@ -96,7 +175,7 @@ export const CompactTopSearchBar: React.FC = () => {
             {/* Leaving from Popover */}
             <Popover open={leavingOpen} onOpenChange={setLeavingOpen}>
               <PopoverTrigger asChild className="w-full flex-1">
-                <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-transparent hover:border-gray-600 cursor-pointer h-[48px]">
+                <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-gray-600 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
                     <span className="text-[10px] font-medium text-gray-500 leading-tight">Leaving from</span>
@@ -149,7 +228,7 @@ export const CompactTopSearchBar: React.FC = () => {
             {/* Going to Popover */}
             <Popover open={goingOpen} onOpenChange={setGoingOpen}>
               <PopoverTrigger asChild className="w-full flex-1">
-                <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-transparent hover:border-gray-600 cursor-pointer h-[48px]">
+                <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-gray-600 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
                     <span className="text-[10px] font-medium text-gray-500 leading-tight">Going to</span>
@@ -160,6 +239,14 @@ export const CompactTopSearchBar: React.FC = () => {
                 </div>
               </PopoverTrigger>
               <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
+                <div className="p-2 border-b border-gray-100 bg-gray-50/50">
+                  <Input 
+                    placeholder="Search airport..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full text-xs"
+                  />
+                </div>
                 <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
                   {filteredAirports.map((ap) => (
                     <button
@@ -183,35 +270,34 @@ export const CompactTopSearchBar: React.FC = () => {
 
           </div>
 
-          {/* Dates Input */}
+          {/* Interactive Dates Field using DateRangePickerPopover */}
           <div className="w-full lg:flex-1">
-            <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-transparent hover:border-gray-600 cursor-pointer h-[48px]">
-              <CalendarIcon className="w-4 h-4 text-slate-700 shrink-0" />
-              <div className="flex flex-col text-left overflow-hidden">
-                <span className="text-[10px] font-medium text-gray-500 leading-tight">Dates</span>
-                <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
-                  Wed, Aug {dateRange.startDate} - Wed, Aug {dateRange.endDate}
-                </span>
-              </div>
-            </div>
+            <DateRangePickerPopover
+              dateRange={dateRange}
+              onChange={setDateRange}
+              isOpen={dateOpen}
+              onOpenChange={setDateOpen}
+            />
           </div>
 
-          {/* Travelers & Cabin Class Input */}
+          {/* Interactive Travelers & Cabin Class Field using PassengerSelectorPopover */}
           <div className="w-full lg:flex-1">
-            <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-transparent hover:border-gray-600 cursor-pointer h-[48px]">
-              <User className="w-4 h-4 text-slate-700 shrink-0" />
-              <div className="flex flex-col text-left overflow-hidden">
-                <span className="text-[10px] font-medium text-gray-500 leading-tight">Travelers, Cabin class</span>
-                <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
-                  {totalTravelers} traveler, {passengers.cabinClass}
-                </span>
-              </div>
-            </div>
+            <PassengerSelectorPopover
+              passengers={passengers}
+              onUpdateAdults={updateAdults}
+              onUpdateChildren={updateChildren}
+              onUpdateInfantsLap={updateInfantsLap}
+              onUpdateInfantsSeat={updateInfantsSeat}
+              onSetCabinClass={setCabinClass}
+              isOpen={travelersOpen}
+              onOpenChange={setTravelersOpen}
+            />
           </div>
 
           {/* Search Button */}
           <div className="w-full lg:w-auto shrink-0">
             <Button
+              onClick={handleSearchSubmit}
               className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-bold rounded-full px-7 h-[48px] text-xs sm:text-sm shadow-xs transition-colors cursor-pointer"
             >
               Search

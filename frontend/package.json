@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode localdev",
+    "dev:local": "vite --mode localdev",
+    "dev:prod": "vite --mode proddev",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

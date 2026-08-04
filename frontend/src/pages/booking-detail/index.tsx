@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { ETicketPrintable } from '@/components/booking/ETicketPrintable';
 import { 
   Printer, 
   Mail, 
@@ -129,8 +130,13 @@ export const BookingDetail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans py-6">
-      <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-5">
+    <>
+      {/* Official PDF Boarding Pass Printable Template */}
+      <ETicketPrintable detail={detail} etickets={etickets} />
+
+      {/* Interactive Web App View */}
+      <div className="no-print min-h-screen bg-slate-50 font-sans py-6">
+        <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-5">
         
         {/* Top Action Bar */}
         <div className="flex items-center justify-between">
@@ -308,5 +314,6 @@ export const BookingDetail: React.FC = () => {
 
       </div>
     </div>
+    </>
   );
 };
