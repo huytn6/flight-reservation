@@ -55,48 +55,57 @@ export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Grouped Nav Items for Enterprise SaaS / ERP Hierarchy
+  const userRole = user?.role || 'STAFF';
+
+  // Grouped Nav Items for Enterprise SaaS / ERP Hierarchy with Role Permissions
   const navGroups = [
     {
       group: 'THỐNG KÊ & TỔNG QUAN',
       items: [
-        { path: '/admin', label: 'Tổng quan Dashboard', icon: LayoutDashboard, badge: null },
+        { path: '/admin', label: 'Tổng quan Dashboard', icon: LayoutDashboard, badge: null, roles: ['ADMIN', 'STAFF'] },
       ],
     },
     {
       group: 'CHUYẾN BAY & ĐỘI BAY',
       items: [
-        { path: '/admin/flights', label: 'Quản lý Chuyến bay', icon: Plane, badge: null },
-        { path: '/admin/airports', label: 'Danh mục Sân bay', icon: Building2, badge: null },
-        { path: '/admin/airlines', label: 'Danh mục Hãng bay', icon: PlaneTakeoff, badge: null },
-        { path: '/admin/aircraft', label: 'Đội tàu bay', icon: Plane, badge: null },
+        { path: '/admin/flights', label: 'Quản lý Chuyến bay', icon: Plane, badge: null, roles: ['ADMIN', 'STAFF'] },
+        { path: '/admin/airports', label: 'Danh mục Sân bay', icon: Building2, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/airlines', label: 'Danh mục Hãng bay', icon: PlaneTakeoff, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/aircraft', label: 'Đội tàu bay', icon: Plane, badge: null, roles: ['ADMIN'] },
       ],
     },
     {
       group: 'KINH DOANH & DOANH THU',
       items: [
-        { path: '/admin/bookings', label: 'Quản lý Đặt vé', icon: CreditCard, badge: null },
-        { path: '/admin/tickets', label: 'Hỗ trợ khách hàng', icon: LifeBuoy, badge: null },
-        { path: '/admin/coupons', label: 'Mã giảm giá', icon: Tag, badge: null },
-        { path: '/admin/cms', label: 'Quản lý Nội dung CMS', icon: FileText, badge: null },
+        { path: '/admin/bookings', label: 'Quản lý Đặt vé', icon: CreditCard, badge: null, roles: ['ADMIN', 'STAFF'] },
+        { path: '/admin/tickets', label: 'Hỗ trợ khách hàng', icon: LifeBuoy, badge: null, roles: ['ADMIN', 'STAFF'] },
+        { path: '/admin/coupons', label: 'Mã giảm giá', icon: Tag, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/cms', label: 'Quản lý Nội dung CMS', icon: FileText, badge: null, roles: ['ADMIN'] },
       ],
     },
     {
       group: 'TÀI KHOẢN & BẢO MẬT',
       items: [
-        { path: '/admin/customers', label: 'Tài khoản Khách hàng', icon: Users, badge: null },
-        { path: '/admin/staff', label: 'Tài khoản Nhân viên', icon: UserCheck, badge: null },
-        { path: '/admin/audit', label: 'Nhật ký Hệ thống', icon: FileText, badge: null },
+        { path: '/admin/customers', label: 'Tài khoản Khách hàng', icon: Users, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/staff', label: 'Tài khoản Nhân viên', icon: UserCheck, badge: null, roles: ['ADMIN'] },
+        { path: '/admin/audit', label: 'Nhật ký Hệ thống', icon: FileText, badge: null, roles: ['ADMIN'] },
       ],
     },
   ];
+
+  const visibleNavGroups = navGroups
+    .map((g) => ({
+      ...g,
+      items: g.items.filter((item) => item.roles.includes(userRole as any)),
+    }))
+    .filter((g) => g.items.length > 0);
 
   const handleLogout = () => {
     logout();
     navigate('/signin');
   };
 
-  const allNavItems = navGroups.flatMap(g => g.items);
+  const allNavItems = visibleNavGroups.flatMap(g => g.items);
   const currentNav = allNavItems.find((item) => item.path === location.pathname) || allNavItems[0];
 
   return (
@@ -114,7 +123,7 @@ export const AdminLayout: React.FC = () => {
               </div>
               <div className="flex flex-col group-data-[collapsible=icon]:hidden">
                 <span className="text-xs font-semibold text-slate-900 tracking-tight leading-none">
-                  Quản Trị Chuyến Bay
+                  {userRole === 'ADMIN' ? 'Quản Trị Hệ Thống' : 'Cổng Vận Hành Nhân Viên'}
                 </span>
                 <span className="text-[10px] text-slate-500 font-normal mt-1">Hệ thống quản lý đặt vé</span>
               </div>
@@ -123,7 +132,7 @@ export const AdminLayout: React.FC = () => {
 
           {/* Grouped Sidebar Navigation Content */}
           <SidebarContent className="p-2 bg-white group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:py-2">
-            {navGroups.map((group, idx) => (
+            {visibleNavGroups.map((group, idx) => (
               <SidebarGroup key={idx} className="py-1 group-data-[collapsible=icon]:py-0.5">
                 <SidebarGroupLabel className="text-[10px] font-semibold text-slate-400 tracking-wider uppercase px-2 mb-1 group-data-[collapsible=icon]:hidden">
                   {group.group}
@@ -166,12 +175,14 @@ export const AdminLayout: React.FC = () => {
               <div className="flex items-center gap-2 min-w-0 group-data-[collapsible=icon]:justify-center">
                 <Avatar className="w-7 h-7 bg-[#0065eb] text-white font-bold text-[10px] shrink-0">
                   <AvatarFallback className="bg-[#0065eb] text-white text-[10px]">
-                    {user?.full_name?.charAt(0).toUpperCase() || 'A'}
+                    {user?.full_name?.charAt(0).toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
-                  <span className="text-xs font-semibold text-slate-900 truncate">{user?.full_name || 'Admin'}</span>
-                  <span className="text-[9px] text-[#0065eb] font-mono">SYS_ADMIN</span>
+                  <span className="text-xs font-semibold text-slate-900 truncate">{user?.full_name || 'User'}</span>
+                  <span className="text-[9px] text-[#0065eb] font-mono font-bold uppercase">
+                    {userRole === 'ADMIN' ? 'SYS_ADMIN' : 'STAFF_OPERATOR'}
+                  </span>
                 </div>
               </div>
 
