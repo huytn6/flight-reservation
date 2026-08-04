@@ -146,10 +146,14 @@ body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 10mm;
+    margin: 8mm;
   }
   header, footer, nav, .no-print, button {
     display: none !important;
+  }
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
   body {
     background: #ffffff !important;
@@ -159,5 +163,7 @@ body {
   }
   .print-only {
     display: block !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 }
