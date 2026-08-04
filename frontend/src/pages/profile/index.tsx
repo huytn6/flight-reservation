@@ -185,12 +185,12 @@ export const Profile: React.FC = () => {
     setChangingPassword(true);
     try {
       await authService.changePassword({ old_password: oldPassword, new_password: newPassword });
-      toast.success('Password changed successfully. Please sign in again.');
+      toast.success('Đổi mật khẩu thành công. Vui lòng đăng nhập lại.');
       setOldPassword('');
       setNewPassword('');
       setEditingPassword(false);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to change password');
+      toast.error(err.message || 'Đổi mật khẩu thất bại');
     } finally {
       setChangingPassword(false);
     }
@@ -199,10 +199,10 @@ export const Profile: React.FC = () => {
   const handleRevokeSession = async (id: string) => {
     try {
       await userService.revokeSession(id);
-      toast.success('Session revoked');
+      toast.success('Đã đăng xuất thiết bị');
       loadSessions();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to revoke session');
+      toast.error(err.message || 'Đăng xuất thiết bị thất bại');
     }
   };
 
@@ -213,15 +213,15 @@ export const Profile: React.FC = () => {
     try {
       if (editingPassenger.id) {
         await userService.updateSavedPassenger(editingPassenger.id, editingPassenger);
-        toast.success('Passenger updated');
+        toast.success('Đã cập nhật thông tin hành khách');
       } else {
         await userService.addSavedPassenger(editingPassenger);
-        toast.success('Passenger saved');
+        toast.success('Đã thêm hành khách thành công');
       }
       setEditingPassenger(null);
       loadPassengers();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to save passenger');
+      toast.error(err.message || 'Lưu thông tin hành khách thất bại');
     } finally {
       setSavingPassenger(false);
     }
@@ -230,20 +230,20 @@ export const Profile: React.FC = () => {
   const handleDeletePassenger = async (id: string) => {
     try {
       await userService.deleteSavedPassenger(id);
-      toast.success('Passenger deleted');
+      toast.success('Đã xóa thông tin hành khách');
       loadPassengers();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to delete passenger');
+      toast.error(err.message || 'Xóa hành khách thất bại');
     }
   };
 
   const handleUnsaveFlight = async (id: string) => {
     try {
       await flightService.unsaveFlight(id);
-      toast.success('Flight removed');
+      toast.success('Đã xóa chuyến bay khỏi danh sách đã lưu');
       loadSavedFlights();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to unsave flight');
+      toast.error(err.message || 'Xóa chuyến bay thất bại');
     }
   };
 
@@ -252,9 +252,9 @@ export const Profile: React.FC = () => {
     setAlertPrefs({ ...alertPrefs, [key]: val });
     try {
       await notificationService.updatePreferences({ [key]: val });
-      toast.success('Preferences updated');
+      toast.success('Cập nhật cài đặt thông báo thành công');
     } catch {
-      toast.error('Failed to update preferences');
+      toast.error('Cập nhật cài đặt thông báo thất bại');
     }
   };
 
@@ -263,12 +263,12 @@ export const Profile: React.FC = () => {
     setCreatingTicket(true);
     try {
       await supportService.createTicket({ subject: ticketSubject, category: ticketCategory, message: ticketMessage });
-      toast.success('Support ticket created!');
+      toast.success('Tạo yêu cầu hỗ trợ thành công!');
       setTicketSubject('');
       setTicketMessage('');
       loadSupportTickets();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create ticket');
+      toast.error(err.message || 'Tạo yêu cầu hỗ trợ thất bại');
     } finally {
       setCreatingTicket(false);
     }
@@ -279,7 +279,7 @@ export const Profile: React.FC = () => {
       const detail = await supportService.getTicketDetail(id);
       setActiveTicketDetail(detail);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load thread');
+      toast.error(err.message || 'Tải chi tiết cuộc trò chuyện thất bại');
     }
   };
 
@@ -289,11 +289,11 @@ export const Profile: React.FC = () => {
     setSendingReply(true);
     try {
       await supportService.addMessage(activeTicketDetail.ticket.id, replyBody);
-      toast.success('Message sent');
+      toast.success('Đã gửi tin nhắn phản hồi');
       setReplyBody('');
       handleSelectTicket(activeTicketDetail.ticket.id);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send message');
+      toast.error(err.message || 'Gửi tin nhắn thất bại');
     } finally {
       setSendingReply(false);
     }
@@ -302,39 +302,39 @@ export const Profile: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      toast.success('Logged out successfully');
+      toast.success('Đăng xuất thành công');
       navigate('/');
     } catch {
-      toast.error('Logout failed');
+      toast.error('Đăng xuất thất bại');
     }
   };
 
-  const firstName = user?.full_name?.split(' ')[0] || user?.full_name || 'User';
+  const firstName = user?.full_name?.split(' ')[0] || user?.full_name || 'Bạn';
 
   return (
     <div className="max-w-[1240px] mx-auto px-4 py-4 sm:py-6 font-sans">
       
       {/* Top Header Title */}
       <div className="mb-4">
-        <h1 className="text-lg sm:text-xl font-bold text-slate-900">Hi, {firstName}</h1>
+        <h1 className="text-lg sm:text-xl font-bold text-slate-900">Xin chào, {firstName}</h1>
         <p className="text-[11px] text-slate-500">{user?.email}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
         
-        {/* Left Sidebar Navigation Cards (Expedia Layout matching image) */}
+        {/* Left Sidebar Navigation Cards */}
         <div className="flex flex-col gap-2">
           
           {/* Account Overview Summary Card */}
           <div className="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col gap-1 relative mb-1">
             <span className="absolute top-3 right-3 text-[9px] font-semibold px-2 py-0.5 bg-blue-100 text-blue-800 rounded-md uppercase">
-              {user?.role}
+              {user?.role === 'ADMIN' ? 'Quản trị viên' : user?.role === 'STAFF' ? 'Nhân viên' : 'Khách hàng'}
             </span>
             <div className="flex items-center gap-1 text-[11px] text-slate-500">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Account Status</span>
+              <span>Trạng thái tài khoản</span>
             </div>
-            <p className="text-base font-bold text-slate-900 capitalize">{user?.status || 'Active'}</p>
+            <p className="text-base font-bold text-slate-900 capitalize">Đang hoạt động</p>
             <p className="text-[10px] text-slate-500">{user?.email}</p>
           </div>
 
@@ -348,8 +348,8 @@ export const Profile: React.FC = () => {
             <div className="flex items-start gap-2.5">
               <User className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-slate-900">Profile</p>
-                <p className="text-[10px] text-slate-500">Provide your personal details and travel documents</p>
+                <p className="text-xs font-semibold text-slate-900">Hồ sơ cá nhân</p>
+                <p className="text-[10px] text-slate-500">Cung cấp thông tin cá nhân và giấy tờ du lịch</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
@@ -365,8 +365,8 @@ export const Profile: React.FC = () => {
             <div className="flex items-start gap-2.5">
               <Bell className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-slate-900">Communications</p>
-                <p className="text-[10px] text-slate-500">Control which notifications & price alerts you get</p>
+                <p className="text-xs font-semibold text-slate-900">Thông báo & Giá vé</p>
+                <p className="text-[10px] text-slate-500">Quản lý cài đặt nhận thông báo và theo dõi giá vé</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
@@ -382,8 +382,8 @@ export const Profile: React.FC = () => {
             <div className="flex items-start gap-2.5">
               <Ticket className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-slate-900">My Trips</p>
-                <p className="text-[10px] text-slate-500">View upcoming flight bookings and e-tickets</p>
+                <p className="text-xs font-semibold text-slate-900">Chuyến đi của tôi</p>
+                <p className="text-[10px] text-slate-500">Xem danh sách vé máy bay và vé điện tử đã đặt</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
@@ -399,14 +399,14 @@ export const Profile: React.FC = () => {
             <div className="flex items-start gap-2.5">
               <Heart className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-slate-900">Saved Flights</p>
-                <p className="text-[10px] text-slate-500">View your saved flight offers and favorites</p>
+                <p className="text-xs font-semibold text-slate-900">Chuyến bay đã lưu</p>
+                <p className="text-[10px] text-slate-500">Xem danh sách ưu đãi chuyến bay bạn đã lưu</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           </button>
 
-          {/* 6. Additional Travelers */}
+          {/* 5. Additional Travelers */}
           <button
             onClick={() => setActiveTab('PASSENGERS')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
@@ -416,14 +416,14 @@ export const Profile: React.FC = () => {
             <div className="flex items-start gap-2.5">
               <Users className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-slate-900">Additional Travelers</p>
-                <p className="text-[10px] text-slate-500">Save travel profiles ({passengers.length})</p>
+                <p className="text-xs font-semibold text-slate-900">Hành khách đi cùng</p>
+                <p className="text-[10px] text-slate-500">Lưu thông tin người thân, bạn bè ({passengers.length})</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           </button>
 
-          {/* 7. Security and settings */}
+          {/* 6. Security and settings */}
           <button
             onClick={() => setActiveTab('SECURITY')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
@@ -433,14 +433,14 @@ export const Profile: React.FC = () => {
             <div className="flex items-start gap-2.5">
               <KeyRound className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-slate-900">Security and settings</p>
-                <p className="text-[10px] text-slate-500">Update your email, password or active devices ({sessions.length})</p>
+                <p className="text-xs font-semibold text-slate-900">Bảo mật & Cài đặt</p>
+                <p className="text-[10px] text-slate-500">Cập nhật mật khẩu và quản lý thiết bị đăng nhập ({sessions.length})</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
           </button>
 
-          {/* 8. Help and feedback */}
+          {/* 7. Help and feedback */}
           <button
             onClick={() => setActiveTab('SUPPORT')}
             className={`p-3 rounded-xl border transition-colors text-left flex items-start justify-between cursor-pointer ${
@@ -450,8 +450,8 @@ export const Profile: React.FC = () => {
             <div className="flex items-start gap-2.5">
               <HelpCircle className="w-4 h-4 text-slate-700 shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-semibold text-slate-900">Help and feedback</p>
-                <p className="text-[10px] text-slate-500">Get customer support and help</p>
+                <p className="text-xs font-semibold text-slate-900">Hỗ trợ & Trợ giúp</p>
+                <p className="text-[10px] text-slate-500">Gửi yêu cầu trợ giúp và tư vấn từ nhân viên</p>
               </div>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
@@ -463,112 +463,112 @@ export const Profile: React.FC = () => {
               onClick={handleLogout}
               className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer py-1"
             >
-              Sign out
+              Đăng xuất
             </button>
           </div>
 
         </div>
 
-        {/* Right Main Content Panel (Dynamically changes based on active tab) */}
+        {/* Right Main Content Panel */}
         <div className="lg:col-span-2 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 flex flex-col gap-5 min-h-[480px]">
           
-          {/* TAB 1: PROFILE (BASIC INFO, CONTACT, MORE DETAILS & ADDITIONAL TRAVELERS) */}
+          {/* TAB 1: PROFILE */}
           {activeTab === 'PROFILE' && (
             <div className="flex flex-col gap-5">
               
-              {/* 1. Header Name */}
+              {/* Header Name */}
               <div className="border-b border-slate-100 pb-2">
                 <h2 className="text-xl font-bold text-slate-900">{user?.full_name}</h2>
               </div>
 
-              {/* 2. Basic information */}
+              {/* Basic information */}
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-900">Basic information</h3>
+                  <h3 className="text-lg font-semibold text-slate-900">Thông tin cơ bản</h3>
                   <button
                     onClick={() => navigate('/profile/edit')}
                     className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer"
                   >
-                    Edit
+                    Chỉnh sửa
                   </button>
                 </div>
                 <p className="text-xs text-slate-500 leading-normal mb-1">
-                  Make sure this information matches your travel ID, like your passport or license.
+                  Hãy đảm bảo thông tin này trùng khớp với giấy tờ tùy thân của bạn (Hộ chiếu, CCCD).
                 </p>
 
                 {/* 2-Column Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-xs">
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Name</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Họ và tên</p>
                     <p className="text-slate-600">{user?.full_name}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Bio</p>
-                    <p className="text-slate-600">Not provided</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Giới thiệu</p>
+                    <p className="text-slate-600">Chưa cập nhật</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Date of birth</p>
-                    <p className="text-slate-600">Not provided</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Ngày sinh</p>
+                    <p className="text-slate-600">Chưa cập nhật</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Gender</p>
-                    <p className="text-slate-600">Not provided</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Giới tính</p>
+                    <p className="text-slate-600">Chưa cập nhật</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Accessibility needs</p>
-                    <p className="text-slate-600">Not provided</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Yêu cầu hỗ trợ đặc biệt</p>
+                    <p className="text-slate-600">Chưa cập nhật</p>
                   </div>
                 </div>
               </div>
 
               <div className="border-t border-slate-100" />
 
-              {/* 3. Contact */}
+              {/* Contact */}
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-900">Contact</h3>
+                  <h3 className="text-lg font-semibold text-slate-900">Thông tin liên hệ</h3>
                   <button
                     onClick={() => navigate('/profile/edit')}
                     className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer"
                   >
-                    Edit
+                    Chỉnh sửa
                   </button>
                 </div>
                 <p className="text-xs text-slate-500 leading-normal mb-1">
-                  You can sign in, receive account activity alerts, and get trip updates by sharing this information.
+                  Thông tin dùng để đăng nhập, nhận thông báo chuyến bay và cập nhật trạng thái đặt vé.
                 </p>
 
                 {/* 2-Column Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-xs">
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Mobile number</p>
-                    <p className="text-slate-600">{user?.phone || 'Not provided'}</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Số điện thoại</p>
+                    <p className="text-slate-600">{user?.phone || 'Chưa cập nhật'}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Email</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Địa chỉ Email</p>
                     <p className="text-slate-600">{user?.email}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Emergency contact</p>
-                    <p className="text-slate-600">Not provided</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Liên hệ khẩn cấp</p>
+                    <p className="text-slate-600">Chưa cập nhật</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 mb-0.5">Address</p>
-                    <p className="text-slate-600">Not provided</p>
+                    <p className="font-semibold text-slate-900 mb-0.5">Địa chỉ</p>
+                    <p className="text-slate-600">Chưa cập nhật</p>
                   </div>
                 </div>
               </div>
 
               <div className="border-t border-slate-100" />
 
-              {/* 4. Bottom 2-Column Grid: More details & Additional travelers */}
+              {/* Bottom 2-Column Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 
                 {/* Left Col: More details */}
                 <div className="flex flex-col gap-2">
-                  <h3 className="text-lg font-semibold text-slate-900">More details</h3>
+                  <h3 className="text-lg font-semibold text-slate-900">Chi tiết bổ sung</h3>
                   <p className="text-xs text-slate-500 leading-normal mb-1">
-                    Speed up your booking by securely saving essential travel details.
+                    Lưu trước thông tin để đặt vé máy bay nhanh chóng hơn.
                   </p>
 
                   <div className="flex flex-col gap-2 mt-1">
@@ -577,8 +577,8 @@ export const Profile: React.FC = () => {
                       className="p-3 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left flex items-center justify-between cursor-pointer"
                     >
                       <div>
-                        <p className="text-xs font-semibold text-slate-900">Travel documents</p>
-                        <p className="text-[10px] text-slate-500">Passport information</p>
+                        <p className="text-xs font-semibold text-slate-900">Giấy tờ du lịch</p>
+                        <p className="text-[10px] text-slate-500">Thông tin Hộ chiếu & CCCD</p>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400" />
                     </button>
@@ -588,8 +588,8 @@ export const Profile: React.FC = () => {
                       className="p-3 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left flex items-center justify-between cursor-pointer"
                     >
                       <div>
-                        <p className="text-xs font-semibold text-slate-900">Flight preferences</p>
-                        <p className="text-[10px] text-slate-500">Seat preference and home airport</p>
+                        <p className="text-xs font-semibold text-slate-900">Sở thích chuyến bay</p>
+                        <p className="text-[10px] text-slate-500">Vị trí chỗ ngồi và sân bay quen thuộc</p>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400" />
                     </button>
@@ -599,10 +599,10 @@ export const Profile: React.FC = () => {
                 {/* Right Col: Additional travelers */}
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-slate-900">Additional travelers</h3>
+                    <h3 className="text-lg font-semibold text-slate-900">Hành khách đi cùng</h3>
                   </div>
                   <p className="text-xs text-slate-500 leading-normal mb-1">
-                    Make booking a breeze by saving profiles of family, friends, or teammates who often travel with you.
+                    Lưu thông tin người thân hoặc bạn bè để điền nhanh khi đặt vé chuyến bay.
                   </p>
 
                   <div className="mt-2">
@@ -610,7 +610,7 @@ export const Profile: React.FC = () => {
                       onClick={() => setActiveTab('PASSENGERS')}
                       className="w-full text-xs font-semibold text-[#0065eb] border border-slate-300 rounded-full px-5 py-2 hover:bg-slate-50 transition-colors cursor-pointer text-center"
                     >
-                      Add additional traveler
+                      Thêm hành khách đi cùng
                     </button>
                   </div>
                 </div>
@@ -620,35 +620,35 @@ export const Profile: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 2: COMMUNICATIONS (PRICE ALERTS & NOTIFICATIONS) */}
+          {/* TAB 2: COMMUNICATIONS */}
           {activeTab === 'COMMUNICATIONS' && (
             <div className="flex flex-col gap-4">
               <div className="border-b border-slate-100 pb-2.5">
                 <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-slate-600" /> Communications & Price Alerts
+                  <Bell className="w-5 h-5 text-slate-600" /> Thông báo & Theo dõi giá vé
                 </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">Manage travel alert preferences and active price trackers.</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">Quản lý tùy chọn nhận thông báo chuyến bay và các chặng bay đang theo dõi.</p>
               </div>
 
               {alertPrefs && (
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-3 text-xs">
-                  <h3 className="font-semibold text-slate-800 text-xs">Notification Preferences</h3>
+                  <h3 className="font-semibold text-slate-800 text-xs">Tùy chọn nhận thông báo</h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700">Flight delay push notifications</span>
+                    <span className="text-slate-700">Thông báo đẩy khi chuyến bay hoãn</span>
                     <Switch
                       checked={alertPrefs.flight_delay_push}
                       onCheckedChange={(checked) => handleTogglePref('flight_delay_push', Boolean(checked))}
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700">Gate change push notifications</span>
+                    <span className="text-slate-700">Thông báo đẩy khi thay đổi cổng lên máy bay</span>
                     <Switch
                       checked={alertPrefs.gate_change_push}
                       onCheckedChange={(checked) => handleTogglePref('gate_change_push', Boolean(checked))}
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700">Price drop email alerts</span>
+                    <span className="text-slate-700">Gửi Email khi giá vé giảm</span>
                     <Switch
                       checked={alertPrefs.price_drop_email}
                       onCheckedChange={(checked) => handleTogglePref('price_drop_email', Boolean(checked))}
@@ -659,23 +659,23 @@ export const Profile: React.FC = () => {
 
               <div className="flex flex-col gap-3">
                 <h3 className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                  <TrendingDown className="w-4 h-4 text-blue-600" /> Active Price Trackers
+                  <TrendingDown className="w-4 h-4 text-blue-600" /> Chặng bay đang theo dõi giá
                 </h3>
 
                 {loadingAlerts ? (
-                  <LoadingState message="Loading price alerts..." />
+                  <LoadingState message="Đang tải danh sách theo dõi giá..." />
                 ) : alerts.length === 0 ? (
-                  <EmptyState title="No active price alerts" description="Track prices on any flight route to get instant notifications." />
+                  <EmptyState title="Chưa có chặng bay nào được theo dõi giá" description="Bấm theo dõi giá ở trang tìm kiếm để nhận thông báo ngay khi giá giảm." />
                 ) : (
                   <div className="flex flex-col gap-2.5">
                     {alerts.map((al) => (
                       <div key={al.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
                         <div>
                           <p className="font-semibold text-slate-900">{al.origin_iata} → {al.destination_iata}</p>
-                          <p className="text-[10px] text-slate-500">Departure: {al.departure_date} • Created: {new Date(al.created_at).toLocaleDateString()}</p>
+                          <p className="text-[10px] text-slate-500">Khởi hành: {al.departure_date} • Tạo lúc: {new Date(al.created_at).toLocaleDateString()}</p>
                         </div>
                         <span className="text-xs font-semibold text-blue-600">
-                          {al.target_price ? `${al.target_price.toLocaleString()} VND` : 'Tracking'}
+                          {al.target_price ? `${al.target_price.toLocaleString()} VND` : 'Đang theo dõi'}
                         </span>
                       </div>
                     ))}
@@ -685,39 +685,44 @@ export const Profile: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 3: MY TRIPS & BOOKINGS */}
+          {/* TAB 3: MY TRIPS */}
           {activeTab === 'MY_TRIPS' && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                    <Ticket className="w-5 h-5 text-slate-600" /> My Trips & Bookings
+                    <Ticket className="w-5 h-5 text-slate-600" /> Chuyến đi & Đặt vé của tôi
                   </h2>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Manage your upcoming flights, e-tickets, and cancellations.</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Quản lý các chuyến bay sắp tới, vé điện tử và trạng thái đặt vé.</p>
                 </div>
 
                 <div className="flex bg-slate-100 p-1 rounded-lg gap-1 text-[11px] font-medium">
-                  {['', 'CONFIRMED', 'PENDING', 'CANCELLED'].map((st) => (
+                  {[
+                    { code: '', label: 'Tất cả' },
+                    { code: 'CONFIRMED', label: 'Đã xác nhận' },
+                    { code: 'PENDING', label: 'Chờ xử lý' },
+                    { code: 'CANCELLED', label: 'Đã hủy' },
+                  ].map((st) => (
                     <button
-                      key={st}
-                      onClick={() => setBookingFilter(st)}
+                      key={st.code}
+                      onClick={() => setBookingFilter(st.code)}
                       className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
-                        bookingFilter === st ? 'bg-white text-blue-600 font-semibold shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                        bookingFilter === st.code ? 'bg-white text-blue-600 font-semibold shadow-2xs' : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
-                      {st || 'All'}
+                      {st.label}
                     </button>
                   ))}
                 </div>
               </div>
 
               {loadingBookings ? (
-                <LoadingState message="Loading your bookings..." />
+                <LoadingState message="Đang tải danh sách đặt vé..." />
               ) : bookings.length === 0 ? (
                 <EmptyState
-                  title="No bookings found"
-                  description="Start searching for flights to book your next trip!"
-                  actionLabel="Search Flights"
+                  title="Chưa có đơn đặt vé nào"
+                  description="Bắt đầu tìm kiếm chuyến bay cho hành trình tiếp theo của bạn!"
+                  actionLabel="Tìm chuyến bay"
                   onAction={() => navigate('/flights/search')}
                 />
               ) : (
@@ -734,16 +739,16 @@ export const Profile: React.FC = () => {
                           <span className={`text-[9px] font-semibold px-2 py-0.5 rounded-full ${
                             b.status === 'CONFIRMED' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
                           }`}>
-                            {b.status}
+                            {b.status === 'CONFIRMED' ? 'Đã xác nhận' : b.status === 'PENDING' ? 'Chờ xử lý' : 'Đã hủy'}
                           </span>
                         </div>
-                        <p className="font-semibold text-slate-800">Contact: {b.contact_name} ({b.contact_email})</p>
-                        <p className="text-[10px] text-slate-500">Booked: {new Date(b.created_at).toLocaleString()}</p>
+                        <p className="font-semibold text-slate-800">Liên hệ: {b.contact_name} ({b.contact_email})</p>
+                        <p className="text-[10px] text-slate-500">Ngày đặt: {new Date(b.created_at).toLocaleString()}</p>
                       </div>
 
                       <div className="flex items-center gap-3">
                         <div className="text-right">
-                          <p className="text-[10px] text-slate-500">Total Amount</p>
+                          <p className="text-[10px] text-slate-500">Tổng tiền</p>
                           <p className="font-semibold text-slate-900 text-xs sm:text-sm">{b.total_amount.toLocaleString()} VND</p>
                         </div>
                         <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -760,18 +765,18 @@ export const Profile: React.FC = () => {
             <div className="flex flex-col gap-4">
               <div className="border-b border-slate-100 pb-2.5">
                 <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-slate-600" /> Saved Flights
+                  <Heart className="w-5 h-5 text-slate-600" /> Chuyến bay đã lưu
                 </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">Your bookmarked flight routes and saved offers.</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">Danh sách các chặng bay và ưu đãi bạn đã lưu lại.</p>
               </div>
 
               {loadingSavedFlights ? (
-                <LoadingState message="Loading saved flights..." />
+                <LoadingState message="Đang tải danh sách chuyến bay đã lưu..." />
               ) : savedFlights.length === 0 ? (
                 <EmptyState
-                  title="You haven't saved any flights yet"
-                  description="Click the heart icon on any flight offer to save it here for later."
-                  actionLabel="Search Flights"
+                  title="Bạn chưa lưu chuyến bay nào"
+                  description="Bấm vào biểu tượng trái tim khi tìm kiếm vé để lưu lại xem sau."
+                  actionLabel="Tìm chuyến bay"
                   onAction={() => navigate('/flights/search')}
                 />
               ) : (
@@ -779,9 +784,9 @@ export const Profile: React.FC = () => {
                   {savedFlights.map((sf) => (
                     <div key={sf.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
                       <div>
-                        <p className="font-semibold text-blue-600 text-[11px]">{sf.flight_number || 'Flight'}</p>
+                        <p className="font-semibold text-blue-600 text-[11px]">{sf.flight_number || 'Chuyến bay'}</p>
                         <p className="font-semibold text-slate-900 text-sm">{sf.origin} → {sf.destination}</p>
-                        <p className="text-[10px] text-slate-500">Saved: {new Date(sf.created_at).toLocaleDateString()}</p>
+                        <p className="text-[10px] text-slate-500">Đã lưu: {new Date(sf.created_at).toLocaleDateString()}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Button
@@ -789,7 +794,7 @@ export const Profile: React.FC = () => {
                           size="sm"
                           className="bg-blue-600 text-white font-medium text-[11px] rounded-lg h-8 px-3 cursor-pointer"
                         >
-                          Offers
+                          Xem vé
                         </Button>
                         <button
                           onClick={() => handleUnsaveFlight(sf.id)}
@@ -805,25 +810,25 @@ export const Profile: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 6: ADDITIONAL TRAVELERS */}
+          {/* TAB 5: PASSENGERS */}
           {activeTab === 'PASSENGERS' && (
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                 <div>
                   <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-slate-600" /> Additional Travelers
+                    <Users className="w-5 h-5 text-slate-600" /> Danh sách hành khách đi cùng
                   </h2>
-                  <p className="text-[11px] text-slate-500 mt-0.5">Save profiles of family, friends, or teammates for quick checkout.</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Lưu sẵn thông tin người thân hoặc bạn bè để điền nhanh khi đặt vé.</p>
                 </div>
               </div>
 
               {editingPassenger ? (
                 <form onSubmit={handleSavePassenger} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col gap-2.5">
-                  <h4 className="text-xs font-semibold text-slate-800">{editingPassenger.id ? 'Edit Traveler' : 'Add New Traveler'}</h4>
+                  <h4 className="text-xs font-semibold text-slate-800">{editingPassenger.id ? 'Chỉnh sửa hành khách' : 'Thêm hành khách mới'}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                    <Input placeholder="Full Name" value={editingPassenger.full_name || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, full_name: e.target.value })} required className="text-xs bg-white h-9" />
+                    <Input placeholder="Họ và tên" value={editingPassenger.full_name || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, full_name: e.target.value })} required className="text-xs bg-white h-9" />
                     
-                    {/* Official shadcn Date Picker */}
+                    {/* Official Date Picker */}
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -834,7 +839,7 @@ export const Profile: React.FC = () => {
                           <CalendarIcon className="mr-2 h-3.5 w-3.5 text-slate-500" />
                           {editingPassenger.date_of_birth
                             ? new Date(editingPassenger.date_of_birth).toLocaleDateString()
-                            : <span className="text-slate-400">Date of Birth</span>}
+                            : <span className="text-slate-400">Ngày sinh</span>}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0 bg-white border border-slate-200 shadow-none rounded-xl" align="start">
@@ -851,15 +856,15 @@ export const Profile: React.FC = () => {
                       </PopoverContent>
                     </Popover>
 
-                    <Input placeholder="Nationality" value={editingPassenger.nationality || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, nationality: e.target.value })} className="text-xs bg-white h-9" />
-                    <Input placeholder="Passport Number" value={editingPassenger.passport_number || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, passport_number: e.target.value })} className="text-xs bg-white h-9" />
+                    <Input placeholder="Quốc tịch" value={editingPassenger.nationality || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, nationality: e.target.value })} className="text-xs bg-white h-9" />
+                    <Input placeholder="Số hộ chiếu / CCCD" value={editingPassenger.passport_number || ''} onChange={(e) => setEditingPassenger({ ...editingPassenger, passport_number: e.target.value })} className="text-xs bg-white h-9" />
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     <Button type="submit" size="sm" disabled={savingPassenger} className="bg-[#0065eb] text-white font-medium text-xs rounded-full px-4 h-8 cursor-pointer">
-                      <Check className="w-3.5 h-3.5 mr-1" /> Save Traveler
+                      <Check className="w-3.5 h-3.5 mr-1" /> Lưu hành khách
                     </Button>
                     <Button type="button" size="sm" variant="ghost" onClick={() => setEditingPassenger(null)} className="text-xs h-8 cursor-pointer">
-                      <X className="w-3.5 h-3.5 mr-1" /> Cancel
+                      <X className="w-3.5 h-3.5 mr-1" /> Hủy
                     </Button>
                   </div>
                 </form>
@@ -871,9 +876,9 @@ export const Profile: React.FC = () => {
                         <div key={p.id} className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-start text-xs">
                           <div>
                             <h4 className="font-semibold text-slate-900">{p.full_name}</h4>
-                            <p className="text-[11px] text-slate-500">DOB: {p.date_of_birth || 'N/A'}</p>
-                            <p className="text-[11px] text-slate-500">Nationality: {p.nationality || 'N/A'}</p>
-                            {p.passport_number && <p className="text-[11px] text-slate-500">Passport: {p.passport_number}</p>}
+                            <p className="text-[11px] text-slate-500">Ngày sinh: {p.date_of_birth || 'Chưa cập nhật'}</p>
+                            <p className="text-[11px] text-slate-500">Quốc tịch: {p.nationality || 'Việt Nam'}</p>
+                            {p.passport_number && <p className="text-[11px] text-slate-500">Hộ chiếu: {p.passport_number}</p>}
                           </div>
                           <div className="flex items-center gap-1">
                             <button onClick={() => setEditingPassenger(p)} className="p-1 text-slate-500 hover:text-blue-600 rounded hover:bg-slate-200 cursor-pointer">
@@ -889,39 +894,39 @@ export const Profile: React.FC = () => {
                   )}
 
                   <Button
-                    onClick={() => setEditingPassenger({ full_name: '', nationality: 'Vietnam' })}
+                    onClick={() => setEditingPassenger({ full_name: '', nationality: 'Việt Nam' })}
                     variant="outline"
                     className="w-full sm:w-fit text-xs font-semibold text-slate-700 border-slate-300 rounded-full px-5 py-1.5 h-8 hover:bg-slate-50 cursor-pointer"
                   >
-                    Add additional traveler
+                    Thêm hành khách đi cùng
                   </Button>
                 </div>
               )}
             </div>
           )}
 
-          {/* TAB 7: SECURITY & ACTIVE SESSIONS */}
+          {/* TAB 6: SECURITY */}
           {activeTab === 'SECURITY' && (
             <div className="flex flex-col gap-4">
               <div className="border-b border-slate-100 pb-2.5">
                 <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <KeyRound className="w-5 h-5 text-slate-600" /> Security & Settings
+                  <KeyRound className="w-5 h-5 text-slate-600" /> Bảo mật & Cài đặt tài khoản
                 </h2>
-                <p className="text-[11px] text-slate-500 mt-0.5">Manage password updates and active login devices.</p>
+                <p className="text-[11px] text-slate-500 mt-0.5">Quản lý đổi mật khẩu và xem các thiết bị đang đăng nhập.</p>
               </div>
 
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-900">Change Password</h3>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Update your account password for enhanced security.</p>
+                    <h3 className="text-sm font-semibold text-slate-900">Đổi mật khẩu</h3>
+                    <p className="text-[11px] text-slate-500 mt-0.5">Cập nhật mật khẩu tài khoản để tăng cường bảo mật.</p>
                   </div>
                   {!editingPassword && (
                     <button
                       onClick={() => setEditingPassword(true)}
                       className="text-xs font-semibold text-[#0065eb] hover:underline cursor-pointer"
                     >
-                      Change Password
+                      Đổi mật khẩu
                     </button>
                   )}
                 </div>
@@ -929,19 +934,19 @@ export const Profile: React.FC = () => {
                 {editingPassword && (
                   <form onSubmit={handleChangePassword} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-2.5 max-w-md">
                     <div>
-                      <label className="text-[11px] font-medium text-slate-600 block mb-1">Old Password</label>
+                      <label className="text-[11px] font-medium text-slate-600 block mb-1">Mật khẩu hiện tại</label>
                       <Input type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} required className="text-xs bg-white h-9" />
                     </div>
                     <div>
-                      <label className="text-[11px] font-medium text-slate-600 block mb-1">New Password</label>
+                      <label className="text-[11px] font-medium text-slate-600 block mb-1">Mật khẩu mới</label>
                       <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required className="text-xs bg-white h-9" />
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       <Button type="submit" disabled={changingPassword} size="sm" className="bg-[#0065eb] hover:bg-blue-700 text-white font-medium text-xs rounded-full px-4 h-8 cursor-pointer">
-                        {changingPassword ? 'Updating...' : 'Update Password'}
+                        {changingPassword ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}
                       </Button>
                       <Button type="button" variant="ghost" size="sm" onClick={() => setEditingPassword(false)} className="text-xs h-8 cursor-pointer">
-                        Cancel
+                        Hủy
                       </Button>
                     </div>
                   </form>
@@ -949,22 +954,22 @@ export const Profile: React.FC = () => {
               </div>
 
               <div className="border-t border-slate-100 pt-3">
-                <h3 className="text-sm font-semibold text-slate-900 mb-0.5">Active login devices</h3>
-                <p className="text-[11px] text-slate-500 mb-3">View active browser sessions logged into your account.</p>
+                <h3 className="text-sm font-semibold text-slate-900 mb-0.5">Thiết bị đang đăng nhập</h3>
+                <p className="text-[11px] text-slate-500 mb-3">Xem danh sách các trình duyệt và thiết bị đang đăng nhập tài khoản của bạn.</p>
                 {loadingSessions ? (
-                  <p className="text-[11px] text-slate-500">Loading active sessions...</p>
+                  <p className="text-[11px] text-slate-500">Đang tải danh sách thiết bị...</p>
                 ) : sessions.length === 0 ? (
-                  <p className="text-[11px] text-slate-500">No active sessions found.</p>
+                  <p className="text-[11px] text-slate-500">Không tìm thấy thiết bị nào.</p>
                 ) : (
                   <div className="flex flex-col gap-2">
                     {sessions.map((s) => (
                       <div key={s.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
                         <div>
-                          <p className="font-semibold text-slate-800">{s.user_agent || 'Browser Device'}</p>
-                          <p className="text-[10px] text-slate-500">IP: {s.ip_address || '127.0.0.1'} • Logged in: {new Date(s.created_at).toLocaleString()}</p>
+                          <p className="font-semibold text-slate-800">{s.user_agent || 'Thiết bị trình duyệt'}</p>
+                          <p className="text-[10px] text-slate-500">IP: {s.ip_address || '127.0.0.1'} • Đăng nhập: {new Date(s.created_at).toLocaleString()}</p>
                         </div>
                         <Button variant="outline" size="sm" onClick={() => handleRevokeSession(s.id)} className="text-red-600 border-red-200 hover:bg-red-50 text-[11px] font-medium cursor-pointer rounded-full h-7 px-3">
-                          Revoke
+                          Đăng xuất
                         </Button>
                       </div>
                     ))}
@@ -974,13 +979,13 @@ export const Profile: React.FC = () => {
             </div>
           )}
 
-          {/* TAB 8: HELP & FEEDBACK / SUPPORT DESK */}
+          {/* TAB 7: HELP & SUPPORT */}
           {activeTab === 'SUPPORT' && (
             <div className="flex flex-col gap-4">
               <div className="border-b border-slate-100 pb-2">
-                <h2 className="text-lg font-semibold text-slate-900">Help and feedback</h2>
+                <h2 className="text-lg font-semibold text-slate-900">Hỗ trợ & Trợ giúp</h2>
                 <p className="text-xs text-slate-500 mt-0.5 leading-normal">
-                  Get customer support for bookings, refunds, or general inquiries.
+                  Gửi yêu cầu hỗ trợ về đặt vé máy bay, hoàn tiền hoặc các thắc mắc chung.
                 </p>
               </div>
 
@@ -989,41 +994,41 @@ export const Profile: React.FC = () => {
                 {/* Left Col: Submit Support Ticket Form */}
                 <form onSubmit={handleCreateTicket} className="p-4 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 h-full">
                   <h3 className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                    <Plus className="w-3.5 h-3.5 text-[#0065eb]" /> Submit Support Ticket
+                    <Plus className="w-3.5 h-3.5 text-[#0065eb]" /> Gửi yêu cầu hỗ trợ mới
                   </h3>
                   
                   <div>
-                    <label className="text-[11px] font-normal text-slate-600 block mb-1">Subject</label>
+                    <label className="text-[11px] font-normal text-slate-600 block mb-1">Tiêu đề</label>
                     <Input
                       value={ticketSubject}
                       onChange={(e) => setTicketSubject(e.target.value)}
-                      placeholder="Need help with..."
+                      placeholder="Cần trợ giúp về..."
                       required
                       className="text-xs bg-white border-slate-300 rounded-lg h-9 focus:border-[#0065eb]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-normal text-slate-600 block mb-1">Category</label>
+                    <label className="text-[11px] font-normal text-slate-600 block mb-1">Chủ đề</label>
                     <Select value={ticketCategory} onValueChange={setTicketCategory}>
                       <SelectTrigger className="text-xs bg-white border-slate-300 rounded-lg h-9">
-                        <SelectValue placeholder="Select Category" />
+                        <SelectValue placeholder="Chọn chủ đề" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="BOOKING">Booking & Itinerary</SelectItem>
-                        <SelectItem value="REFUND">Refund / Payment</SelectItem>
-                        <SelectItem value="BAGGAGE">Baggage & Extras</SelectItem>
-                        <SelectItem value="OTHER">Other Query</SelectItem>
+                        <SelectItem value="BOOKING">Đặt vé & Hành trình</SelectItem>
+                        <SelectItem value="REFUND">Hoàn tiền & Thanh toán</SelectItem>
+                        <SelectItem value="BAGGAGE">Hành lý & Dịch vụ thêm</SelectItem>
+                        <SelectItem value="OTHER">Thắc mắc khác</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-normal text-slate-600 block mb-1">Message</label>
+                    <label className="text-[11px] font-normal text-slate-600 block mb-1">Nội dung yêu cầu</label>
                     <Textarea
                       value={ticketMessage}
                       onChange={(e) => setTicketMessage(e.target.value)}
-                      placeholder="Describe your question..."
+                      placeholder="Mô tả chi tiết câu hỏi hoặc thắc mắc của bạn..."
                       className="text-xs bg-white border-slate-300 rounded-lg min-h-24 p-2.5 leading-normal focus:border-[#0065eb]"
                       required
                     />
@@ -1034,23 +1039,23 @@ export const Profile: React.FC = () => {
                     disabled={creatingTicket}
                     className="bg-[#0065eb] hover:bg-blue-700 text-white text-xs font-semibold rounded-full h-9 cursor-pointer mt-auto transition-colors shadow-none"
                   >
-                    {creatingTicket ? 'Submitting...' : 'Submit Ticket'}
+                    {creatingTicket ? 'Đang gửi...' : 'Gửi yêu cầu'}
                   </Button>
                 </form>
 
-                {/* Right Col: Your Tickets List & Active Thread */}
+                {/* Right Col: Your Tickets List */}
                 <div className="p-4 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 h-full min-h-[350px]">
                   <h3 className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                    <Ticket className="w-3.5 h-3.5 text-[#0065eb]" /> Your Tickets
+                    <Ticket className="w-3.5 h-3.5 text-[#0065eb]" /> Yêu cầu của bạn
                   </h3>
                   
                   {loadingSupport ? (
-                    <LoadingState message="Loading support tickets..." />
+                    <LoadingState message="Đang tải danh sách yêu cầu hỗ trợ..." />
                   ) : supportTickets.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center gap-2 p-6 text-center my-auto">
                       <HelpCircle className="w-8 h-8 text-slate-300 stroke-[1.5]" />
-                      <p className="text-xs text-slate-700 font-semibold">No support tickets found</p>
-                      <p className="text-[11px] text-slate-400">Submitted support requests will appear here.</p>
+                      <p className="text-xs text-slate-700 font-semibold">Chưa có yêu cầu hỗ trợ nào</p>
+                      <p className="text-[11px] text-slate-400">Các yêu cầu bạn gửi sẽ hiển thị tại đây.</p>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
@@ -1067,7 +1072,7 @@ export const Profile: React.FC = () => {
                             <span className={`text-[9px] font-normal uppercase px-2 py-0.5 rounded-full ${
                               t.status === 'RESOLVED' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'
                             }`}>
-                              {t.status}
+                              {t.status === 'RESOLVED' ? 'Đã giải quyết' : 'Đang xử lý'}
                             </span>
                           </div>
                           <span className="text-[10px] text-slate-400">{new Date(t.created_at).toLocaleString()}</span>
@@ -1094,7 +1099,7 @@ export const Profile: React.FC = () => {
                           <Input
                             value={replyBody}
                             onChange={(e) => setReplyBody(e.target.value)}
-                            placeholder="Type reply..."
+                            placeholder="Nhập phản hồi..."
                             className="text-xs bg-white border-slate-300 rounded-lg h-8 flex-1 focus:border-[#0065eb]"
                             required
                           />
