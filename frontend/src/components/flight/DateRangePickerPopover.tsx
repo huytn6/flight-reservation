@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -17,8 +17,30 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
   isOpen,
   onOpenChange,
 }) => {
+  const [activeTab, setActiveTab] = useState<'start' | 'end'>('start');
+
   const augustDays = Array.from({ length: 31 }, (_, i) => i + 1);
   const septemberDays = Array.from({ length: 30 }, (_, i) => i + 1);
+
+  const handleDayClick = (day: number, monthOffset: number = 0) => {
+    if (monthOffset === 0) {
+      if (activeTab === 'start') {
+        if (day > dateRange.endDate) {
+          onChange({ ...dateRange, startDate: day, endDate: day });
+        } else {
+          onChange({ ...dateRange, startDate: day });
+        }
+        setActiveTab('end');
+      } else {
+        if (day < dateRange.startDate) {
+          onChange({ ...dateRange, startDate: day, endDate: day });
+          setActiveTab('end');
+        } else {
+          onChange({ ...dateRange, endDate: day });
+        }
+      }
+    }
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
@@ -34,11 +56,31 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
         </div>
       </PopoverTrigger>
       <PopoverContent className="w-[340px] sm:w-[580px] bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 sm:p-6" align="start">
-        {/* Selected Range Header */}
+        {/* Selected Range Header with Interactive Tabs */}
         <div className="flex items-center gap-3 font-bold text-sm sm:text-base text-gray-900 border-b border-gray-200 pb-3 mb-4">
-          <span className="border-b-2 border-[#0065eb] pb-1">Wed, Aug {dateRange.startDate}</span>
-          <span>→</span>
-          <span>Wed, Aug {dateRange.endDate}</span>
+          <button
+            type="button"
+            onClick={() => setActiveTab('start')}
+            className={`pb-1 transition-all cursor-pointer ${
+              activeTab === 'start'
+                ? 'border-b-2 border-[#0065eb] text-[#0065eb]'
+                : 'text-gray-600 hover:text-blue-600'
+            }`}
+          >
+            Wed, Aug {dateRange.startDate}
+          </button>
+          <span className="text-gray-400">→</span>
+          <button
+            type="button"
+            onClick={() => setActiveTab('end')}
+            className={`pb-1 transition-all cursor-pointer ${
+              activeTab === 'end'
+                ? 'border-b-2 border-[#0065eb] text-[#0065eb]'
+                : 'text-gray-600 hover:text-blue-600'
+            }`}
+          >
+            Wed, Aug {dateRange.endDate}
+          </button>
         </div>
 
         {/* Dual Calendar View */}
@@ -62,18 +104,13 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
                 return (
                   <button
                     key={`aug-${day}`}
-                    onClick={() => {
-                      if (day < dateRange.startDate) {
-                        onChange({ ...dateRange, startDate: day });
-                      } else {
-                        onChange({ ...dateRange, endDate: day });
-                      }
-                    }}
+                    type="button"
+                    onClick={() => handleDayClick(day, 0)}
                     className={`h-8 w-8 rounded-full flex items-center justify-center font-medium cursor-pointer transition-colors ${
                       isStart || isEnd 
                         ? 'bg-[#0065eb] text-white font-bold' 
                         : isInRange 
-                        ? 'bg-blue-50 text-blue-900' 
+                        ? 'bg-blue-50 text-blue-900 font-semibold' 
                         : 'hover:bg-gray-100 text-gray-800'
                     }`}
                   >
@@ -99,6 +136,7 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
               {septemberDays.slice(0, 28).map((day) => (
                 <button
                   key={`sep-${day}`}
+                  type="button"
                   className="h-8 w-8 rounded-full flex items-center justify-center font-medium text-gray-800 hover:bg-gray-100 cursor-pointer"
                 >
                   {day}
@@ -111,7 +149,7 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
         <div className="flex justify-end mt-4 pt-3 border-t border-gray-100">
           <Button 
             onClick={() => onOpenChange(false)}
-            className="bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-full"
+            className="bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-full cursor-pointer"
           >
             Done
           </Button>
