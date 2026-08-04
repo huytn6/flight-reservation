@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
-import { MapPin, Calendar as CalendarIcon, User, ArrowLeftRight, Building2 } from 'lucide-react';
+import { MapPin, ArrowLeftRight, Building2 } from 'lucide-react';
 import { useFlightSearch } from '@/hooks/use-flight-search';
 import { catalogService } from '@/services/catalog';
 import type { Airport } from '@/types/airport';
@@ -121,8 +121,6 @@ export const CompactTopSearchBar: React.FC = () => {
 
     navigate(`/Flights-Search?${queryParams}`);
   };
-
-  const totalTravelers = passengers.adults + passengers.children + passengers.infantsLap + passengers.infantsSeat;
 
   const filteredAirports = airports.filter(
     (a) =>
