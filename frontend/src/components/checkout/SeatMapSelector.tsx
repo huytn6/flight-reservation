@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Armchair, UserCheck, X } from 'lucide-react';
+import { Armchair, UserCheck, X, Check } from 'lucide-react';
 
 import { SeatStatusEnum } from '@/types/enums';
 
@@ -232,7 +232,10 @@ export const SeatMapSelector: React.FC<SeatMapSelectorProps> = ({
           <div className="w-3.5 h-3.5 rounded bg-white border border-slate-200" /> Ghế trống
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3.5 h-3.5 rounded bg-[#0065eb] text-white flex items-center justify-center text-[9px] font-bold">✓</div> Ghế bạn chọn
+          <div className="w-3.5 h-3.5 rounded bg-[#0065eb] text-white flex items-center justify-center">
+            <Check className="w-2.5 h-2.5 stroke-[3]" />
+          </div>
+          <span>Ghế bạn chọn</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="w-3.5 h-3.5 rounded bg-slate-300 opacity-60" /> Đã có người

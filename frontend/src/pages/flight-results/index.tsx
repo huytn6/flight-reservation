@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Info, Loader2, Heart, Scale, ShieldCheck } from 'lucide-react';
+import { Info, Loader2, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { CompactTopSearchBar } from '@/components/flight-results/CompactTopSearchBar';
 import { FlightFilterSidebar } from '@/components/flight-results/FlightFilterSidebar';
 import { DatePriceMatrix } from '@/components/flight-results/DatePriceMatrix';
@@ -118,8 +126,8 @@ export const FlightResults: React.FC = () => {
     }
   };
 
-  const handleToggleSaveFlight = async (flightId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleToggleSaveFlight = async (flightId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation?.();
     if (!isAuthenticated) {
       toast.error('Vui lòng đăng nhập để lưu chuyến bay');
       navigate('/signin');
@@ -145,8 +153,8 @@ export const FlightResults: React.FC = () => {
     }
   };
 
-  const handleOpenFareComparison = async (flightId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleOpenFareComparison = async (flightId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation?.();
     try {
       const fares = await flightService.getFareComparison(flightId);
       setFareComparisonModal(fares);
@@ -155,8 +163,8 @@ export const FlightResults: React.FC = () => {
     }
   };
 
-  const handleOpenFareRules = async (fareId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleOpenFareRules = async (fareId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation?.();
     try {
       const [rules, baggage] = await Promise.all([
         flightService.getFareRules(fareId),
@@ -216,7 +224,7 @@ export const FlightResults: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 font-sans">
+    <div className="min-h-screen bg-white pb-24 font-sans">
       <CompactTopSearchBar />
 
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 mt-6">
@@ -231,9 +239,9 @@ export const FlightResults: React.FC = () => {
                 <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
                   Chuyến Bay {origin} → {destination}
                 </h1>
-                <div className="flex items-center gap-1 text-xs text-gray-500 font-medium mt-0.5">
+                <div className="flex items-center gap-1 text-xs text-slate-500 font-medium mt-0.5">
                   <span>Tìm thấy {flightOffers.length} chuyến bay phù hợp ({departureDate})</span>
-                  <Info className="w-3.5 h-3.5 text-gray-400" />
+                  <Info className="w-3.5 h-3.5 text-slate-400" />
                 </div>
               </div>
 
@@ -243,127 +251,118 @@ export const FlightResults: React.FC = () => {
             </div>
 
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-[#0065eb] mb-3" />
-                <p className="text-sm font-medium text-slate-600">Đang tìm kiếm chuyến bay thực tế từ hệ thống...</p>
+              <div className="bg-white p-12 rounded-2xl border border-slate-100 text-center flex flex-col items-center justify-center min-h-[300px]">
+                <Loader2 className="w-8 h-8 animate-spin text-[#0065eb] mb-2" />
+                <p className="text-xs text-slate-600 font-medium">Đang tìm kiếm chuyến bay tốt nhất cho bạn...</p>
               </div>
             ) : flightOffers.length === 0 ? (
-              <div className="bg-white p-12 rounded-2xl border-0 shadow-none text-center flex flex-col items-center">
+              <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center flex flex-col items-center">
                 <p className="text-base font-bold text-slate-800">Không tìm thấy chuyến bay phù hợp cho chặng bay này</p>
                 <p className="text-xs text-slate-500 mt-1 mb-4">Vui lòng thử chọn ngày bay hoặc sân bay khác.</p>
-                <Button onClick={() => navigate('/')} className="bg-[#0065eb] text-white font-normal text-xs rounded-lg px-5 shadow-none">
+                <Button onClick={() => navigate('/')} className="bg-[#0065eb] text-white text-xs font-normal rounded-lg px-5 shadow-none">
                   Tìm kiếm chuyến bay khác
                 </Button>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {flightResultItems.map((item, idx) => {
-                  const rawOffer = flightOffers[idx];
-                  const isSaved = savedFlightIds.includes(rawOffer.id);
-                  const cheapestFare = rawOffer.fares?.[0];
-
-                  return (
-                    <div key={item.id} className="relative group">
-                      <FlightCard
-                        flight={item}
-                        isSelected={selectedFlight?.id === item.id}
-                        onSelect={handleFlightCardClick}
-                      />
-
-                      {/* Utility Action Overlay Bar */}
-                      <div className="flex items-center justify-between px-4 py-2 bg-slate-100/80 rounded-b-xl border-x border-b text-xs text-slate-600 font-normal -mt-1">
-                        <div className="flex items-center gap-4">
-                          <button
-                            onClick={(e) => handleOpenFareComparison(rawOffer.id, e)}
-                            className="flex items-center gap-1 hover:text-[#0065eb] transition-colors cursor-pointer"
-                          >
-                            <Scale className="w-3.5 h-3.5" /> So sánh các hạng vé
-                          </button>
-                          {cheapestFare && (
-                            <button
-                              onClick={(e) => handleOpenFareRules(cheapestFare.id, e)}
-                              className="flex items-center gap-1 hover:text-[#0065eb] transition-colors cursor-pointer"
-                            >
-                              <ShieldCheck className="w-3.5 h-3.5" /> Quy định vé & Hành lý
-                            </button>
-                          )}
-                        </div>
-
-                        <button
-                          onClick={(e) => handleToggleSaveFlight(rawOffer.id, e)}
-                          className={`flex items-center gap-1 font-normal transition-colors cursor-pointer ${
-                            isSaved ? 'text-rose-500' : 'text-slate-500 hover:text-rose-500'
-                          }`}
-                        >
-                          <Heart className={`w-3.5 h-3.5 ${isSaved ? 'fill-rose-500 text-rose-500' : ''}`} />
-                          {isSaved ? 'Đã lưu' : 'Lưu chuyến bay'}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+                {flightResultItems.map((item) => (
+                  <FlightCard
+                    key={item.id}
+                    flight={item}
+                    isSelected={selectedFlight?.id === item.id}
+                    onSelect={handleFlightCardClick}
+                  />
+                ))}
               </div>
             )}
           </main>
         </div>
       </div>
 
-      {/* Fare Comparison Modal */}
-      {fareComparisonModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto font-sans">
-            <h2 className="text-base font-bold text-slate-900 mb-4">So Sánh Các Hạng Vé</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {fareComparisonModal.map((fare) => (
-                <div key={fare.id} className="p-4 border border-slate-100 rounded-xl bg-slate-50 flex flex-col gap-2">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-sm text-slate-800">{fare.fare_name}</span>
-                    <span className="text-xs font-semibold text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded-full">{fare.cabin_name || 'Phổ thông'}</span>
-                  </div>
-                  <p className="text-xl font-bold text-slate-900 font-mono">{(fare.base_price + fare.tax + fare.fees).toLocaleString('vi-VN')} VNĐ</p>
-                  <div className="text-xs text-slate-600 space-y-1 mt-2">
-                    <p>• Hành lý ký gửi: {fare.baggage_kg || 20} kg, xách tay {fare.carry_on_kg || 7} kg</p>
-                    <p>• Cho phép hoàn vé: {fare.is_refundable ? 'Có' : 'Không'}</p>
-                    <p>• Cho phép đổi vé: {fare.is_changeable ? `Có (phí ${fare.change_fee?.toLocaleString('vi-VN')} VNĐ)` : 'Không'}</p>
-                    <p>• Số ghế còn lại: {fare.available_seats} ghế</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex justify-end">
-              <Button onClick={() => setFareComparisonModal(null)} className="bg-[#0065eb] text-white text-xs font-normal rounded-lg px-5 shadow-none">Đóng</Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Fare Comparison Modal using shadcn Dialog */}
+      <Dialog open={Boolean(fareComparisonModal)} onOpenChange={(open) => !open && setFareComparisonModal(null)}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-white border border-slate-200 shadow-lg">
+          <DialogHeader>
+            <DialogTitle>So Sánh Các Hạng Vé</DialogTitle>
+            <DialogDescription>
+              Thông tin chi tiết về tiện ích và quyền lợi của từng gói hạng vé
+            </DialogDescription>
+          </DialogHeader>
 
-      {/* Fare Rules Modal */}
-      {fareRulesModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full font-sans">
-            <h2 className="text-base font-bold text-slate-900 mb-4">Quy Định Vé & Tiêu Chuẩn Hành Lý</h2>
-            {fareRulesModal.baggage && (
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-900 space-y-1">
-                <p className="font-bold">🧳 Tiêu chuẩn hành lý miễn cước:</p>
-                <p>Hành lý ký gửi: {fareRulesModal.baggage.checked_baggage_kg} kg</p>
-                <p>Hành lý xách tay: {fareRulesModal.baggage.carry_on_kg} kg</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-2">
+            {fareComparisonModal?.map((fare) => (
+              <div key={fare.id} className="p-4 border border-slate-200 rounded-xl bg-white flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-sm text-slate-800">{fare.fare_name}</span>
+                  <span className="text-xs font-medium text-[#0065eb] border border-blue-100 bg-blue-50/50 px-2 py-0.5 rounded-md">
+                    {fare.cabin_name || 'Phổ thông'}
+                  </span>
+                </div>
+                <p className="text-lg font-bold text-slate-900 font-mono">
+                  {(fare.base_price + fare.tax + fare.fees).toLocaleString('vi-VN')} VNĐ
+                </p>
+                <div className="text-xs text-slate-600 space-y-1.5 mt-2 border-t border-slate-100 pt-2">
+                  <p>Hành lý ký gửi: {fare.baggage_kg || 20} kg, xách tay: {fare.carry_on_kg || 7} kg</p>
+                  <p>Hoàn vé: {fare.is_refundable ? 'Có hỗ trợ' : 'Không hỗ trợ'}</p>
+                  <p>Đổi vé: {fare.is_changeable ? `Có hỗ trợ (phí ${fare.change_fee?.toLocaleString('vi-VN')} VNĐ)` : 'Không hỗ trợ'}</p>
+                  <p>Số ghế còn lại: {fare.available_seats} ghế</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <DialogFooter>
+            <Button onClick={() => setFareComparisonModal(null)} className="bg-[#0065eb] text-white text-xs font-normal rounded-lg px-5 shadow-none">
+              Đóng
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Fare Rules Modal using shadcn Dialog */}
+      <Dialog open={Boolean(fareRulesModal)} onOpenChange={(open) => !open && setFareRulesModal(null)}>
+        <DialogContent className="sm:max-w-lg bg-white border border-slate-200 shadow-lg">
+          <DialogHeader>
+            <DialogTitle>Quy Định Vé & Tiêu Chuẩn Hành Lý</DialogTitle>
+            <DialogDescription>
+              Chi tiết quy định áp dụng cho gói vé đã chọn
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {fareRulesModal?.baggage && (
+              <div className="p-3.5 border border-slate-200 rounded-xl text-xs space-y-1.5 bg-white">
+                <div className="flex items-center gap-2 font-semibold text-slate-900">
+                  <Briefcase className="w-4 h-4 text-[#0065eb]" />
+                  <span>Tiêu chuẩn hành lý miễn cước:</span>
+                </div>
+                <p className="pl-6 text-slate-600">Hành lý ký gửi: {fareRulesModal.baggage.checked_baggage_kg} kg</p>
+                <p className="pl-6 text-slate-600">Hành lý xách tay: {fareRulesModal.baggage.carry_on_kg} kg</p>
               </div>
             )}
-            <div className="space-y-2 mb-6">
+
+            <div className="space-y-2">
               <p className="text-xs font-semibold text-slate-700">Điều khoản sử dụng vé:</p>
-              {fareRulesModal.rules.map((r, i) => (
-                <div key={i} className="text-xs p-2 bg-slate-100 rounded-lg">
-                  <span className="font-semibold text-slate-800 uppercase">{r.rule_type}: </span>
-                  <span className="text-slate-600">{r.description}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-end">
-              <Button onClick={() => setFareRulesModal(null)} className="bg-[#0065eb] text-white text-xs font-normal rounded-lg px-5 shadow-none">Đóng</Button>
+              {fareRulesModal?.rules && fareRulesModal.rules.length > 0 ? (
+                fareRulesModal.rules.map((r, i) => (
+                  <div key={i} className="text-xs p-2.5 border border-slate-100 rounded-lg bg-white">
+                    <span className="font-semibold text-slate-800 uppercase">{r.rule_type}: </span>
+                    <span className="text-slate-600">{r.description}</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500 italic">Áp dụng theo điều kiện biểu giá tiêu chuẩn của hãng vận chuyển.</p>
+              )}
             </div>
           </div>
-        </div>
-      )}
+
+          <DialogFooter>
+            <Button onClick={() => setFareRulesModal(null)} className="bg-[#0065eb] text-white text-xs font-normal rounded-lg px-5 shadow-none">
+              Đóng
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Flight Detail Drawer */}
       <FlightDetailDrawer
@@ -371,6 +370,10 @@ export const FlightResults: React.FC = () => {
         flight={selectedFlight}
         onClose={() => setIsDrawerOpen(false)}
         onSelectFare={handleConfirmFare}
+        onOpenFareComparison={() => selectedRawOffer && handleOpenFareComparison(selectedRawOffer.id)}
+        onOpenFareRules={() => selectedRawOffer?.fares?.[0] && handleOpenFareRules(selectedRawOffer.fares[0].id)}
+        onToggleSave={() => selectedRawOffer && handleToggleSaveFlight(selectedRawOffer.id)}
+        isSaved={Boolean(selectedRawOffer && savedFlightIds.includes(selectedRawOffer.id))}
       />
     </div>
   );

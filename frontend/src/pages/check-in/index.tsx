@@ -125,7 +125,7 @@ export const CheckInPage: React.FC = () => {
             </div>
             <div className="space-y-1">
               <span className="text-slate-500">Hành trình:</span>
-              <p className="font-bold text-slate-900">{booking.departure_city || 'Hồ Chí Minh'} ➔ {booking.arrival_city || 'Hà Nội'}</p>
+              <p className="font-bold text-slate-900">{booking.departure_city || 'Hồ Chí Minh'} → {booking.arrival_city || 'Hà Nội'}</p>
             </div>
             <div className="space-y-1">
               <span className="text-slate-500">Thời gian cất cánh:</span>

@@ -25,9 +25,7 @@ export const WatchPricesWidget: React.FC = () => {
           enabled ? 'bg-[#0065eb] justify-end' : 'bg-slate-400 justify-start'
         }`}
       >
-        <div className="w-5 h-5 rounded-full bg-white shadow-xs flex items-center justify-center text-[10px] font-bold text-slate-500">
-          {enabled ? '' : '✕'}
-        </div>
+        <div className="w-5 h-5 rounded-full bg-white shadow-xs flex items-center justify-center" />
       </button>
     </div>
   );

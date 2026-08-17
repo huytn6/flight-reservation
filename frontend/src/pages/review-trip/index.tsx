@@ -166,7 +166,7 @@ export const ReviewTrip: React.FC = () => {
                 <div className="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-xl">
                   <div>
                     <span className="font-bold text-slate-900">{passedFlight.airline?.name || 'Vietnam Airlines'} ({passedFlight.flight_number})</span>
-                    <p className="text-slate-500 mt-0.5">{passedFlight.departure_airport?.city} ➔ {passedFlight.arrival_airport?.city}</p>
+                    <p className="text-slate-500 mt-0.5">{passedFlight.departure_airport?.city} → {passedFlight.arrival_airport?.city}</p>
                   </div>
                   <span className="font-mono text-slate-800 font-bold bg-white px-2.5 py-1 rounded border border-slate-200">
                     {passedFare?.fare_name || 'Hạng Phổ Thông'}

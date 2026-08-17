@@ -30,16 +30,16 @@ export const DatePriceMatrix: React.FC = () => {
             onClick={() => setSelectedIndex(idx)}
             className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl transition-colors cursor-pointer ${
               isSelected
-                ? 'bg-[#ebf3ff] border-2 border-[#12182b]'
-                : 'bg-transparent border border-[#707994] hover:border-slate-800'
+                ? 'bg-white border-2 border-[#0065eb]'
+                : 'bg-white border border-slate-200 hover:border-slate-400'
             }`}
           >
-            <span className="text-xs font-normal text-slate-800 leading-tight">
+            <span className={`text-xs font-normal leading-tight ${isSelected ? 'text-[#0065eb] font-semibold' : 'text-slate-700'}`}>
               {item.dayName}, {item.date}
             </span>
             <span
               className={`text-sm font-bold mt-0.5 leading-tight ${
-                item.isLowest && !isSelected ? 'text-[#1b7b4a]' : 'text-slate-900'
+                isSelected ? 'text-[#0065eb]' : 'text-slate-900'
               }`}
             >
               ${item.price}

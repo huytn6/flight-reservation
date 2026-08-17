@@ -249,7 +249,7 @@ export const BookingDetail: React.FC = () => {
                           {seg.departure_time ? new Date(seg.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : 'Chưa cập nhật'}
                         </p>
                       </div>
-                      <span className="text-slate-400">➔</span>
+                      <span className="text-slate-400">→</span>
                       <div>
                         <p className="font-bold text-slate-900">{seg.arrival_iata || '---'}</p>
                         <p className="text-[11px] text-slate-500 font-mono">

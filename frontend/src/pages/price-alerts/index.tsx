@@ -274,7 +274,7 @@ export const PriceAlerts: React.FC = () => {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-slate-900 font-mono">
-                              {alert.origin_iata} ✈ {alert.destination_iata}
+                              {alert.origin_iata} → {alert.destination_iata}
                             </span>
                             {alert.target_price && (
                               <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 font-mono text-[10px] font-semibold">
@@ -300,7 +300,7 @@ export const PriceAlerts: React.FC = () => {
                         </Button>
                         <Button
                           type="button"
-                          onClick={() => handleDeleteAlert(alert.id, `${alert.origin_iata} ✈ ${alert.destination_iata}`)}
+                          onClick={() => handleDeleteAlert(alert.id, `${alert.origin_iata} → ${alert.destination_iata}`)}
                           size="sm"
                           variant="ghost"
                           className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 h-8 w-8 p-0 rounded-lg cursor-pointer transition-colors"

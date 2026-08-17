@@ -129,11 +129,11 @@ export const CompactTopSearchBar: React.FC = () => {
   );
 
   return (
-    <div className="bg-slate-50 pt-4 pb-2 font-sans">
+    <div className="bg-white border-b border-slate-100 pt-4 pb-3 font-sans">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-3">
         
         {/* Flight Type Sub-tabs (Khứ Hồi / Một Chiều / Nhiều Thành Phố) */}
-        <div className="flex items-center gap-6 border-b border-gray-100 pb-2 text-sm sm:text-base font-normal">
+        <div className="flex items-center gap-6 border-b border-slate-100 pb-2 text-sm sm:text-base font-normal">
           <button
             onClick={() => setFlightType('roundtrip')}
             className={`pb-2 transition-all cursor-pointer ${
@@ -175,18 +175,18 @@ export const CompactTopSearchBar: React.FC = () => {
             {/* Leaving from Popover */}
             <Popover open={leavingOpen} onOpenChange={setLeavingOpen}>
               <PopoverTrigger asChild className="w-full flex-1">
-                <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-gray-600 cursor-pointer h-[48px]">
+                <div className="w-full border border-slate-300 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-slate-500 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
-                    <span className="text-[10px] font-medium text-gray-500 leading-tight">Leaving from</span>
+                    <span className="text-[10px] font-medium text-slate-500 leading-tight">Leaving from</span>
                     <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
                       {leavingFrom ? `${leavingFrom.city} (${leavingFrom.code})` : 'Ho Chi Minh City (SGN)'}
                     </span>
                   </div>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
-                <div className="p-2 border-b border-gray-100 bg-gray-50/50">
+              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-lg border border-slate-200 p-0 overflow-hidden" align="start">
+                <div className="p-2 border-b border-slate-100 bg-slate-50/50">
                   <Input 
                     placeholder="Search airport..."
                     value={searchQuery}
@@ -194,7 +194,7 @@ export const CompactTopSearchBar: React.FC = () => {
                     className="w-full text-xs"
                   />
                 </div>
-                <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
+                <div className="divide-y divide-slate-100 max-h-60 overflow-y-auto">
                   {filteredAirports.map((ap) => (
                     <button
                       key={ap.code}
@@ -202,12 +202,12 @@ export const CompactTopSearchBar: React.FC = () => {
                         setLeavingFrom(ap);
                         setLeavingOpen(false);
                       }}
-                      className="w-full text-left p-2.5 hover:bg-blue-50/60 transition-colors flex items-start gap-2.5 cursor-pointer text-xs"
+                      className="w-full text-left p-2.5 hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer text-xs"
                     >
                       <Building2 className="w-4 h-4 text-slate-700 mt-0.5 shrink-0" />
                       <div className="flex flex-col">
                         <span className="font-bold text-slate-900">{ap.city} ({ap.code})</span>
-                        <span className="text-[10px] text-gray-500">{ap.sublabel}</span>
+                        <span className="text-[10px] text-slate-500">{ap.sublabel}</span>
                       </div>
                     </button>
                   ))}
@@ -220,26 +220,26 @@ export const CompactTopSearchBar: React.FC = () => {
               variant="outline"
               size="icon"
               onClick={handleSwap}
-              className="w-7 h-7 rounded-full border border-gray-300 bg-white shadow-xs flex items-center justify-center shrink-0 hover:bg-gray-50 transition-colors sm:-mx-3 z-10 cursor-pointer min-w-0 p-0"
+              className="w-7 h-7 rounded-full border border-slate-200 bg-white shadow-none flex items-center justify-center shrink-0 hover:bg-slate-50 transition-colors sm:-mx-3 z-10 cursor-pointer min-w-0 p-0"
             >
-              <ArrowLeftRight className="w-3.5 h-3.5 text-gray-700" />
+              <ArrowLeftRight className="w-3.5 h-3.5 text-slate-700" />
             </Button>
 
             {/* Going to Popover */}
             <Popover open={goingOpen} onOpenChange={setGoingOpen}>
               <PopoverTrigger asChild className="w-full flex-1">
-                <div className="w-full border border-gray-400 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-gray-600 cursor-pointer h-[48px]">
+                <div className="w-full border border-slate-300 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-slate-500 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
-                    <span className="text-[10px] font-medium text-gray-500 leading-tight">Going to</span>
+                    <span className="text-[10px] font-medium text-slate-500 leading-tight">Going to</span>
                     <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
                       {goingTo ? `${goingTo.city} (${goingTo.code})` : 'Hanoi (HAN)'}
                     </span>
                   </div>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
-                <div className="p-2 border-b border-gray-100 bg-gray-50/50">
+              <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-lg border border-slate-200 p-0 overflow-hidden" align="start">
+                <div className="p-2 border-b border-slate-100 bg-slate-50/50">
                   <Input 
                     placeholder="Search airport..."
                     value={searchQuery}
@@ -247,7 +247,7 @@ export const CompactTopSearchBar: React.FC = () => {
                     className="w-full text-xs"
                   />
                 </div>
-                <div className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
+                <div className="divide-y divide-slate-100 max-h-60 overflow-y-auto">
                   {filteredAirports.map((ap) => (
                     <button
                       key={ap.code}
@@ -255,7 +255,7 @@ export const CompactTopSearchBar: React.FC = () => {
                         setGoingTo(ap);
                         setGoingOpen(false);
                       }}
-                      className="w-full text-left p-2.5 hover:bg-blue-50/60 transition-colors flex items-start gap-2.5 cursor-pointer text-xs"
+                      className="w-full text-left p-2.5 hover:bg-slate-50 transition-colors flex items-start gap-2.5 cursor-pointer text-xs"
                     >
                       <Building2 className="w-4 h-4 text-slate-700 mt-0.5 shrink-0" />
                       <div className="flex flex-col">
