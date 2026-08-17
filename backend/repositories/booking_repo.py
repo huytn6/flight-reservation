@@ -280,7 +280,12 @@ def add_booking_segment(db, seg_id, booking_id, flight_id, fare_id, order):
 def get_booking_segments(db, booking_id):
     return db.execute(
         """SELECT bs.*, f.flight_number, f.departure_time, f.arrival_time, f.status as flight_status,
-                  dep.iata_code as dep_iata, arr.iata_code as arr_iata, al.name as airline_name
+                  dep.iata_code as dep_iata, arr.iata_code as arr_iata,
+                  dep.iata_code as departure_iata, arr.iata_code as arrival_iata,
+                  dep.city as dep_city, arr.city as arr_city,
+                  dep.city as departure_city, arr.city as arrival_city,
+                  dep.name as departure_airport_name, arr.name as arrival_airport_name,
+                  al.name as airline_name, al.iata_code as airline_code
            FROM booking_segments bs
            JOIN flights f ON f.id=bs.flight_id
            JOIN airports dep ON dep.id=f.departure_airport_id

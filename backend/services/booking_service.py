@@ -213,10 +213,25 @@ def lookup_booking(pnr: str, last_name: str) -> dict:
     found = any(last_name.lower() in p['full_name'].lower() for p in pax)
     if not found:
         raise NotFoundError('Booking')
+    segments = booking_repo.get_booking_segments(db, booking['id'])
+    seg_dicts = [dict(s) for s in segments]
+    first_seg = seg_dicts[0] if seg_dicts else {}
     return {
-        'id': booking['id'], 'pnr': booking['pnr'], 'status': booking['status'],
-        'contact_name': booking['contact_name'], 'total_amount': booking['total_amount'],
+        'id': booking['id'],
+        'pnr': booking['pnr'],
+        'status': booking['status'],
+        'contact_name': booking['contact_name'],
+        'contact_full_name': booking['contact_name'],
+        'total_amount': booking['total_amount'],
         'currency': booking['currency'],
+        'flight_number': first_seg.get('flight_number'),
+        'departure_city': first_seg.get('departure_city'),
+        'arrival_city': first_seg.get('arrival_city'),
+        'departure_time': first_seg.get('departure_time'),
+        'arrival_time': first_seg.get('arrival_time'),
+        'airline_name': first_seg.get('airline_name'),
+        'segments': seg_dicts,
+        'passengers': [dict(p) for p in pax],
     }
 
 

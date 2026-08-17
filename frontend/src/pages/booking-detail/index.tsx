@@ -236,29 +236,34 @@ export const BookingDetail: React.FC = () => {
                 Hành Trình Chuyến Bay
               </h2>
               {segments?.length > 0 ? (
-                segments.map((seg: any, idx: number) => (
-                  <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 bg-slate-50/70 rounded-lg text-xs">
-                    <div className="space-y-1">
-                      <span className="font-bold text-slate-900 text-sm">{seg.flight_number || 'Chuyến bay'}</span>
-                      <p className="text-slate-500">{seg.airline_name || 'Hãng hàng không'}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div>
-                        <p className="font-bold text-slate-900">{seg.departure_iata || '---'}</p>
-                        <p className="text-[11px] text-slate-500 font-mono">
-                          {seg.departure_time ? new Date(seg.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : 'Chưa cập nhật'}
-                        </p>
+                segments.map((seg: any, idx: number) => {
+                  const depCode = seg.departure_iata || seg.dep_iata || '---';
+                  const arrCode = seg.arrival_iata || seg.arr_iata || '---';
+                  const depCity = seg.departure_city || seg.dep_city || depCode;
+                  const arrCity = seg.arrival_city || seg.arr_city || arrCode;
+                  const depTime = seg.departure_time ? new Date(seg.departure_time).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Chưa cập nhật';
+                  const arrTime = seg.arrival_time ? new Date(seg.arrival_time).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Chưa cập nhật';
+
+                  return (
+                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3.5 bg-slate-50/70 rounded-lg text-xs">
+                      <div className="space-y-1">
+                        <span className="font-bold text-slate-900 text-sm">{seg.flight_number || 'Chuyến bay'}</span>
+                        <p className="text-slate-500">{seg.airline_name || 'Hãng hàng không'}</p>
                       </div>
-                      <span className="text-slate-400">→</span>
-                      <div>
-                        <p className="font-bold text-slate-900">{seg.arrival_iata || '---'}</p>
-                        <p className="text-[11px] text-slate-500 font-mono">
-                          {seg.arrival_time ? new Date(seg.arrival_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : 'Chưa cập nhật'}
-                        </p>
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <p className="font-bold text-slate-900">{depCity} ({depCode})</p>
+                          <p className="text-[11px] text-slate-500 font-mono">{depTime}</p>
+                        </div>
+                        <span className="text-slate-400">→</span>
+                        <div>
+                          <p className="font-bold text-slate-900">{arrCity} ({arrCode})</p>
+                          <p className="text-[11px] text-slate-500 font-mono">{arrTime}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <p className="text-xs text-slate-500">Thông tin hành trình đã được lưu hệ thống.</p>
               )}

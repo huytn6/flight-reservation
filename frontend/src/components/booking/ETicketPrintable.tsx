@@ -58,42 +58,49 @@ export const ETicketPrintable: React.FC<ETicketPrintableProps> = ({ detail, etic
         </h2>
 
         <div className="space-y-2">
-          {segments?.map((seg: any, idx: number) => (
-            <div key={idx} className="p-3 bg-slate-50/70 rounded-lg flex flex-col gap-2">
-              <div className="flex items-center justify-between border-b border-slate-200/60 pb-1.5 text-xs">
-                <span className="font-bold text-slate-900">{seg.airline_name || 'Hãng hàng không'} — {seg.flight_number || 'VN-123'}</span>
-                <span className="text-[#0065eb] font-semibold text-[11px]">Hạng Phổ Thông (Economy)</span>
-              </div>
+          {segments?.map((seg: any, idx: number) => {
+            const depIata = seg.departure_iata || seg.dep_iata || '---';
+            const arrIata = seg.arrival_iata || seg.arr_iata || '---';
+            const depCity = seg.departure_city || seg.dep_city || 'Khởi hành';
+            const arrCity = seg.arrival_city || seg.arr_city || 'Điểm đến';
 
-              <div className="grid grid-cols-3 gap-2 items-center text-center">
-                <div className="text-left">
-                  <p className="text-xl font-black text-slate-900">{seg.departure_iata}</p>
-                  <p className="text-xs font-semibold text-slate-700">{seg.departure_city || 'Khởi hành'}</p>
-                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">
-                    {seg.departure_time ? new Date(seg.departure_time).toLocaleString('vi-VN') : '---'}
-                  </p>
+            return (
+              <div key={idx} className="p-3 bg-slate-50/70 rounded-lg flex flex-col gap-2">
+                <div className="flex items-center justify-between border-b border-slate-200/60 pb-1.5 text-xs">
+                  <span className="font-bold text-slate-900">{seg.airline_name || 'Hãng hàng không'} — {seg.flight_number || 'VN-123'}</span>
+                  <span className="text-[#0065eb] font-semibold text-[11px]">Hạng Phổ Thông (Economy)</span>
                 </div>
 
-                <div className="flex flex-col items-center">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Bay thẳng</span>
-                  <div className="w-full flex items-center justify-center gap-1 my-0.5">
-                    <div className="h-[1px] bg-slate-300 flex-1" />
-                    <Plane className="w-3.5 h-3.5 text-[#0065eb] rotate-90" />
-                    <div className="h-[1px] bg-slate-300 flex-1" />
+                <div className="grid grid-cols-3 gap-2 items-center text-center">
+                  <div className="text-left">
+                    <p className="text-xl font-black text-slate-900">{depIata}</p>
+                    <p className="text-xs font-semibold text-slate-700">{depCity}</p>
+                    <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                      {seg.departure_time ? new Date(seg.departure_time).toLocaleString('vi-VN') : '---'}
+                    </p>
                   </div>
-                  <span className="text-[9px] text-slate-500">Hành lý 23kg ký gửi</span>
-                </div>
 
-                <div className="text-right">
-                  <p className="text-xl font-black text-slate-900">{seg.arrival_iata}</p>
-                  <p className="text-xs font-semibold text-slate-700">{seg.arrival_city || 'Điểm đến'}</p>
-                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">
-                    {seg.arrival_time ? new Date(seg.arrival_time).toLocaleString('vi-VN') : '---'}
-                  </p>
+                  <div className="flex flex-col items-center">
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Bay thẳng</span>
+                    <div className="w-full flex items-center justify-center gap-1 my-0.5">
+                      <div className="h-[1px] bg-slate-300 flex-1" />
+                      <Plane className="w-3.5 h-3.5 text-[#0065eb] rotate-90" />
+                      <div className="h-[1px] bg-slate-300 flex-1" />
+                    </div>
+                    <span className="text-[9px] text-slate-500">Hành lý 23kg ký gửi</span>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="text-xl font-black text-slate-900">{arrIata}</p>
+                    <p className="text-xs font-semibold text-slate-700">{arrCity}</p>
+                    <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                      {seg.arrival_time ? new Date(seg.arrival_time).toLocaleString('vi-VN') : '---'}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 

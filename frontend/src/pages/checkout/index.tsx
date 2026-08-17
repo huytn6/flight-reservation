@@ -55,6 +55,9 @@ export const Checkout: React.FC = () => {
     { passenger_index: 0, passenger_type: PassengerTypeEnum.ADULT, full_name: user?.full_name || '', nationality: 'VN' },
   ]);
 
+  const [contactErrors, setContactErrors] = useState<{ full_name?: string; email?: string; phone?: string }>({});
+  const [passengerErrors, setPassengerErrors] = useState<Array<{ full_name?: string }>>([]);
+
   const [savedPassengers, setSavedPassengers] = useState<SavedPassenger[]>([]);
   const [breakdown, setBreakdown] = useState<PriceBreakdown | null>(null);
   const [flightId, setFlightId] = useState<string | null>(null);
@@ -123,6 +126,13 @@ export const Checkout: React.FC = () => {
       };
       return next;
     });
+
+    setPassengerErrors((prev) => {
+      const next = [...prev];
+      if (next[index]) next[index] = {};
+      return next;
+    });
+
     toast.info(`Đã tự động điền hành khách ${index + 1}: ${saved.full_name}`);
   };
 
@@ -131,19 +141,63 @@ export const Checkout: React.FC = () => {
       ...prev,
       { passenger_index: prev.length, passenger_type: PassengerTypeEnum.ADULT, full_name: '', nationality: 'VN' },
     ]);
+    setPassengerErrors((prev) => [...prev, {}]);
+  };
+
+  const validateForm = (): boolean => {
+    const cErrors: { full_name?: string; email?: string; phone?: string } = {};
+    let hasError = false;
+
+    if (!contact.full_name?.trim()) {
+      cErrors.full_name = 'Vui lòng nhập họ và tên người liên hệ';
+      hasError = true;
+    }
+
+    if (!contact.email?.trim()) {
+      cErrors.email = 'Vui lòng nhập email nhận vé';
+      hasError = true;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email.trim())) {
+      cErrors.email = 'Email không hợp lệ (VD: example@gmail.com)';
+      hasError = true;
+    }
+
+    if (!contact.phone?.trim()) {
+      cErrors.phone = 'Vui lòng nhập số điện thoại';
+      hasError = true;
+    } else if (!/^[0-9+() -]{8,15}$/.test(contact.phone.trim())) {
+      cErrors.phone = 'Số điện thoại không hợp lệ (8 - 15 chữ số)';
+      hasError = true;
+    }
+
+    const pErrors: Array<{ full_name?: string }> = [];
+    passengers.forEach((p, idx) => {
+      const pErr: { full_name?: string } = {};
+      if (!p.full_name?.trim()) {
+        pErr.full_name = `Vui lòng nhập họ tên cho hành khách ${idx + 1}`;
+        hasError = true;
+      }
+      pErrors.push(pErr);
+    });
+
+    setContactErrors(cErrors);
+    setPassengerErrors(pErrors);
+
+    if (hasError) {
+      const firstError =
+        cErrors.full_name ||
+        cErrors.email ||
+        cErrors.phone ||
+        pErrors.find((p) => p.full_name)?.full_name ||
+        'Vui lòng điền đầy đủ các thông tin bắt buộc (*)';
+      toast.error(firstError);
+    }
+
+    return !hasError;
   };
 
   const handleSaveContactAndPassengers = async () => {
-    if (!contact.full_name || !contact.email || !contact.phone) {
-      toast.error('Vui lòng nhập đầy đủ thông tin người liên hệ');
-      return false;
-    }
-    for (const p of passengers) {
-      if (!p.full_name) {
-        toast.error('Vui lòng nhập họ tên cho tất cả hành khách');
-        return false;
-      }
-    }
+    if (!validateForm()) return false;
+
     try {
       await draftService.saveContact(draftId, contact);
       await draftService.savePassengers(draftId, passengers);
@@ -227,16 +281,70 @@ export const Checkout: React.FC = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">Họ và Tên</label>
-                  <Input value={contact.full_name} onChange={(e) => setContact({ ...contact, full_name: e.target.value })} required className="text-xs h-9" />
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    Họ và Tên <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    value={contact.full_name}
+                    onChange={(e) => {
+                      setContact({ ...contact, full_name: e.target.value });
+                      if (contactErrors.full_name) {
+                        setContactErrors((prev) => ({ ...prev, full_name: undefined }));
+                      }
+                    }}
+                    placeholder="VD: Nguyen Van A"
+                    className={`text-xs h-9 bg-white ${
+                      contactErrors.full_name ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                    }`}
+                  />
+                  {contactErrors.full_name && (
+                    <p className="text-[11px] text-rose-500 font-medium mt-1">{contactErrors.full_name}</p>
+                  )}
                 </div>
+
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">Email Nhận Vé</label>
-                  <Input type="email" value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} required className="text-xs h-9" />
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    Email Nhận Vé <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    type="email"
+                    value={contact.email}
+                    onChange={(e) => {
+                      setContact({ ...contact, email: e.target.value });
+                      if (contactErrors.email) {
+                        setContactErrors((prev) => ({ ...prev, email: undefined }));
+                      }
+                    }}
+                    placeholder="VD: example@email.com"
+                    className={`text-xs h-9 bg-white ${
+                      contactErrors.email ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                    }`}
+                  />
+                  {contactErrors.email && (
+                    <p className="text-[11px] text-rose-500 font-medium mt-1">{contactErrors.email}</p>
+                  )}
                 </div>
+
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">Số Điện Thoại</label>
-                  <Input value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} placeholder="0901 234 567" required className="text-xs h-9" />
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    Số Điện Thoại <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    value={contact.phone}
+                    onChange={(e) => {
+                      setContact({ ...contact, phone: e.target.value });
+                      if (contactErrors.phone) {
+                        setContactErrors((prev) => ({ ...prev, phone: undefined }));
+                      }
+                    }}
+                    placeholder="0901 234 567"
+                    className={`text-xs h-9 bg-white ${
+                      contactErrors.phone ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                    }`}
+                  />
+                  {contactErrors.phone && (
+                    <p className="text-[11px] text-rose-500 font-medium mt-1">{contactErrors.phone}</p>
+                  )}
                 </div>
               </div>
             </Card>
@@ -275,7 +383,9 @@ export const Checkout: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] font-medium text-slate-600 block mb-1">Họ tên (Như trên CCCD/Hộ chiếu)</label>
+                      <label className="text-[11px] font-medium text-slate-600 block mb-1">
+                        Họ tên (Như trên CCCD/Hộ chiếu) <span className="text-rose-500">*</span>
+                      </label>
                       <Input
                         value={pax.full_name || ''}
                         onChange={(e) => {
@@ -285,11 +395,22 @@ export const Checkout: React.FC = () => {
                             next[idx] = { ...next[idx], full_name: val };
                             return next;
                           });
+                          if (passengerErrors[idx]?.full_name) {
+                            setPassengerErrors((prev) => {
+                              const next = [...prev];
+                              if (next[idx]) next[idx] = { ...next[idx], full_name: undefined };
+                              return next;
+                            });
+                          }
                         }}
-                        placeholder="NGUYEN VAN A"
-                        required
-                        className="text-xs h-9 bg-white"
+                        placeholder="VD: NGUYEN VAN A"
+                        className={`text-xs h-9 bg-white ${
+                          passengerErrors[idx]?.full_name ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                        }`}
                       />
+                      {passengerErrors[idx]?.full_name && (
+                        <p className="text-[11px] text-rose-500 font-medium mt-1">{passengerErrors[idx]?.full_name}</p>
+                      )}
                     </div>
 
                     {/* Date of Birth Picker */}
@@ -307,7 +428,9 @@ export const Checkout: React.FC = () => {
 
                     {/* Nationality using shadcn Select */}
                     <div>
-                      <label className="text-[11px] font-medium text-slate-600 block mb-1">Quốc tịch</label>
+                      <label className="text-[11px] font-medium text-slate-600 block mb-1">
+                        Quốc tịch <span className="text-rose-500">*</span>
+                      </label>
                       <Select
                         value={pax.nationality || 'VN'}
                         onValueChange={(val) => {
@@ -344,7 +467,7 @@ export const Checkout: React.FC = () => {
                           });
                         }}
                         placeholder="001200012345"
-                        className="text-xs h-9 bg-white"
+                        className="text-xs h-9 bg-white border-slate-200"
                       />
                     </div>
                   </div>

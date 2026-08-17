@@ -220,7 +220,7 @@ export const MyBookings: React.FC = () => {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/checkout?draft_id=${booking.id}`);
+                              navigate(`/bookings/${booking.id}`);
                             }}
                             className="bg-emerald-600 hover:bg-emerald-700 text-white font-normal text-xs h-8 px-3 rounded-lg cursor-pointer shadow-none flex items-center gap-1"
                           >
