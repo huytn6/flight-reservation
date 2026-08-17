@@ -81,21 +81,19 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
   };
 
   return (
-    <div className={`relative z-20 max-w-[1240px] mx-auto px-4 md:px-8 ${isHero ? '-mt-36 sm:-mt-44 md:-mt-48 mb-8' : 'mb-2'}`}>
-      <Card className={`bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 ${isHero ? 'shadow-xl' : 'shadow-xs border-gray-200'}`}>
-        
+    <div
+      className={`relative z-20 max-w-[1240px] mx-auto px-4 md:px-8 ${isHero ? '-mt-36 sm:-mt-44 md:-mt-48 mb-8' : 'mb-2'}`}
+    >
+      <Card
+        className={`bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 sm:pb-8 ${isHero ? 'shadow-xl' : 'shadow-xs border-gray-200'}`}
+      >
         {/* Flight Type Sub-tabs (Roundtrip / One-way / Multi-city) */}
-        <FlightTypeTabs 
-          selectedType={flightType} 
-          onChange={setFlightType} 
-        />
+        <FlightTypeTabs selectedType={flightType} onChange={setFlightType} />
 
         {/* Balanced Main Search Form Inputs Row */}
         <div className="flex flex-col lg:flex-row items-center gap-2 relative">
-          
           {/* Equal Width Origin & Destination pair */}
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full lg:flex-[2] relative">
-            
             {/* Leaving from Field */}
             <div className="w-full flex-1">
               <AirportSelectorPopover
@@ -110,7 +108,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
             </div>
 
             {/* Swap Button */}
-            <Button 
+            <Button
               variant="outline"
               size="icon"
               onClick={handleSwap}
@@ -132,7 +130,6 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
                 onOpenChange={setGoingOpen}
               />
             </div>
-
           </div>
 
           {/* Equal Width Dates Field */}
@@ -161,7 +158,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
 
           {/* Search Button */}
           <div className="w-full lg:w-auto mt-2 lg:mt-0">
-            <Button 
+            <Button
               onClick={handleSearchSubmit}
               className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-semibold rounded-full px-8 py-3 h-[56px] text-sm shadow-md transition-colors cursor-pointer"
             >
@@ -181,7 +178,6 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
             Add a stay to Bundle & Save*
           </label>
         </div>
-
       </Card>
     </div>
   );

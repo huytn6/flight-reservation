@@ -32,6 +32,9 @@ export interface SeatMapSeat {
   extra_fee: number;
   status: SeatStatusEnum;
   held_by_me?: boolean;
+  seat_row?: number;
+  column_label?: string;
+  cabin_class_id?: string;
 }
 
 export interface SeatMapData {

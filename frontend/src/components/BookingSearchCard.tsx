@@ -409,7 +409,6 @@ export const BookingSearchCard: React.FC = () => {
             Add a stay to Bundle & Save*
           </label>
         </div>
-
       </Card>
     </div>
   );

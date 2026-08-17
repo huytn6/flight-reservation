@@ -81,6 +81,7 @@ def add_draft_passenger(db, draft_id, index, ptype, full_name, dob, nationality,
 
 def create_seat_hold(db, hold_id, draft_id, seat_id, pax_index, expires):
     now = utcnow_iso()
+    db.execute("DELETE FROM seat_holds WHERE draft_id=? AND seat_id=?", (draft_id, seat_id))
     db.execute(
         "INSERT INTO seat_holds(id,draft_id,seat_id,passenger_index,expires_at,created_at) "
         "VALUES(?,?,?,?,?,?)",
@@ -96,9 +97,10 @@ def find_seat_hold(db, hold_id, draft_id):
 
 def get_active_seat_holds(db, draft_id):
     return db.execute(
-        "SELECT sh.*, s.seat_number, s.cabin_class_id FROM seat_holds sh "
-        "JOIN seats s ON s.id=sh.seat_id "
-        "WHERE sh.draft_id=? AND sh.released_at IS NULL",
+        """SELECT sh.*, s.seat_number, s.cabin_class_id, s.seat_type, s.extra_fee
+           FROM seat_holds sh
+           JOIN seats s ON s.id=sh.seat_id
+           WHERE sh.draft_id=? AND sh.released_at IS NULL""",
         (draft_id,)
     ).fetchall()
 

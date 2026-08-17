@@ -53,6 +53,8 @@ def from_exception(handler, exc):
     if isinstance(exc, AppError):
         error(handler, exc.code, exc.message, exc.status, exc.details)
     else:
+        import traceback
+        traceback.print_exc()
         error(handler, 'INTERNAL_ERROR', 'An unexpected error occurred', 500)
 
 

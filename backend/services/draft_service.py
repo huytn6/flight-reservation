@@ -309,6 +309,7 @@ def get_price_breakdown(draft_id: str, user_id: str, role: str) -> dict:
     offer = json.loads(draft['flight_offer_json'])
     passengers = booking_repo.get_draft_passengers(db, draft_id)
     ancillaries = booking_repo.get_draft_ancillaries(db, draft_id)
+    seat_holds = booking_repo.get_active_seat_holds(db, draft_id)
     pax_count = len(passengers) if passengers else 1
 
     fare_items = []
@@ -325,6 +326,17 @@ def get_price_breakdown(draft_id: str, user_id: str, role: str) -> dict:
          'quantity': a['quantity'], 'subtotal': a['price'] * a['quantity']}
         for a in ancillaries
     ]
+
+    for hold in seat_holds:
+        extra_fee = hold.get('extra_fee') or 0
+        if extra_fee > 0:
+            anc_items.append({
+                'code': f'SEAT_{hold["seat_number"]}',
+                'name': f'Phí chọn chỗ ngồi {hold["seat_number"]} ({hold.get("seat_type", "Ghế đặc biệt")})',
+                'price': extra_fee,
+                'quantity': 1,
+                'subtotal': extra_fee,
+            })
 
     fares_total = sum(i['subtotal'] for i in fare_items)
     anc_total = sum(i['subtotal'] for i in anc_items)

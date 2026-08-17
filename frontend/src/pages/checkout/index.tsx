@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { draftService, type DraftContact, type DraftPassenger, type PriceBreakdown } from '@/services/draft';
+import {
+  draftService,
+  type DraftContact,
+  type DraftPassenger,
+  type PriceBreakdown,
+} from '@/services/draft';
 import { userService } from '@/services/user';
 import { bookingService } from '@/services/booking';
 import { useAuthStore } from '@/store/use-auth';
@@ -12,7 +17,13 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { UserCheck, ShieldCheck, CalendarIcon } from 'lucide-react';
 
@@ -52,10 +63,19 @@ export const Checkout: React.FC = () => {
   });
 
   const [passengers, setPassengers] = useState<Partial<DraftPassenger>[]>([
-    { passenger_index: 0, passenger_type: PassengerTypeEnum.ADULT, full_name: user?.full_name || '', nationality: 'VN' },
+    {
+      passenger_index: 0,
+      passenger_type: PassengerTypeEnum.ADULT,
+      full_name: user?.full_name || '',
+      nationality: 'VN',
+    },
   ]);
 
-  const [contactErrors, setContactErrors] = useState<{ full_name?: string; email?: string; phone?: string }>({});
+  const [contactErrors, setContactErrors] = useState<{
+    full_name?: string;
+    email?: string;
+    phone?: string;
+  }>({});
   const [passengerErrors, setPassengerErrors] = useState<Array<{ full_name?: string }>>([]);
 
   const [savedPassengers, setSavedPassengers] = useState<SavedPassenger[]>([]);
@@ -139,7 +159,12 @@ export const Checkout: React.FC = () => {
   const handleAddPassengerInput = () => {
     setPassengers((prev) => [
       ...prev,
-      { passenger_index: prev.length, passenger_type: PassengerTypeEnum.ADULT, full_name: '', nationality: 'VN' },
+      {
+        passenger_index: prev.length,
+        passenger_type: PassengerTypeEnum.ADULT,
+        full_name: '',
+        nationality: 'VN',
+      },
     ]);
     setPassengerErrors((prev) => [...prev, {}]);
   };
@@ -232,7 +257,9 @@ export const Checkout: React.FC = () => {
         err.code === 'DRAFT_NOT_ACTIVE' ||
         err.code === 'DRAFT_EXPIRED'
       ) {
-        toast.error('Đơn hàng nháp này đã hoàn tất đặt vé hoặc hết hạn. Đang chuyển về trang tìm kiếm...');
+        toast.error(
+          'Đơn hàng nháp này đã hoàn tất đặt vé hoặc hết hạn. Đang chuyển về trang tìm kiếm...'
+        );
         setTimeout(() => navigate('/'), 1200);
       } else {
         toast.error(msg || 'Tạo đơn đặt vé thất bại');
@@ -243,24 +270,29 @@ export const Checkout: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen p-12 text-center text-slate-500 font-sans text-xs">Đang tải thông tin đặt vé...</div>;
+    return (
+      <div className="min-h-screen p-12 text-center text-slate-500 font-sans text-xs">
+        Đang tải thông tin đặt vé...
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans py-8">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-6">
-
         {/* Header */}
         <div className="border-b border-slate-200/80 pb-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Thanh Toán & Thông Tin Hành Khách</h1>
-          <p className="text-xs text-slate-500 mt-0.5">Hoàn tất thông tin hành khách để xác nhận giữ chỗ chuyến bay.</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            Thanh Toán & Thông Tin Hành Khách
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Hoàn tất thông tin hành khách để xác nhận giữ chỗ chuyến bay.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
           {/* Left Column (8 cols): 1. Interactive Seat Selection FIRST, 2. Contact Info, 3. Passenger Info */}
           <div className="lg:col-span-8 flex flex-col gap-6">
-
             {/* 1. Interactive Seat Selection Map (MOVED UP TO TOP) */}
             {flightId && (
               <SeatMapSelector
@@ -275,9 +307,9 @@ export const Checkout: React.FC = () => {
             )}
 
             {/* 2. Contact Information Form */}
-            <Card className="bg-white p-6 rounded-2xl border-0 shadow-none flex flex-col gap-4">
-              <h2 className="text-sm font-semibold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
-                <UserCheck className="w-4 h-4 text-[#0065eb]" /> Thông Tin Người Liên Hệ
+            <div className="bg-white p-6 rounded-2xl border-0 shadow-none flex flex-col gap-4 font-sans">
+              <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-2">
+                Thông Tin Người Liên Hệ
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
@@ -294,11 +326,15 @@ export const Checkout: React.FC = () => {
                     }}
                     placeholder="VD: Nguyen Van A"
                     className={`text-xs h-9 bg-white ${
-                      contactErrors.full_name ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                      contactErrors.full_name
+                        ? 'border-rose-400 focus-visible:ring-rose-300'
+                        : 'border-slate-200'
                     }`}
                   />
                   {contactErrors.full_name && (
-                    <p className="text-[11px] text-rose-500 font-medium mt-1">{contactErrors.full_name}</p>
+                    <p className="text-[11px] text-rose-500 font-medium mt-1">
+                      {contactErrors.full_name}
+                    </p>
                   )}
                 </div>
 
@@ -317,11 +353,15 @@ export const Checkout: React.FC = () => {
                     }}
                     placeholder="VD: example@email.com"
                     className={`text-xs h-9 bg-white ${
-                      contactErrors.email ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                      contactErrors.email
+                        ? 'border-rose-400 focus-visible:ring-rose-300'
+                        : 'border-slate-200'
                     }`}
                   />
                   {contactErrors.email && (
-                    <p className="text-[11px] text-rose-500 font-medium mt-1">{contactErrors.email}</p>
+                    <p className="text-[11px] text-rose-500 font-medium mt-1">
+                      {contactErrors.email}
+                    </p>
                   )}
                 </div>
 
@@ -339,21 +379,30 @@ export const Checkout: React.FC = () => {
                     }}
                     placeholder="0901 234 567"
                     className={`text-xs h-9 bg-white ${
-                      contactErrors.phone ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                      contactErrors.phone
+                        ? 'border-rose-400 focus-visible:ring-rose-300'
+                        : 'border-slate-200'
                     }`}
                   />
                   {contactErrors.phone && (
-                    <p className="text-[11px] text-rose-500 font-medium mt-1">{contactErrors.phone}</p>
+                    <p className="text-[11px] text-rose-500 font-medium mt-1">
+                      {contactErrors.phone}
+                    </p>
                   )}
                 </div>
               </div>
-            </Card>
+            </div>
 
             {/* 3. Passenger Details Form */}
-            <Card className="bg-white p-6 rounded-2xl border-0 shadow-none flex flex-col gap-4">
+            <div className="bg-white p-6 rounded-2xl border-0 shadow-none flex flex-col gap-4 font-sans">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <h2 className="text-sm font-semibold text-slate-900">Danh Sách Hành Khách</h2>
-                <Button onClick={handleAddPassengerInput} size="sm" variant="outline" className="text-[#0065eb] border-blue-200 text-xs font-normal h-8 shadow-none">
+                <Button
+                  onClick={handleAddPassengerInput}
+                  size="sm"
+                  variant="outline"
+                  className="text-[#0065eb] border-blue-200 text-xs font-normal h-8 shadow-none"
+                >
                   + Thêm Hành Khách
                 </Button>
               </div>
@@ -361,7 +410,9 @@ export const Checkout: React.FC = () => {
               {passengers.map((pax, idx) => (
                 <div key={idx} className="p-4 bg-slate-50 rounded-xl flex flex-col gap-3 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">Hành Khách {idx + 1} ({pax.passenger_type || 'ADULT'})</span>
+                    <span className="font-bold text-slate-900">
+                      Hành Khách {idx + 1} ({pax.passenger_type || 'ADULT'})
+                    </span>
 
                     {/* Saved passenger autofill options */}
                     {savedPassengers.length > 0 && (
@@ -405,11 +456,15 @@ export const Checkout: React.FC = () => {
                         }}
                         placeholder="VD: NGUYEN VAN A"
                         className={`text-xs h-9 bg-white ${
-                          passengerErrors[idx]?.full_name ? 'border-rose-400 focus-visible:ring-rose-300' : 'border-slate-200'
+                          passengerErrors[idx]?.full_name
+                            ? 'border-rose-400 focus-visible:ring-rose-300'
+                            : 'border-slate-200'
                         }`}
                       />
                       {passengerErrors[idx]?.full_name && (
-                        <p className="text-[11px] text-rose-500 font-medium mt-1">{passengerErrors[idx]?.full_name}</p>
+                        <p className="text-[11px] text-rose-500 font-medium mt-1">
+                          {passengerErrors[idx]?.full_name}
+                        </p>
                       )}
                     </div>
 
@@ -446,7 +501,11 @@ export const Checkout: React.FC = () => {
                         </SelectTrigger>
                         <SelectContent className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)] bg-white border-slate-200 shadow-xl max-h-60 overflow-y-auto">
                           {NATIONALITY_OPTIONS.map((c) => (
-                            <SelectItem key={c.code} value={c.code} className="text-xs cursor-pointer">
+                            <SelectItem
+                              key={c.code}
+                              value={c.code}
+                              className="text-xs cursor-pointer"
+                            >
                               {c.label}
                             </SelectItem>
                           ))}
@@ -455,7 +514,9 @@ export const Checkout: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="text-[11px] font-medium text-slate-600 block mb-1">Số Hộ chiếu / CCCD</label>
+                      <label className="text-[11px] font-medium text-slate-600 block mb-1">
+                        Số Hộ chiếu / CCCD
+                      </label>
                       <Input
                         value={pax.passport_number || ''}
                         onChange={(e) => {
@@ -473,52 +534,58 @@ export const Checkout: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </Card>
-
+            </div>
           </div>
 
           {/* Right Summary Sidebar (4 cols) */}
           <div className="lg:col-span-4 bg-white p-6 rounded-2xl border-0 shadow-none flex flex-col gap-4 sticky top-20">
-            <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-3">Tóm Tắt Đơn Hàng</h2>
+            <h2 className="text-sm font-semibold text-slate-900 border-b border-slate-100 pb-3">
+              Tóm Tắt Đơn Hàng
+            </h2>
 
             {breakdown && (
               <div className="flex flex-col gap-3 text-xs">
                 <div className="flex justify-between text-slate-600 font-medium">
                   <span>Giá vé cơ bản</span>
-                  <span className="font-mono">{breakdown.fares_total.toLocaleString('vi-VN')} VNĐ</span>
+                  <span className="font-mono">
+                    {breakdown.fares_total.toLocaleString('vi-VN')} VNĐ
+                  </span>
                 </div>
                 {breakdown.ancillary_total > 0 && (
                   <div className="flex justify-between text-slate-600 font-medium">
                     <span>Chọn ghế & Dịch vụ mua thêm</span>
-                    <span className="font-mono">+{breakdown.ancillary_total.toLocaleString('vi-VN')} VNĐ</span>
+                    <span className="font-mono">
+                      +{breakdown.ancillary_total.toLocaleString('vi-VN')} VNĐ
+                    </span>
                   </div>
                 )}
                 {breakdown.coupon_discount > 0 && (
                   <div className="flex justify-between text-emerald-600 font-semibold">
                     <span>Mã giảm giá áp dụng</span>
-                    <span className="font-mono">-{breakdown.coupon_discount.toLocaleString('vi-VN')} VNĐ</span>
+                    <span className="font-mono">
+                      -{breakdown.coupon_discount.toLocaleString('vi-VN')} VNĐ
+                    </span>
                   </div>
                 )}
 
                 <div className="border-t border-slate-100 pt-3 flex justify-between items-center">
                   <span className="text-xs font-bold text-slate-900">Tổng tiền thanh toán</span>
-                  <span className="text-base font-mono font-bold text-[#0065eb]">{breakdown.grand_total.toLocaleString('vi-VN')} VNĐ</span>
+                  <span className="text-base font-mono font-bold text-[#0065eb]">
+                    {breakdown.grand_total.toLocaleString('vi-VN')} VNĐ
+                  </span>
                 </div>
 
                 <Button
                   onClick={handleCreateBooking}
                   disabled={submitting}
-                  className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs h-9.5 rounded-lg mt-3 cursor-pointer shadow-none flex items-center justify-center gap-1.5"
+                  className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-medium text-xs h-9.5 rounded-lg mt-3 cursor-pointer shadow-none flex items-center justify-center"
                 >
-                  <ShieldCheck className="w-4 h-4" />
                   {submitting ? 'Đang khởi tạo đơn...' : 'Tạo Đặt Chỗ & Thanh Toán'}
                 </Button>
               </div>
             )}
           </div>
-
         </div>
-
       </div>
 
       {/* Payment Modal */}

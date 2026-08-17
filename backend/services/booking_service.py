@@ -55,6 +55,10 @@ def create_booking(user_ctx: dict, draft_id: str, idempotency_key: str | None, i
     for anc in ancillaries:
         total_amount += anc['price'] * anc['quantity']
 
+    holds = booking_repo.get_active_seat_holds(db, draft_id)
+    for hold in holds:
+        total_amount += hold.get('extra_fee') or 0
+
     bid = str(uuid.uuid4())
 
     with transaction(db):
