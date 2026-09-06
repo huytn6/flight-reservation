@@ -10,15 +10,15 @@ export const AircraftCreatePage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<AircraftFormData>({
-    code: '',
-    model: '',
+    iata_code: '',
+    name: '',
     manufacturer: 'Airbus',
-    capacity: 180,
+    seat_capacity: 180,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.code || !formData.model || !formData.capacity) {
+    if (!formData.iata_code || !formData.name || !formData.seat_capacity) {
       toast.error('Vui lòng điền đầy đủ tất cả thông tin bắt buộc');
       return;
     }

@@ -50,20 +50,20 @@ export const AircraftListPage: React.FC = () => {
 
   const columns: ColumnDef<any>[] = useMemo(() => [
     {
-      accessorKey: 'code',
+      accessorKey: 'iata_code',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Mã Loại" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
-          {row.original.code}
+          {row.original.iata_code}
         </span>
       ),
     },
     {
-      accessorKey: 'model',
+      accessorKey: 'name',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Dòng Máy Bay" />,
       cell: ({ row }) => (
         <div className="font-medium text-slate-900 text-xs">
-          {row.original.model}
+          {row.original.name}
         </div>
       ),
     },
@@ -75,11 +75,11 @@ export const AircraftListPage: React.FC = () => {
       ),
     },
     {
-      accessorKey: 'capacity',
+      accessorKey: 'seat_capacity',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Số Lượng Ghế" />,
       cell: ({ row }) => (
         <span className="font-mono text-xs font-semibold text-slate-700">
-          {row.original.capacity} ghế
+          {row.original.seat_capacity} ghế
         </span>
       ),
     },

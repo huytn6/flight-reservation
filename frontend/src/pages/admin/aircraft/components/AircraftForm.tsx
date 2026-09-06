@@ -4,10 +4,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export interface AircraftFormData {
-  code: string;
-  model: string;
+  iata_code: string;
+  name: string;
   manufacturer: string;
-  capacity: number;
+  seat_capacity: number;
 }
 
 interface AircraftFormProps {
@@ -30,14 +30,14 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
       </CardHeader>
       <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3.5">
         <div className="space-y-1">
-          <Label htmlFor="code" className="text-xs font-medium text-slate-700">
+          <Label htmlFor="iata_code" className="text-xs font-medium text-slate-700">
             Mã Ký Hiệu Máy Bay <span className="text-red-500">*</span>
           </Label>
           <Input
-            id="code"
-            name="code"
-            value={formData.code}
-            onChange={(e) => setFormData((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
+            id="iata_code"
+            name="iata_code"
+            value={formData.iata_code}
+            onChange={(e) => setFormData((prev) => ({ ...prev, iata_code: e.target.value.toUpperCase() }))}
             placeholder="VD: A320, A321, B787"
             required
             disabled={mode === 'edit'}
@@ -46,14 +46,14 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="model" className="text-xs font-medium text-slate-700">
+          <Label htmlFor="name" className="text-xs font-medium text-slate-700">
             Tên Dòng Máy Bay <span className="text-red-500">*</span>
           </Label>
           <Input
-            id="model"
-            name="model"
-            value={formData.model}
-            onChange={(e) => setFormData((prev) => ({ ...prev, model: e.target.value }))}
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
             placeholder="VD: Airbus A321-200"
             required
             className="text-xs bg-white border-slate-200/60 shadow-none h-8.5"
@@ -76,15 +76,15 @@ export const AircraftForm: React.FC<AircraftFormProps> = ({
         </div>
 
         <div className="space-y-1">
-          <Label htmlFor="capacity" className="text-xs font-medium text-slate-700">
+          <Label htmlFor="seat_capacity" className="text-xs font-medium text-slate-700">
             Sức Chứa Ghế Ngồi <span className="text-red-500">*</span>
           </Label>
           <Input
-            id="capacity"
-            name="capacity"
+            id="seat_capacity"
+            name="seat_capacity"
             type="number"
-            value={formData.capacity}
-            onChange={(e) => setFormData((prev) => ({ ...prev, capacity: Number(e.target.value) }))}
+            value={formData.seat_capacity}
+            onChange={(e) => setFormData((prev) => ({ ...prev, seat_capacity: Number(e.target.value) }))}
             placeholder="VD: 180, 220"
             required
             min={1}

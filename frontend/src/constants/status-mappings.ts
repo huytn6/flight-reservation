@@ -321,3 +321,19 @@ export const getCouponStatusConfig = (status?: string | null): StatusConfig => {
   if (!status) return { label: 'Không rõ', className: 'bg-slate-100 text-slate-600 border-slate-200' };
   return COUPON_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
 };
+
+// 14. CMS Content Publish Status Config
+export const CONTENT_STATUS_CONFIG: Record<string, StatusConfig> = {
+  PUBLISHED: {
+    label: 'Đã xuất bản',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+  },
+  DRAFT: {
+    label: 'Bản nháp',
+    className: 'bg-slate-100 text-slate-600 border-slate-200',
+  },
+};
+
+export const getContentStatusConfig = (status?: string | null): StatusConfig => {
+  return CONTENT_STATUS_CONFIG[status || 'DRAFT'] || CONTENT_STATUS_CONFIG.DRAFT;
+};

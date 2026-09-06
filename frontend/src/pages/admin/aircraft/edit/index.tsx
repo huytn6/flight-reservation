@@ -12,10 +12,10 @@ export const AircraftEditPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [formData, setFormData] = useState<AircraftFormData>({
-    code: '',
-    model: '',
+    iata_code: '',
+    name: '',
     manufacturer: '',
-    capacity: 0,
+    seat_capacity: 0,
   });
 
   useEffect(() => {
@@ -26,13 +26,13 @@ export const AircraftEditPage: React.FC = () => {
     setFetching(true);
     try {
       const list = await adminService.getAircraftTypes();
-      const item = list.find((a: any) => a.id === id || a.code === id);
+      const item = list.find((a: any) => a.id === id || a.iata_code === id);
       if (item) {
         setFormData({
-          code: item.code || '',
-          model: item.model || '',
+          iata_code: item.iata_code || '',
+          name: item.name || '',
           manufacturer: item.manufacturer || '',
-          capacity: item.capacity || 0,
+          seat_capacity: item.seat_capacity || 0,
         });
       } else {
         toast.error('Không tìm thấy thông tin loại máy bay');
@@ -66,14 +66,14 @@ export const AircraftEditPage: React.FC = () => {
 
   return (
     <AdminFormLayout
-      title={`Chỉnh Sửa Dòng Máy Bay: ${formData.code}`}
+      title={`Chỉnh Sửa Dòng Máy Bay: ${formData.iata_code}`}
       description="Cập nhật thông tin chi tiết kỹ thuật và sức chứa ghế ngồi."
       backPath="/admin/aircraft"
       mode="edit"
       submitText="Lưu thay đổi"
       breadcrumbs={[
         { label: 'Quản lý tàu bay', href: '/admin/aircraft' },
-        { label: `Chỉnh sửa ${formData.code}` },
+        { label: `Chỉnh sửa ${formData.iata_code}` },
       ]}
       loading={loading}
       onSubmit={handleSubmit}

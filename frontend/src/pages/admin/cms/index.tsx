@@ -2,11 +2,11 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminService } from '@/services/admin';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable';
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { StatusBadge } from '@/components/common/StatusBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -72,15 +72,7 @@ export const CmsListPage: React.FC = () => {
       accessorKey: 'is_published',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái Đăng" />,
       cell: ({ row }) => (
-        row.original.is_published ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-md border border-emerald-200/60">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" /> Đã xuất bản
-          </span>
-        ) : (
-          <Badge variant="outline" className="text-slate-500 text-xs font-normal">
-            Bản nháp
-          </Badge>
-        )
+        <StatusBadge type="content" value={row.original.is_published ? 'PUBLISHED' : 'DRAFT'} />
       ),
     },
     {

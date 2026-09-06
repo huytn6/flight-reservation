@@ -10,6 +10,7 @@ import {
   getSeatStatusConfig,
   getDraftStatusConfig,
   getCouponStatusConfig,
+  getContentStatusConfig,
   type StatusConfig,
 } from '@/constants/status-mappings';
 
@@ -22,7 +23,8 @@ export type StatusBadgeType =
   | 'ticket'
   | 'seat'
   | 'draft'
-  | 'coupon';
+  | 'coupon'
+  | 'content';
 
 interface StatusBadgeProps {
   type: StatusBadgeType;
@@ -65,6 +67,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       break;
     case 'coupon':
       config = getCouponStatusConfig(value);
+      break;
+    case 'content':
+      config = getContentStatusConfig(value);
       break;
     default:
       config = { label: value || 'Khác', className: 'bg-slate-100 text-slate-700 border-slate-200' };
