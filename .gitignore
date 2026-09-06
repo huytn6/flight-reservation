@@ -1,4 +1,5 @@
 .venv/
+.mysql-dev/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -9,6 +10,8 @@ backend/database/*.db-wal
 
 frontend/node_modules/
 frontend/dist/
+frontend/*.log
+backend/*.log
 .DS_Store
 .vscode/
 deployment/.env

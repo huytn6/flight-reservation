@@ -26,10 +26,10 @@ export const CmsEditPage: React.FC = () => {
     setFetching(true);
     try {
       const list = await adminService.getContents();
-      const item = list.find((c: any) => c.id === id || c.key === id);
+      const item = list.find((c: any) => c.id === id || c.slug === id);
       if (item) {
         setFormData({
-          key: item.key || '',
+          key: item.slug || '',
           title: item.title || '',
           body: item.body || '',
           is_published: Boolean(item.is_published),
