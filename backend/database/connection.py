@@ -149,6 +149,6 @@ def init_schema():
             try:
                 db.execute(stmt)
             except mysql.connector.Error as exc:
-                if exc.errno in (1050, 1060):  # table exists, duplicate column
+                if exc.errno in (1050, 1060, 1061):  # table exists, duplicate column, duplicate key name
                     continue
                 raise
