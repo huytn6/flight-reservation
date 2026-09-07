@@ -193,10 +193,26 @@ Lỗi này sẽ **chỉ hết hẳn sau khi bạn deploy code** (vì phụ thu�
 - `backend/repositories/user_repo.py` (lỗi yêu thích chuyến bay — mục 6.6)
 - `backend/repositories/flight_repo.py`, `backend/services/flight_service.py`, `backend/controllers/flight_controller.py` (route `/flights/status` — mục 6.6b)
 
+## 6.9. Đã đẩy code lên GitHub — và phát hiện quan trọng
+
+Bạn yêu cầu đẩy các fix lên repo (`https://github.com/huytn6/flight-reservation`). Trước khi push, phát hiện: **repo này đã có rất nhiều commit gần đây từ một nguồn khác** (có vẻ một phiên làm việc khác cũng đang sửa lỗi qua git, song song với phiên này) — khoảng 50 file khác với bản local mình đang sửa. Bạn xác nhận đó là công việc hợp lệ, cần giữ nguyên.
+
+**Cách xử lý:** mình không đẩy nguyên bản local lên (sẽ ghi đè mất việc của người khác). Thay vào đó, với từng file mình đã sửa, mình so sánh kỹ với bản mới nhất trên GitHub:
+- Phần lớn file (17/20) không bị ai động vào — đẩy thẳng bản đã sửa.
+- `backend/repositories/user_repo.py`: phát hiện **người khác đã sửa đúng lỗi "yêu thích chuyến bay" này rồi, và sửa tốt hơn bản của mình** (có thêm tên thành phố, tên hãng bay) — mình bỏ qua, giữ nguyên bản của họ.
+- `frontend/src/services/booking.ts`: người khác đã đổi tên nhiều đường dẫn API khác (không liên quan lỗi mình sửa) — mình chỉ ghép thêm đúng phần mình cần (kiểu dữ liệu tra cứu PNR), không đụng phần của họ.
+- `backend/repositories/flight_repo.py`: tương tự — họ đã cải tiến vài hàm khác, mình chỉ chèn thêm đúng hàm tra cứu chuyến bay mới của mình vào, giữ nguyên phần còn lại.
+
+Đã push 2 commit lên nhánh `main`:
+1. `d3881b7` — toàn bộ fix từ lỗi 1 đến lỗi 10.
+2. `99bbe7d` — **một lỗi phát sinh phát hiện khi push**: pipeline test tự động (GitHub Actions) đang **fail sẵn từ trước** (không phải do mình) vì file migration `V3__support_category_aircraft_unique.sql` (của người khác) tạo unique key nhưng code chưa xử lý lỗi "key đã tồn tại" cho đúng loại lỗi đó khi chạy test nhiều lần — khiến **pipeline fail liên tục, kể cả 2 lần push gần nhất của người kia cũng vậy**. Mình sửa 1 dòng để pipeline tolerant với lỗi này (giống cách nó đã tolerant với "bảng đã tồn tại"). Sau khi sửa, bước test/build **đã chạy pass hoàn toàn**.
+
+**Vướng mắc cuối cùng — cần bạn (hoặc người quản lý server) xử lý:** Bước deploy thật lên server (`103.186.64.195`) bị lỗi **3 lần liên tiếp**, cùng 1 nguyên nhân: server không tải được Docker image `python:3.12-slim` từ Docker Hub (`dial tcp ...:443: i/o timeout` khi kéo image). Đây là **lỗi kết nối mạng từ server tới Docker Hub**, không phải lỗi code — mình không có quyền SSH vào server đó nên không tự sửa được. Tin tốt: script deploy có cơ chế **tự động rollback về bản cũ an toàn** mỗi lần fail, nên **production hiện không bị gián đoạn**, chỉ là chưa cập nhật fix mới.
+
 ## 7. Việc còn lại / cần bạn làm
 
-1. **Deploy code lên production**: thư mục này hiện **chưa kết nối git** (`git status` báo not a git repository), trong khi hệ thống chỉ deploy tự động khi push lên nhánh `main` trên GitHub (xem `.github/workflows/deploy.yml`). Theo lựa chọn bạn đã chọn, mình chỉ sửa code ở đây — **bạn tự commit/push** (hoặc cho mình biết remote GitHub để mình push giúp).
-2. **Mở thử trên trình duyệt** sau khi deploy để xác nhận bằng mắt, đặc biệt: luồng chọn chuyến đi → chuyến về cho vé khứ hồi (lỗi 4), một chiều chỉ chọn được 1 ngày (lỗi 6), bộ lọc bên trái hoạt động (lỗi 7), tra cứu PNR ra đúng vé (lỗi 8), trang "Chuyến bay đã lưu" hiện đúng điểm đi/đến.
+1. **Deploy đang bị chặn bởi lỗi hạ tầng, không phải code**: code đã lên GitHub `main` (commit `d3881b7`, `99bbe7d`) và **đã pass toàn bộ test/build**. Chỉ còn bước deploy thật lên server bị lỗi mạng khi kéo Docker image (mục 6.9) — **cần bạn hoặc người quản lý server `103.186.64.195` kiểm tra kết nối tới Docker Hub** (thử `docker pull python:3.12-slim` trực tiếp trên server, kiểm tra DNS/firewall/proxy), rồi vào GitHub Actions bấm "Re-run failed jobs" cho lần chạy mới nhất, hoặc mình chạy lại giúp khi bạn báo đã kiểm tra xong.
+2. **Mở thử trên trình duyệt** sau khi deploy thành công để xác nhận bằng mắt, đặc biệt: luồng chọn chuyến đi → chuyến về cho vé khứ hồi (lỗi 4), một chiều chỉ chọn được 1 ngày (lỗi 6), bộ lọc bên trái hoạt động (lỗi 7), tra cứu PNR ra đúng vé (lỗi 8), tra cứu trạng thái chuyến bay theo số hiệu (lỗi 9), trang "Chuyến bay đã lưu" hiện đúng điểm đi/đến (lỗi 10).
 3. **Dữ liệu chuyến bay trùng**: theo yêu cầu ở vòng 1, mình đã **dừng lại giữa chừng** — hiện còn khoảng **3513 dòng trùng chưa dọn** (đã dọn ~1974/5487) và **3 nhóm cần bạn tự xem xét thủ công** vì đã có khách đặt vé thật. Muốn dọn tiếp thì báo mình chạy lại script. (Lưu ý: dọn dữ liệu này cũng sẽ giúp lỗi 5 — giá theo ngày — trông tự nhiên hơn vì bớt lặp dữ liệu.)
 4. (Tuỳ chọn) Sửa nốt các chỗ hard-code còn sót trong `FlightDetailModal.tsx` (loại tàu bay, khoảng cách bay luôn "721 mi"...) nếu bạn muốn đồng bộ hoàn toàn — phát hiện phụ, không nằm trong yêu cầu FIX.ipynb.
 
@@ -233,3 +249,6 @@ Lỗi này sẽ **chỉ hết hẳn sau khi bạn deploy code** (vì phụ thu�
 - `frontend/src/pages/flight-status/index.tsx` (dùng đúng API tra cứu thay vì lọc tay trên danh sách luôn rỗng)
 - `frontend/src/pages/saved-flights/index.tsx` (nút "Xem Giá Vé" gửi đúng điểm đi/đến + ngày bay thật)
 - `frontend/src/pages/flight-results/index.tsx` (phòng vệ chống hiện chữ "undefined" khi link thiếu tham số)
+
+**Vòng 4 (fix CI/pipeline, phát sinh khi đẩy code lên GitHub):**
+- `backend/database/connection.py` (bỏ qua lỗi "duplicate key name" khi chạy lại migration nhiều lần — đang chặn toàn bộ pipeline test/deploy)
