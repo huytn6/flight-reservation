@@ -7,11 +7,16 @@ import config
 
 @route('POST', '/auth/register')
 def register(handler):
+    ip = handler.client_address[0]
+    middleware.check_rate_limit(f'register:{ip}', 10, 3600)
     data = req.parse_json_body(handler)
     val.require_fields(data, 'email', 'password', 'full_name')
     email = val.validate_email(data['email'])
     val.validate_password(data['password'])
     full_name = val.sanitize_str(data['full_name'], 100, 'full_name')
+    if not full_name:
+        from core.exceptions import ValidationError
+        raise ValidationError('full_name cannot be empty')
     user = auth_service.register(email, data['password'], full_name, handler.client_address[0])
     response.created(handler, user, 'Registration successful')
 

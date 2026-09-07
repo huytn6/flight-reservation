@@ -13,6 +13,8 @@ export const CheckInPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [booking, setBooking] = useState<any | null>(null);
   const [checkedIn, setCheckedIn] = useState(false);
+  const [checkingIn, setCheckingIn] = useState(false);
+  const [boardingInfo, setBoardingInfo] = useState<{ seat_number: string | null; gate: string } | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,10 +41,26 @@ export const CheckInPage: React.FC = () => {
     }
   };
 
-  const handleConfirmCheckIn = () => {
-    setCheckedIn(true);
-    toast.success('Làm thủ tục trực tuyến thành công! Thẻ lên máy bay đã được khởi tạo.');
+  const handleConfirmCheckIn = async () => {
+    if (!booking?.id) return;
+    setCheckingIn(true);
+    try {
+      const result = await bookingService.confirmCheckIn(booking.id);
+      setBoardingInfo({ seat_number: result.seat_number, gate: result.gate });
+      setCheckedIn(true);
+      toast.success(
+        result.already_checked_in
+          ? 'Vé này đã được làm thủ tục trực tuyến trước đó.'
+          : 'Làm thủ tục trực tuyến thành công! Thẻ lên máy bay đã được khởi tạo.'
+      );
+    } catch (err: any) {
+      toast.error(err.message || 'Không thể làm thủ tục check-in cho đặt chỗ này');
+    } finally {
+      setCheckingIn(false);
+    }
   };
+
+  const eligible = booking?.status === 'CONFIRMED';
 
   return (
     <div className="w-full max-w-4xl mx-auto py-6 px-4 space-y-6 font-sans">
@@ -111,11 +129,17 @@ export const CheckInPage: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <span className="text-[11px] text-slate-500 font-medium">MÃ ĐẶT CHỖ (PNR)</span>
-              <p className="text-lg font-bold font-mono text-slate-900">{booking.pnr_code || pnr}</p>
+              <p className="text-lg font-bold font-mono text-slate-900">{booking.pnr || pnr}</p>
             </div>
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-              Đủ Điều Kiện Check-in
-            </span>
+            {eligible ? (
+              <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                Đủ Điều Kiện Check-in
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 border border-slate-200/60">
+                Chưa Đủ Điều Kiện ({booking.status})
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
@@ -143,14 +167,14 @@ export const CheckInPage: React.FC = () => {
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Đã Hoàn Tất Làm Thủ Tục Trực Tuyến</span>
                 </div>
-                <span className="text-xs font-mono text-slate-500">Ghế: 12A (Phổ Thông)</span>
+                <span className="text-xs font-mono text-slate-500">Ghế: {boardingInfo?.seat_number || 'Chưa gán'}</span>
               </div>
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg border border-slate-100">
                 <div className="space-y-1">
                   <p className="text-[11px] text-slate-400">HÀNH KHÁCH</p>
                   <p className="text-sm font-bold text-slate-900">{booking.contact_full_name || lastName.toUpperCase()}</p>
-                  <p className="text-xs text-slate-500">Cổng lên máy bay (Gate): <span className="font-bold text-slate-900">A04</span></p>
+                  <p className="text-xs text-slate-500">Cổng lên máy bay (Gate): <span className="font-bold text-slate-900">{boardingInfo?.gate || 'A04'}</span></p>
                 </div>
                 <div className="flex flex-col items-center gap-1 border-t sm:border-t-0 sm:border-l border-slate-100 pt-3 sm:pt-0 sm:pl-6">
                   <QrCode className="w-24 h-24 text-slate-800" />
@@ -162,11 +186,17 @@ export const CheckInPage: React.FC = () => {
             <div className="pt-2">
               <Button
                 onClick={handleConfirmCheckIn}
-                className="w-full h-10 bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs rounded-lg cursor-pointer shadow-none flex items-center justify-center gap-2"
+                disabled={!eligible || checkingIn}
+                className="w-full h-10 bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs rounded-lg cursor-pointer shadow-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <CheckCircle2 className="w-4 h-4" />
-                Xác Nhận Check-in & Xuất Thẻ Lên Máy Bay
+                {checkingIn ? 'Đang xử lý...' : 'Xác Nhận Check-in & Xuất Thẻ Lên Máy Bay'}
               </Button>
+              {!eligible && (
+                <p className="text-[11px] text-slate-500 text-center mt-2">
+                  Chỉ đặt chỗ ở trạng thái đã xác nhận (CONFIRMED) mới có thể làm thủ tục trực tuyến.
+                </p>
+              )}
             </div>
           )}
         </Card>

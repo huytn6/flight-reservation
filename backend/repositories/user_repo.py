@@ -87,10 +87,11 @@ def find_active_session(db, session_id, user_id):
 
 
 def list_active_sessions(db, user_id):
+    now = utcnow_iso()
     return db.execute(
         "SELECT id,ip_address,user_agent,created_at,expires_at,last_seen_at "
-        "FROM sessions WHERE user_id=? AND revoked_at IS NULL ORDER BY created_at DESC",
-        (user_id,)
+        "FROM sessions WHERE user_id=? AND revoked_at IS NULL AND expires_at > ? ORDER BY created_at DESC",
+        (user_id, now)
     ).fetchall()
 
 
@@ -155,8 +156,15 @@ def delete_saved_passenger(db, pid):
 
 def list_saved_flights(db, user_id):
     return db.execute(
-        "SELECT sf.*, f.flight_number, f.departure_time, f.arrival_time "
-        "FROM saved_flights sf JOIN flights f ON f.id=sf.flight_id "
+        "SELECT sf.*, f.flight_number, f.departure_time, f.arrival_time, f.status as flight_status, "
+        "dep.iata_code as origin, dep.city as origin_city, "
+        "arr.iata_code as destination, arr.city as destination_city, "
+        "al.name as airline_name, al.iata_code as airline_code "
+        "FROM saved_flights sf "
+        "JOIN flights f ON f.id=sf.flight_id "
+        "JOIN airports dep ON dep.id=f.departure_airport_id "
+        "JOIN airports arr ON arr.id=f.arrival_airport_id "
+        "JOIN airlines al ON al.id=f.airline_id "
         "WHERE sf.user_id=? ORDER BY sf.created_at DESC",
         (user_id,)
     ).fetchall()

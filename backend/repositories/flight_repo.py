@@ -20,16 +20,27 @@ def search_flights(db, dep_airport_id, arr_airport_id, date):
     ).fetchall()
 
 
+_LIST_FLIGHTS_ADMIN_SELECT = (
+    "SELECT f.*, al.name as airline_name, al.iata_code as airline_code, "
+    "dep.iata_code as departure_iata, dep.city as departure_city, dep.name as departure_airport_name, "
+    "arr.iata_code as arrival_iata, arr.city as arrival_city, arr.name as arrival_airport_name, "
+    "ac.name as aircraft_type_name, ac.iata_code as aircraft_code, ac.seat_capacity as capacity "
+    "FROM flights f "
+    "JOIN airlines al ON al.id=f.airline_id "
+    "JOIN airports dep ON dep.id=f.departure_airport_id "
+    "JOIN airports arr ON arr.id=f.arrival_airport_id "
+    "LEFT JOIN aircraft_types ac ON ac.id=f.aircraft_type_id "
+)
+
+
 def list_flights_admin(db, date_filter=''):
     if date_filter:
         return db.execute(
-            "SELECT f.*, al.name as airline_name FROM flights f JOIN airlines al ON al.id=f.airline_id "
-            "WHERE DATE(f.departure_time)=? ORDER BY f.departure_time DESC",
+            _LIST_FLIGHTS_ADMIN_SELECT + "WHERE DATE(f.departure_time)=? ORDER BY f.departure_time DESC",
             (date_filter,)
         ).fetchall()
     return db.execute(
-        "SELECT f.*, al.name as airline_name FROM flights f JOIN airlines al ON al.id=f.airline_id "
-        "ORDER BY f.departure_time DESC"
+        _LIST_FLIGHTS_ADMIN_SELECT + "ORDER BY f.departure_time DESC"
     ).fetchall()
 
 
@@ -213,6 +224,12 @@ def find_seat(db, seat_id):
     return db.execute("SELECT * FROM seats WHERE id=?", (seat_id,)).fetchone()
 
 
+def find_seat_for_update(db, seat_id):
+    """Locks the seat row for the duration of the caller's transaction so two
+    concurrent seat-hold requests for the same seat serialize instead of deadlocking."""
+    return db.execute("SELECT * FROM seats WHERE id=? FOR UPDATE", (seat_id,)).fetchone()
+
+
 def update_seat_status(db, seat_id, status):
     now = utcnow_iso()
     db.execute("UPDATE seats SET status=?, updated_at=? WHERE id=?", (status, now, seat_id))
@@ -250,7 +267,7 @@ def get_price_calendar(db, dep_id, arr_id, year_month):
            JOIN fares fa ON fa.flight_id=f.id
            JOIN fare_inventories fi ON fi.fare_id=fa.id
            WHERE f.departure_airport_id=? AND f.arrival_airport_id=?
-             AND strftime('%Y-%m', f.departure_time)=?
+             AND DATE_FORMAT(f.departure_time, '%Y-%m')=?
              AND fi.available_seats>0
            GROUP BY dep_date
            ORDER BY dep_date""",

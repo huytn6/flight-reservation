@@ -1,8 +1,12 @@
 def apply_coupon(amount: int, coupon: dict) -> int:
-    """Returns discount amount (integer VND)."""
+    """Returns discount amount (integer VND), clamped to [0, amount] regardless of
+    how discount_value was stored — a safety net against a bad/negative value slipping
+    past admin-side validation and inflating the customer's total instead of reducing it."""
     if coupon['discount_type'] == 'PERCENT':
-        return min(amount, int(amount * coupon['discount_value'] / 100))
-    return min(amount, coupon['discount_value'])
+        discount = int(amount * coupon['discount_value'] / 100)
+    else:
+        discount = coupon['discount_value']
+    return max(0, min(amount, discount))
 
 
 def fare_total(base_price: int, tax: int, fees: int) -> int:

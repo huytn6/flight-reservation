@@ -1,5 +1,5 @@
 import uuid
-from core.exceptions import NotFoundError, BusinessError, ValidationError, AuthorizationError
+from core.exceptions import NotFoundError, BusinessError, ValidationError, AuthorizationError, ConflictError
 from database.connection import get_db
 from repositories import review_repo, booking_repo
 
@@ -24,9 +24,11 @@ def create_review(user_id: str, booking_id: str, airline_id: str, rating: int,
         raise NotFoundError('Booking')
     if booking['status'] != 'COMPLETED':
         raise BusinessError('BOOKING_NOT_COMPLETED', 'You can only review completed bookings')
+    if review_repo.find_review_by_user_and_airline(db, user_id, airline_id):
+        raise ConflictError('You have already reviewed this airline', 'REVIEW_ALREADY_EXISTS')
 
     rid = str(uuid.uuid4())
-    review_repo.create_review(db, rid, user_id, airline_id, rating, title, body)
+    review_repo.create_review(db, rid, user_id, airline_id, booking_id, rating, title, body)
     db.commit()
     return {'id': rid}
 

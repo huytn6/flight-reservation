@@ -6,7 +6,7 @@ export interface PriceAlert {
   origin_iata: string;
   destination_iata: string;
   departure_date: string;
-  target_price?: number;
+  max_price?: number;
   current_price?: number;
   is_active: boolean;
   created_at: string;
@@ -16,7 +16,7 @@ export interface PriceAlertHistory {
   id: string;
   alert_id: string;
   price: number;
-  checked_at: string;
+  recorded_at: string;
 }
 
 export const priceAlertService = {
@@ -24,7 +24,7 @@ export const priceAlertService = {
     return $api.get('/users/me/price-alerts');
   },
 
-  createAlert: async (data: { origin_iata: string; destination_iata: string; departure_date: string; target_price?: number }): Promise<PriceAlert> => {
+  createAlert: async (data: { origin_iata: string; destination_iata: string; departure_date: string; max_price?: number }): Promise<PriceAlert> => {
     return $api.post('/users/me/price-alerts', data);
   },
 

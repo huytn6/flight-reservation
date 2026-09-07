@@ -15,32 +15,43 @@ export const FlightStatusPage: React.FC = () => {
     loadInitialFlights();
   }, []);
 
-  const loadInitialFlights = async () => {
+  // /flights/search requires a specific origin+destination+date; there is no public
+  // "list every flight" endpoint. Show today's flights on the busiest seeded route
+  // (SGN <-> HAN) as a real, non-empty default view instead of calling search with
+  // no criteria (which always fails validation and silently left the page empty).
+  const DEFAULT_ORIGIN = 'SGN';
+  const DEFAULT_DESTINATION = 'HAN';
+
+  const loadFlights = async (origin: string, destination: string, date: string) => {
     setLoading(true);
     try {
-      const res = await flightService.searchFlights({});
-      setFlights(Array.isArray(res) ? res : (res as any).items || []);
-    } catch {
+      const res = await flightService.searchFlights({ origin, destination, departure_date: date });
+      setFlights(res.outbound?.flights || []);
+    } catch (err: any) {
       setFlights([]);
+      toast.error(err.message || 'Không thể tải danh sách chuyến bay');
     } finally {
       setLoading(false);
     }
   };
 
+  const loadInitialFlights = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    loadFlights(DEFAULT_ORIGIN, DEFAULT_DESTINATION, today);
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) {
+    const flightNumber = query.trim().toUpperCase();
+    if (!flightNumber) {
       loadInitialFlights();
       return;
     }
-    const q = query.toLowerCase();
-    const filtered = flights.filter(
-      (f) =>
-        f.flight_number?.toLowerCase().includes(q) ||
-        f.departure_city?.toLowerCase().includes(q) ||
-        f.arrival_city?.toLowerCase().includes(q) ||
-        f.airline_name?.toLowerCase().includes(q)
-    );
+    const filtered = flights.filter((f) => f.flight_number?.toUpperCase().includes(flightNumber));
+    if (filtered.length === 0) {
+      toast.info('Không tìm thấy chuyến bay trong danh sách đang hiển thị — thử tra cứu tuyến bay khác.');
+      return;
+    }
     setFlights(filtered);
     toast.info(`Tìm thấy ${filtered.length} chuyến bay phù hợp`);
   };
@@ -114,7 +125,7 @@ export const FlightStatusPage: React.FC = () => {
                   <span className="font-mono font-bold text-sm text-[#0065eb] bg-blue-50 px-2.5 py-0.5 rounded">
                     {f.flight_number}
                   </span>
-                  <span className="text-xs text-slate-600 font-medium">{f.airline_name || 'Hãng bay'}</span>
+                  <span className="text-xs text-slate-600 font-medium">{f.airline?.name || 'Hãng bay'}</span>
                 </div>
                 {getStatusBadge(f.status)}
               </div>
@@ -122,7 +133,7 @@ export const FlightStatusPage: React.FC = () => {
               <div className="flex items-center justify-between gap-3 text-xs">
                 <div>
                   <p className="text-[11px] text-slate-400">KHỞI HÀNH</p>
-                  <p className="font-bold text-sm text-slate-900">{f.departure_city || 'SGN'}</p>
+                  <p className="font-bold text-sm text-slate-900">{f.departure_airport?.city || 'SGN'}</p>
                   <p className="font-mono text-slate-500 text-[11px]">
                     {f.departure_time ? new Date(f.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '08:30'}
                   </p>
@@ -135,7 +146,7 @@ export const FlightStatusPage: React.FC = () => {
 
                 <div className="text-right">
                   <p className="text-[11px] text-slate-400">ĐIỂM ĐẾN</p>
-                  <p className="font-bold text-sm text-slate-900">{f.arrival_city || 'HAN'}</p>
+                  <p className="font-bold text-sm text-slate-900">{f.arrival_airport?.city || 'HAN'}</p>
                   <p className="font-mono text-slate-500 text-[11px]">
                     {f.arrival_time ? new Date(f.arrival_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '10:45'}
                   </p>

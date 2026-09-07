@@ -107,6 +107,7 @@ def reset_password(token: str, new_password: str) -> None:
     hashed = auth.hash_password(new_password)
     user_repo.update_password(db, row['user_id'], hashed)
     user_repo.mark_reset_token_used(db, row['id'], now)
+    user_repo.revoke_all_sessions(db, row['user_id'], now)
     db.commit()
 
 

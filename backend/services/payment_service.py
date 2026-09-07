@@ -40,6 +40,15 @@ def _confirm_booking(db, booking_id: str, user_id: str) -> str:
         booking_repo.create_e_ticket(db, str(uuid.uuid4()), booking_id, pax['id'], ticket_num)
 
     booking = booking_repo.find_booking(db, booking_id)
+    if booking and booking['draft_id']:
+        from repositories import coupon_repo
+        ancillaries = booking_repo.get_draft_ancillaries(db, booking['draft_id'])
+        coupon_anc = next((a for a in ancillaries if a['ancillary_type'] == 'COUPON'), None)
+        if coupon_anc:
+            coupon = coupon_repo.find_coupon(db, coupon_anc['code'])
+            if coupon:
+                coupon_repo.increment_coupon_usage(db, coupon['id'])
+
     if booking and booking['user_id']:
         from repositories import notification_repo
         notification_repo.create_notification(
@@ -56,7 +65,8 @@ def create_payment(booking_id: str, user_ctx: dict, payment_method: str,
     db = get_db()
     if idempotency_key:
         existing = payment_repo.find_payment_by_idempotency(db, idempotency_key)
-        if existing:
+        if existing and existing['booking_id'] == booking_id:
+            _assert_booking_access(db, booking_id, user_ctx)
             return dict(existing)
 
     booking = _assert_booking_access(db, booking_id, user_ctx)
@@ -153,5 +163,6 @@ def get_transactions(payment_id: str, user_ctx: dict) -> list:
     payment = payment_repo.find_payment(db, payment_id)
     if not payment:
         raise NotFoundError('Payment')
+    _assert_booking_access(db, payment['booking_id'], user_ctx)
     rows = payment_repo.get_transactions(db, payment_id)
     return [dict(r) for r in rows]

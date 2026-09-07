@@ -44,12 +44,12 @@ def assign_ticket(db, ticket_id, staff_id):
     )
 
 
-def add_message(db, mid, ticket_id, sender_id, content, sender_role):
+def add_message(db, mid, ticket_id, sender_id, body, sender_role):
     now = utcnow_iso()
     db.execute(
-        "INSERT INTO support_messages(id,ticket_id,sender_id,sender_role,content,created_at) "
+        "INSERT INTO support_messages(id,ticket_id,sender_id,sender_role,body,created_at) "
         "VALUES(?,?,?,?,?,?)",
-        (mid, ticket_id, sender_id, sender_role, content, now)
+        (mid, ticket_id, sender_id, sender_role, body, now)
     )
 
 

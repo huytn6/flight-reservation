@@ -9,7 +9,7 @@ export interface AirlineReview {
   title?: string;
   body?: string;
   created_at: string;
-  user_name?: string;
+  reviewer_name?: string;
 }
 
 export const reviewService = {

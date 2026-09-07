@@ -1,5 +1,5 @@
 from core.router import route
-from core import response, request as req, authentication as auth, validation as val
+from core import response, request as req, authentication as auth, validation as val, middleware
 from database.connection import get_db
 from services import support_service
 
@@ -8,6 +8,7 @@ from services import support_service
 def create_ticket(handler):
     db = get_db()
     user = auth.require_auth(handler, db)
+    middleware.check_rate_limit(f'support-ticket:{user["user_id"]}', 5, 3600)
     data = req.parse_json_body(handler)
     val.require_fields(data, 'subject')
     result = support_service.create_ticket(

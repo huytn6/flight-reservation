@@ -14,7 +14,7 @@ export const userService = {
     return $api.get('/users/me');
   },
 
-  updateProfile: async (data: { full_name?: string; phone?: string }): Promise<void> => {
+  updateProfile: async (data: { full_name?: string; phone?: string; date_of_birth?: string; nationality?: string }): Promise<void> => {
     return $api.patch('/users/me', data);
   },
 

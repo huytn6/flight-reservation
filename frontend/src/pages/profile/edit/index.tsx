@@ -39,18 +39,31 @@ export const ProfileEdit: React.FC = () => {
         setLastName(parts[parts.length - 1]);
       }
     }
+    userService.getProfile().then((profile: any) => {
+      if (profile.phone) setPhone(profile.phone);
+      if (profile.date_of_birth) {
+        const [y, m, d] = profile.date_of_birth.split('-');
+        setDobYear(y || '');
+        setDobMonth(m || '');
+        setDobDay(d || '');
+      }
+    }).catch(() => {});
   }, [user]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     const constructedFullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+    const updates: { full_name: string; phone: string; date_of_birth?: string } = {
+      full_name: constructedFullName,
+      phone,
+    };
+    if (dobYear && dobMonth && dobDay) {
+      updates.date_of_birth = `${dobYear.padStart(4, '0')}-${dobMonth.padStart(2, '0')}-${dobDay.padStart(2, '0')}`;
+    }
 
     try {
-      await userService.updateProfile({
-        full_name: constructedFullName,
-        phone,
-      });
+      await userService.updateProfile(updates);
 
       if (user) {
         setUser({ ...user, full_name: constructedFullName });
@@ -135,6 +148,7 @@ export const ProfileEdit: React.FC = () => {
           {/* About You / Bio */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold text-slate-800">About you</span>
+            <p className="text-[10px] text-slate-400">Coming soon — not saved to your account yet.</p>
             <Textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
@@ -185,6 +199,7 @@ export const ProfileEdit: React.FC = () => {
           {/* Gender */}
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-semibold text-slate-800">Gender</span>
+            <p className="text-[10px] text-slate-400">Coming soon — not saved to your account yet.</p>
             <div className="flex flex-col gap-2 text-xs text-slate-700">
               {['Female', 'Male', 'Unspecified (X)', 'Undisclosed (U)'].map((opt) => (
                 <label key={opt} className="flex items-center gap-2 cursor-pointer">
@@ -207,6 +222,7 @@ export const ProfileEdit: React.FC = () => {
             <span className="text-xs font-semibold text-slate-800">Accessibility needs</span>
             <p className="text-[10px] text-slate-500 leading-normal mb-0.5">
               Help us build features that make travel accessible for all by sharing this information.
+              Coming soon — not saved to your account yet.
             </p>
             <Select value={accessibility} onValueChange={setAccessibility}>
               <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">

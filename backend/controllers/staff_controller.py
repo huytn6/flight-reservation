@@ -61,6 +61,8 @@ def staff_get_booking(handler, booking_id):
 
 @route('POST', '/staff/booking-drafts')
 def staff_create_draft(handler):
+    db = get_db()
+    auth.require_staff(handler, db)
     from controllers.draft_controller import create_draft
     create_draft(handler)
 
@@ -128,10 +130,13 @@ def staff_cancel_booking(handler, booking_id):
     reason = data.get('reason', 'Staff cancellation')
 
     from database.connection import transaction
+    from repositories import flight_repo
     with transaction(db):
         booking_repo.update_booking_status(db, booking_id, 'CANCELLED')
         booking_repo.add_status_history(db, booking_id, booking['status'], 'CANCELLED',
                                         changed_by=user['user_id'], reason=reason)
+        for a in booking_repo.get_seat_assignments(db, booking_id):
+            flight_repo.update_seat_status(db, a['seat_id'], 'AVAILABLE')
         audit_repo.log(db, user['user_id'], 'CANCEL_BOOKING', 'bookings', booking_id)
 
     response.success(handler, None, 'Booking cancelled')

@@ -35,6 +35,13 @@ def find_notification(db, notif_id, user_id):
     ).fetchone()
 
 
+def find_by_reference(db, user_id, ref_type, ref_id):
+    return db.execute(
+        "SELECT id FROM notifications WHERE user_id=? AND reference_type=? AND reference_id=?",
+        (user_id, ref_type, ref_id)
+    ).fetchone()
+
+
 def mark_read(db, notif_id, user_id):
     db.execute(
         "UPDATE notifications SET is_read=1 WHERE id=? AND user_id=?", (notif_id, user_id)
@@ -66,8 +73,8 @@ def upsert_alert_preferences(db, user_id, prefs: dict):
         )
     else:
         pid = str(uuid.uuid4())
-        cols = ['id', 'user_id'] + list(prefs.keys()) + ['created_at', 'updated_at']
-        vals = [pid, user_id] + list(prefs.values()) + [now, now]
+        cols = ['id', 'user_id'] + list(prefs.keys()) + ['updated_at']
+        vals = [pid, user_id] + list(prefs.values()) + [now]
         placeholders = ','.join(['?'] * len(cols))
         db.execute(
             f"INSERT INTO travel_alert_preferences({','.join(cols)}) VALUES({placeholders})", vals

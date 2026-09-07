@@ -195,6 +195,14 @@ def check_in_link(handler, booking_id):
     })
 
 
+@route('POST', '/bookings/{booking_id}/check-in')
+def confirm_check_in(handler, booking_id):
+    ip = handler.client_address[0]
+    middleware.check_rate_limit(f'checkin:{ip}', 10, 300)
+    result = booking_service.confirm_check_in(booking_id)
+    response.success(handler, result, 'Checked in successfully')
+
+
 @route('GET', '/bookings/{booking_id}/flight-status')
 def flight_status(handler, booking_id):
     db = get_db()

@@ -55,9 +55,17 @@ export const FlightEditPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
+    const durationMinutes = Math.round(
+      (new Date(formData.arrival_time).getTime() - new Date(formData.departure_time).getTime()) / 60000
+    );
+    if (!(durationMinutes > 0)) {
+      toast.error('Thời gian hạ cánh phải sau thời gian cất cánh');
+      return;
+    }
+
     setLoading(true);
     try {
-      await adminService.updateFlight(id, formData);
+      await adminService.updateFlight(id, { ...formData, duration_minutes: durationMinutes });
       toast.success('Cập nhật chuyến bay thành công!');
       navigate('/admin/flights');
     } catch (err: any) {

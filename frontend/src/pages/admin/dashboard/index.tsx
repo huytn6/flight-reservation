@@ -33,6 +33,7 @@ import { toast } from 'sonner';
 export const AdminDashboard: React.FC = () => {
   const [summary, setSummary] = useState<any>(null);
   const [bookingMetrics, setBookingMetrics] = useState<any[]>([]);
+  const [revenueMetrics, setRevenueMetrics] = useState<any[]>([]);
   const [flightMetrics, setFlightMetrics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('30d');
@@ -44,14 +45,16 @@ export const AdminDashboard: React.FC = () => {
   const loadDashboard = async () => {
     setLoading(true);
     try {
-      const [sumRes, bookRes, fltRes] = await Promise.all([
+      const [sumRes, bookRes, revRes, fltRes] = await Promise.all([
         adminService.getDashboardSummary(),
         adminService.getDashboardBookings(),
+        adminService.getDashboardRevenue(),
         adminService.getDashboardFlights(),
       ]);
 
       setSummary(sumRes);
       setBookingMetrics(bookRes || []);
+      setRevenueMetrics(revRes || []);
       setFlightMetrics(fltRes || []);
     } catch (err: any) {
       toast.error(err.message || 'Failed to load dashboard metrics');
@@ -69,8 +72,18 @@ export const AdminDashboard: React.FC = () => {
     );
   }
 
+  // Booking count and revenue come from two different, intentionally distinct sources:
+  // dashboard/bookings counts ALL bookings (any status) per day, while dashboard/revenue
+  // sums only successfully collected payments per day — merge them by date rather than
+  // reusing the booking total as "revenue" (which counted CANCELLED/unpaid bookings too).
+  const revenueByDate = new Map(revenueMetrics.map((r: any) => [r.date, r.revenue]));
+  const mergedMetrics = bookingMetrics.map((b: any) => ({
+    ...b,
+    revenue: revenueByDate.get(b.date) || 0,
+  }));
+
   // Fallback Data if metrics array is empty
-  const chartData = bookingMetrics.length > 0 ? bookingMetrics : [
+  const chartData = mergedMetrics.length > 0 ? mergedMetrics : [
     { date: 'Jul 26', count: 12, revenue: 14200000 },
     { date: 'Jul 27', count: 18, revenue: 21500000 },
     { date: 'Jul 28', count: 15, revenue: 18400000 },

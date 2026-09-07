@@ -34,7 +34,7 @@ export const CustomersListPage: React.FC = () => {
   };
 
   const handleToggleStatus = async (user: AuthUser) => {
-    const nextStatus = user.status === UserStatusEnum.ACTIVE ? UserStatusEnum.SUSPENDED : UserStatusEnum.ACTIVE;
+    const nextStatus = user.status === UserStatusEnum.ACTIVE ? UserStatusEnum.BANNED : UserStatusEnum.ACTIVE;
     try {
       await adminService.updateCustomerStatus(user.id, nextStatus);
       toast.success(`Đã cập nhật trạng thái khách hàng thành ${nextStatus === UserStatusEnum.ACTIVE ? 'Hoạt động' : 'Tạm khóa'}`);

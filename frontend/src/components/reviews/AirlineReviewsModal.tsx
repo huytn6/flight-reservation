@@ -114,7 +114,7 @@ export const AirlineReviewsModal: React.FC<AirlineReviewsModalProps> = ({
 
                 {r.title && <p className="font-bold text-slate-900">{r.title}</p>}
                 {r.body && <p className="text-slate-600 leading-relaxed">{r.body}</p>}
-                <span className="text-[10px] text-slate-400">Bởi {r.user_name || 'Hành khách'} • {new Date(r.created_at).toLocaleDateString('vi-VN')}</span>
+                <span className="text-[10px] text-slate-400">Bởi {r.reviewer_name || 'Hành khách'} • {new Date(r.created_at).toLocaleDateString('vi-VN')}</span>
 
                 {reportingReviewId === r.id && (
                   <div className="mt-2 p-2 bg-amber-50 rounded-xl border border-amber-200 flex gap-2">

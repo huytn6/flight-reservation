@@ -224,7 +224,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <div className="max-h-32 overflow-y-auto space-y-1 text-[11px]">
                   {transactions.map((tx) => (
                     <div key={tx.id} className="p-2 bg-slate-50 rounded-md flex justify-between">
-                      <span>{tx.transaction_type} ({tx.status})</span>
+                      <span>{tx.event_type}</span>
                       <span className="font-mono font-semibold">{Number(tx.amount || 0).toLocaleString('vi-VN')} VNĐ</span>
                     </div>
                   ))}

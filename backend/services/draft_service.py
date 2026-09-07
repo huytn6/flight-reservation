@@ -149,6 +149,14 @@ def save_passengers(draft_id: str, user_id: str, role: str, passengers: list) ->
             adult_count += 1
         if ptype == 'INFANT':
             infant_count += 1
+        dob = pax.get('date_of_birth')
+        if dob:
+            val.validate_date(dob, 'date_of_birth')
+            if dob > utcnow_iso()[:10]:
+                raise ValidationError('date_of_birth cannot be in the future')
+        expiry = pax.get('passport_expiry')
+        if expiry and len(expiry) > 10:
+            raise ValidationError('passport_expiry must be in YYYY-MM-DD format')
         booking_repo.add_draft_passenger(
             db, draft_id, i, ptype, pax['full_name'], pax.get('date_of_birth'),
             pax.get('nationality'), pax.get('passport_number'), pax.get('passport_expiry')
@@ -189,24 +197,32 @@ def hold_seat(draft_id: str, user_id: str, role: str, seat_id: str, pax_idx: int
     _get_draft_or_403(db, draft_id, user_id, role)
     now = datetime.datetime.utcnow()
     expires = now + datetime.timedelta(minutes=config.SEAT_HOLD_MINUTES)
+    import mysql.connector
 
-    with transaction(db):
-        seat = flight_repo.find_seat(db, seat_id)
-        if not seat:
-            raise NotFoundError('Seat')
-        if seat['status'] not in ('AVAILABLE',):
-            held = booking_repo.find_active_hold_for_seat(db, draft_id, seat_id)
-            if not held:
-                raise ConflictError(f'Seat {seat["seat_number"]} is not available', 'SEAT_NOT_AVAILABLE')
+    try:
+        with transaction(db):
+            # Lock the seat row first so two concurrent holds on the same seat
+            # serialize on this SELECT instead of deadlocking on the later writes.
+            seat = flight_repo.find_seat_for_update(db, seat_id)
+            if not seat:
+                raise NotFoundError('Seat')
+            if seat['status'] not in ('AVAILABLE',):
+                held = booking_repo.find_active_hold_for_seat(db, draft_id, seat_id)
+                if not held:
+                    raise ConflictError(f'Seat {seat["seat_number"]} is not available', 'SEAT_NOT_AVAILABLE')
 
-        old_hold = booking_repo.find_active_hold_for_passenger(db, draft_id, pax_idx)
-        if old_hold:
-            booking_repo.release_passenger_holds(db, draft_id, pax_idx)
-            flight_repo.update_seat_status(db, old_hold['seat_id'], 'AVAILABLE')
+            old_hold = booking_repo.find_active_hold_for_passenger(db, draft_id, pax_idx)
+            if old_hold:
+                booking_repo.release_passenger_holds(db, draft_id, pax_idx)
+                flight_repo.update_seat_status(db, old_hold['seat_id'], 'AVAILABLE')
 
-        hold_id = str(uuid.uuid4())
-        booking_repo.create_seat_hold(db, hold_id, draft_id, seat_id, pax_idx, expires.isoformat())
-        flight_repo.update_seat_status(db, seat_id, 'HELD')
+            hold_id = str(uuid.uuid4())
+            booking_repo.create_seat_hold(db, hold_id, draft_id, seat_id, pax_idx, expires.isoformat())
+            flight_repo.update_seat_status(db, seat_id, 'HELD')
+    except mysql.connector.Error as exc:
+        if exc.errno in (1213, 1205):  # deadlock / lock wait timeout
+            raise ConflictError('Seat is being held by another request, please try again', 'SEAT_NOT_AVAILABLE')
+        raise
 
     return {'id': hold_id, 'expires_at': expires.isoformat()}
 
@@ -326,6 +342,7 @@ def get_price_breakdown(draft_id: str, user_id: str, role: str) -> dict:
          'quantity': a['quantity'], 'subtotal': a['price'] * a['quantity']}
         for a in ancillaries
     ]
+    coupon_discount = -sum(a['price'] * a['quantity'] for a in ancillaries if a['ancillary_type'] == 'COUPON')
 
     for hold in seat_holds:
         extra_fee = hold.get('extra_fee') or 0
@@ -345,7 +362,7 @@ def get_price_breakdown(draft_id: str, user_id: str, role: str) -> dict:
         'ancillary_items': anc_items,
         'fares_total': fares_total,
         'ancillary_total': anc_total,
-        'coupon_discount': 0,
+        'coupon_discount': coupon_discount,
         'grand_total': fares_total + anc_total,
         'currency': 'VND',
     }

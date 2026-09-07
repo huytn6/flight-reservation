@@ -6,16 +6,17 @@ export interface AppNotification {
   user_id: string;
   type: string;
   title: string;
-  message: string;
+  body: string;
   is_read: boolean;
   created_at: string;
 }
 
 export interface TravelAlertPreferences {
   user_id?: string;
-  flight_delay_push: boolean;
-  gate_change_push: boolean;
-  price_drop_email: boolean;
+  delay_alerts: boolean;
+  gate_changes: boolean;
+  cancellation_alerts: boolean;
+  price_drop_alerts: boolean;
 }
 
 export const notificationService = {

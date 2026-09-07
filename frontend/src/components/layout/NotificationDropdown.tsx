@@ -109,7 +109,7 @@ export const NotificationDropdown: React.FC = () => {
                     </button>
                   )}
                 </div>
-                <p className="text-slate-600 font-normal leading-snug">{n.message}</p>
+                <p className="text-slate-600 font-normal leading-snug">{n.body}</p>
                 <span className="text-[10px] text-slate-400">{new Date(n.created_at).toLocaleTimeString('vi-VN')}</span>
               </DropdownMenuItem>
             ))

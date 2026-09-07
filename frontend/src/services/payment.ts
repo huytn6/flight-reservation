@@ -13,9 +13,8 @@ export interface Payment {
 export interface PaymentTransaction {
   id: string;
   payment_id: string;
-  transaction_type: string;
+  event_type: string;
   amount: number;
-  status: string;
   response_payload?: string;
   created_at: string;
 }

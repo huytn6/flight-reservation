@@ -1,5 +1,5 @@
 from core.router import route
-from core import response, request as req, authentication as auth, validation as val
+from core import response, request as req, authentication as auth, validation as val, middleware
 from database.connection import get_db
 from services import review_service
 
@@ -14,6 +14,7 @@ def airline_reviews(handler, airline_id):
 def create_review(handler, booking_id):
     db = get_db()
     user = auth.require_auth(handler, db)
+    middleware.check_rate_limit(f'review:{user["user_id"]}', 10, 3600)
     data = req.parse_json_body(handler)
     val.require_fields(data, 'airline_id', 'rating')
     result = review_service.create_review(

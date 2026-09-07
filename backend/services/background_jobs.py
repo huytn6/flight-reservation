@@ -105,5 +105,45 @@ def mark_bookings_completed():
         logger.info('Marked %d bookings as COMPLETED', len(completed))
 
 
+_FLIGHT_EVENT_RULES = (
+    ('DELAYED', 'delay_alerts', 'Flight Delayed',
+     'Your flight {flight_number} has been delayed. Please check the latest schedule.'),
+    ('CANCELLED', 'cancellation_alerts', 'Flight Cancelled',
+     'Your flight {flight_number} has been cancelled. Our support team will contact you shortly.'),
+)
+
+
 def notification_dispatcher():
-    pass
+    """Notify affected, confirmed-booking customers when one of their flights turns
+    DELAYED or CANCELLED, respecting each user's travel-alert preferences. Runs
+    frequently (every 15s) so it de-duplicates via a per-(user, flight, status)
+    notification reference instead of re-sending on every tick."""
+    from database.connection import get_db
+    from repositories import notification_repo
+    db = get_db()
+    sent = 0
+    for status, pref_field, title, template in _FLIGHT_EVENT_RULES:
+        rows = db.execute(
+            """SELECT DISTINCT b.user_id, f.id as flight_id, f.flight_number
+               FROM flights f
+               JOIN booking_segments bs ON bs.flight_id=f.id
+               JOIN bookings b ON b.id=bs.booking_id
+               WHERE f.status=? AND b.status='CONFIRMED' AND b.user_id IS NOT NULL""",
+            (status,)
+        ).fetchall()
+        for row in rows:
+            prefs = notification_repo.get_alert_preferences(db, row['user_id'])
+            if prefs and not prefs[pref_field]:
+                continue
+            ref_id = f"{row['flight_id']}:{status}"
+            if notification_repo.find_by_reference(db, row['user_id'], 'FLIGHT_STATUS', ref_id):
+                continue
+            notification_repo.create_notification(
+                db, row['user_id'], 'ALERT', title,
+                template.format(flight_number=row['flight_number']),
+                'FLIGHT_STATUS', ref_id
+            )
+            sent += 1
+    if sent:
+        db.commit()
+        logger.info('Dispatched %d flight-status notifications', sent)

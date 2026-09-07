@@ -70,7 +70,7 @@ export const PriceAlerts: React.FC = () => {
         origin_iata: origin.toUpperCase(),
         destination_iata: destination.toUpperCase(),
         departure_date: departureDate,
-        target_price: targetPrice,
+        max_price: targetPrice,
       });
       toast.success(`Đã tạo cảnh báo giá cho chặng ${origin.toUpperCase()} → ${destination.toUpperCase()}`);
       loadAll();
@@ -276,9 +276,9 @@ export const PriceAlerts: React.FC = () => {
                             <span className="text-sm font-bold text-slate-900 font-mono">
                               {alert.origin_iata} → {alert.destination_iata}
                             </span>
-                            {alert.target_price && (
+                            {alert.max_price && (
                               <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 font-mono text-[10px] font-semibold">
-                                Mục tiêu: &lt; {Number(alert.target_price).toLocaleString('vi-VN')} VNĐ
+                                Mục tiêu: &lt; {Number(alert.max_price).toLocaleString('vi-VN')} VNĐ
                               </Badge>
                             )}
                           </div>
@@ -329,43 +329,43 @@ export const PriceAlerts: React.FC = () => {
               <div className="flex flex-col gap-4 text-xs">
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
                   <div>
-                    <label htmlFor="flight_delay_push" className="font-semibold text-slate-800 block cursor-pointer">
-                      Thông báo Hoãn / Hủy Chuyến
+                    <label htmlFor="delay_alerts" className="font-semibold text-slate-800 block cursor-pointer">
+                      Thông báo Hoãn Chuyến
                     </label>
-                    <span className="text-[11px] text-slate-500">Nhận thông báo Push khi lịch trình thay đổi</span>
+                    <span className="text-[11px] text-slate-500">Nhận thông báo khi lịch trình thay đổi</span>
                   </div>
                   <Switch
-                    id="flight_delay_push"
-                    checked={prefs.flight_delay_push}
-                    onCheckedChange={(checked) => handleTogglePref('flight_delay_push', Boolean(checked))}
+                    id="delay_alerts"
+                    checked={prefs.delay_alerts}
+                    onCheckedChange={(checked) => handleTogglePref('delay_alerts', Boolean(checked))}
                   />
                 </div>
 
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
                   <div>
-                    <label htmlFor="gate_change_push" className="font-semibold text-slate-800 block cursor-pointer">
-                      Đổi Cửa Khởi Hành (Gate)
+                    <label htmlFor="cancellation_alerts" className="font-semibold text-slate-800 block cursor-pointer">
+                      Thông báo Hủy Chuyến
                     </label>
-                    <span className="text-[11px] text-slate-500">Cập nhật vị trí cửa ra máy bay tại sân bay</span>
+                    <span className="text-[11px] text-slate-500">Nhận thông báo ngay khi chuyến bay bị hủy</span>
                   </div>
                   <Switch
-                    id="gate_change_push"
-                    checked={prefs.gate_change_push}
-                    onCheckedChange={(checked) => handleTogglePref('gate_change_push', Boolean(checked))}
+                    id="cancellation_alerts"
+                    checked={prefs.cancellation_alerts}
+                    onCheckedChange={(checked) => handleTogglePref('cancellation_alerts', Boolean(checked))}
                   />
                 </div>
 
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
                   <div>
-                    <label htmlFor="price_drop_email" className="font-semibold text-slate-800 block cursor-pointer">
-                      Email Cảnh Báo Khi Giảm Giá
+                    <label htmlFor="price_drop_alerts" className="font-semibold text-slate-800 block cursor-pointer">
+                      Cảnh Báo Khi Giảm Giá
                     </label>
-                    <span className="text-[11px] text-slate-500">Gửi Email ngay khi chặng bay giảm giá sâu</span>
+                    <span className="text-[11px] text-slate-500">Nhận thông báo ngay khi chặng bay giảm giá sâu</span>
                   </div>
                   <Switch
-                    id="price_drop_email"
-                    checked={prefs.price_drop_email}
-                    onCheckedChange={(checked) => handleTogglePref('price_drop_email', Boolean(checked))}
+                    id="price_drop_alerts"
+                    checked={prefs.price_drop_alerts}
+                    onCheckedChange={(checked) => handleTogglePref('price_drop_alerts', Boolean(checked))}
                   />
                 </div>
               </div>
@@ -396,7 +396,7 @@ export const PriceAlerts: React.FC = () => {
                 {historyModal.map((h) => (
                   <div key={h.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center text-xs">
                     <span className="text-slate-500 font-mono">
-                      {new Date(h.checked_at).toLocaleDateString('vi-VN', {
+                      {new Date(h.recorded_at).toLocaleDateString('vi-VN', {
                         day: '2-digit',
                         month: '2-digit',
                         year: 'numeric',

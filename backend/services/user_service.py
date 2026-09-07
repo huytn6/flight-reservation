@@ -1,5 +1,6 @@
 import uuid
 from core.exceptions import ValidationError, NotFoundError
+from core import validation as val
 from database.connection import get_db
 from repositories import user_repo
 from utils.pagination import paginate
@@ -23,6 +24,12 @@ def update_profile(user_id: str, data: dict) -> None:
     updates = {k: v for k, v in data.items() if k in ALLOWED_PROFILE_FIELDS}
     if not updates:
         raise ValidationError('No updatable fields provided')
+    if updates.get('phone'):
+        updates['phone'] = val.validate_phone(updates['phone'])
+    if updates.get('date_of_birth'):
+        val.validate_date(updates['date_of_birth'], 'date_of_birth')
+        if updates['date_of_birth'] > utcnow_iso()[:10]:
+            raise ValidationError('date_of_birth cannot be in the future')
     db = get_db()
     user_repo.update(db, user_id, updates)
     db.commit()

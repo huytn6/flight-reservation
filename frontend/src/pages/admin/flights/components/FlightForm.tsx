@@ -185,7 +185,7 @@ export const FlightForm: React.FC<FlightFormProps> = ({
               <SelectContent className="font-sans">
                 {aircraftTypes.map((ac) => (
                   <SelectItem key={ac.id} value={ac.id} className="text-xs">
-                    {ac.model} ({ac.code})
+                    {ac.name} ({ac.iata_code})
                   </SelectItem>
                 ))}
               </SelectContent>

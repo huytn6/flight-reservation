@@ -53,5 +53,9 @@ def get_idempotency_key(handler):
 
 def get_pagination(handler, default_size=20, max_size=100):
     page = get_int_param(handler, 'page', 1, min_val=1)
-    size = get_int_param(handler, 'page_size', default_size, min_val=1, max_val=max_size)
+    # Frontend historically sends "size" on several pages while the API contract is
+    # "page_size" — accept either so pagination actually takes effect either way.
+    has_size = get_query_param(handler, 'size') is not None
+    size_key = 'size' if has_size and get_query_param(handler, 'page_size') is None else 'page_size'
+    size = get_int_param(handler, size_key, default_size, min_val=1, max_val=max_size)
     return page, size

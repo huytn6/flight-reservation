@@ -89,10 +89,12 @@ export const Profile: React.FC = () => {
   const [creatingTicket, setCreatingTicket] = useState(false);
   const [replyBody, setReplyBody] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [dateOfBirth, setDateOfBirth] = useState<string | null>(null);
 
   useEffect(() => {
     loadSessions();
     loadPassengers();
+    userService.getProfile().then((p: any) => setDateOfBirth(p.date_of_birth || null)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -508,7 +510,7 @@ export const Profile: React.FC = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900 mb-0.5">Ngày sinh</p>
-                    <p className="text-slate-600">Chưa cập nhật</p>
+                    <p className="text-slate-600">{dateOfBirth || 'Chưa cập nhật'}</p>
                   </div>
                   <div>
                     <p className="font-semibold text-slate-900 mb-0.5">Giới tính</p>
@@ -634,24 +636,24 @@ export const Profile: React.FC = () => {
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col gap-3 text-xs">
                   <h3 className="font-semibold text-slate-800 text-xs">Tùy chọn nhận thông báo</h3>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700">Thông báo đẩy khi chuyến bay hoãn</span>
+                    <span className="text-slate-700">Thông báo khi chuyến bay hoãn</span>
                     <Switch
-                      checked={alertPrefs.flight_delay_push}
-                      onCheckedChange={(checked) => handleTogglePref('flight_delay_push', Boolean(checked))}
+                      checked={alertPrefs.delay_alerts}
+                      onCheckedChange={(checked) => handleTogglePref('delay_alerts', Boolean(checked))}
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700">Thông báo đẩy khi thay đổi cổng lên máy bay</span>
+                    <span className="text-slate-700">Thông báo khi chuyến bay bị hủy</span>
                     <Switch
-                      checked={alertPrefs.gate_change_push}
-                      onCheckedChange={(checked) => handleTogglePref('gate_change_push', Boolean(checked))}
+                      checked={alertPrefs.cancellation_alerts}
+                      onCheckedChange={(checked) => handleTogglePref('cancellation_alerts', Boolean(checked))}
                     />
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-700">Gửi Email khi giá vé giảm</span>
+                    <span className="text-slate-700">Thông báo khi giá vé giảm</span>
                     <Switch
-                      checked={alertPrefs.price_drop_email}
-                      onCheckedChange={(checked) => handleTogglePref('price_drop_email', Boolean(checked))}
+                      checked={alertPrefs.price_drop_alerts}
+                      onCheckedChange={(checked) => handleTogglePref('price_drop_alerts', Boolean(checked))}
                     />
                   </div>
                 </div>
@@ -675,7 +677,7 @@ export const Profile: React.FC = () => {
                           <p className="text-[10px] text-slate-500">Khởi hành: {al.departure_date} • Tạo lúc: {new Date(al.created_at).toLocaleDateString()}</p>
                         </div>
                         <span className="text-xs font-semibold text-blue-600">
-                          {al.target_price ? `${al.target_price.toLocaleString()} VND` : 'Đang theo dõi'}
+                          {al.max_price ? `${al.max_price.toLocaleString()} VND` : 'Đang theo dõi'}
                         </span>
                       </div>
                     ))}

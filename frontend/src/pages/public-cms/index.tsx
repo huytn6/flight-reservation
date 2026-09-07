@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { adminService } from '@/services/admin';
+import { $api } from '@/utils/$api';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, FileText, Calendar } from 'lucide-react';
@@ -19,33 +19,28 @@ export const PublicCmsPage: React.FC = () => {
   const loadArticle = async () => {
     setLoading(true);
     try {
-      const list = await adminService.getContents();
-      const item = list.find((c: any) => c.key === slug || c.id === slug);
-      if (item) {
-        setArticle(item);
-      } else {
-        // Fallback default content for terms/privacy if backend returns empty list
-        if (slug === 'terms') {
-          setArticle({
-            title: 'Điều Khoản Dịch Vụ Khách Hàng',
-            key: 'terms',
-            body: `Chào mừng bạn đến với hệ thống đặt vé chuyến bay Expedia. Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý với các điều khoản đặt vé, thanh toán, hủy vé và hoàn tiền theo quy định của hãng hàng không vận chuyển. Tất cả giá vé hiển thị đã bao gồm thuế và phí cố định.`,
-            updated_at: new Date().toISOString(),
-          });
-        } else if (slug === 'privacy') {
-          setArticle({
-            title: 'Chính Sách Bảo Mật Quyền Riêng Tư',
-            key: 'privacy',
-            body: `Expedia cam kết bảo vệ thông tin cá nhân của khách hàng. Mọi thông tin như Họ tên, Email, Số điện thoại và Mã thông tin thanh toán đều được mã hóa bằng chuẩn SSL 256-bit cao nhất. Chúng tôi không chia sẻ dữ liệu cho bên thứ ba ngoại trừ các hãng bay trực tiếp xử lý chuyến bay của bạn.`,
-            updated_at: new Date().toISOString(),
-          });
-        } else {
-          toast.error('Không tìm thấy bài viết');
-          navigate('/');
-        }
-      }
+      const item = await $api.get(`/contents/${slug}`);
+      setArticle(item);
     } catch {
-      toast.error('Tải bài viết thất bại');
+      // Fallback default content for terms/privacy if this page hasn't been published in CMS yet
+      if (slug === 'terms') {
+        setArticle({
+          title: 'Điều Khoản Dịch Vụ Khách Hàng',
+          slug: 'terms',
+          body: `Chào mừng bạn đến với hệ thống đặt vé chuyến bay Expedia. Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý với các điều khoản đặt vé, thanh toán, hủy vé và hoàn tiền theo quy định của hãng hàng không vận chuyển. Tất cả giá vé hiển thị đã bao gồm thuế và phí cố định.`,
+          updated_at: new Date().toISOString(),
+        });
+      } else if (slug === 'privacy') {
+        setArticle({
+          title: 'Chính Sách Bảo Mật Quyền Riêng Tư',
+          slug: 'privacy',
+          body: `Expedia cam kết bảo vệ thông tin cá nhân của khách hàng. Mọi thông tin như Họ tên, Email, Số điện thoại và Mã thông tin thanh toán đều được mã hóa bằng chuẩn SSL 256-bit cao nhất. Chúng tôi không chia sẻ dữ liệu cho bên thứ ba ngoại trừ các hãng bay trực tiếp xử lý chuyến bay của bạn.`,
+          updated_at: new Date().toISOString(),
+        });
+      } else {
+        toast.error('Không tìm thấy bài viết');
+        navigate('/');
+      }
     } finally {
       setLoading(false);
     }
@@ -80,7 +75,7 @@ export const PublicCmsPage: React.FC = () => {
         <div className="space-y-2 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2 text-xs text-slate-400">
             <FileText className="w-3.5 h-3.5 text-[#0065eb]" />
-            <span>Mã bài viết: {article.key}</span>
+            <span>Mã bài viết: {article.slug}</span>
             <span>•</span>
             <Calendar className="w-3.5 h-3.5" />
             <span>{new Date(article.updated_at || Date.now()).toLocaleDateString('vi-VN')}</span>

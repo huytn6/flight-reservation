@@ -56,6 +56,11 @@ def create_booking(user_ctx: dict, draft_id: str, idempotency_key: str | None, i
         total_amount += anc['price'] * anc['quantity']
 
     holds = booking_repo.get_active_seat_holds(db, draft_id)
+    if len(holds) != len(passengers):
+        raise BusinessError(
+            'SEAT_PASSENGER_MISMATCH',
+            f'{len(passengers)} passenger(s) but only {len(holds)} seat(s) held'
+        )
     for hold in holds:
         total_amount += hold.get('extra_fee') or 0
 
@@ -80,6 +85,11 @@ def create_booking(user_ctx: dict, draft_id: str, idempotency_key: str | None, i
             bp = next((b for b in bp_ids if b[1] == hold['passenger_index']), None)
             if bp and segs:
                 booking_repo.create_seat_assignment(db, str(uuid.uuid4()), bid, segs[0]['id'], bp[0], hold['seat_id'])
+            # Seat now belongs to this (unpaid) booking: mark it BOOKED and release the
+            # timed hold so the background scheduler never reclaims it as "expired" out
+            # from under a real booking while the customer is still on the payment step.
+            flight_repo.update_seat_status(db, hold['seat_id'], 'BOOKED')
+            booking_repo.release_seat_hold(db, hold['id'])
 
         booking_repo.add_status_history(db, bid, None, 'PENDING_PAYMENT', changed_by=user_ctx['user_id'])
         booking_repo.set_draft_status(db, draft_id, 'CONFIRMED')
@@ -239,10 +249,46 @@ def lookup_booking(pnr: str, last_name: str) -> dict:
     }
 
 
+def confirm_check_in(booking_id: str) -> dict:
+    """Public self-service check-in (reached only after a successful PNR + last-name
+    lookup, mirroring lookup_booking's public/no-auth model). Persists CHECKED_IN on
+    every e-ticket for the booking instead of the previous UI-only mock confirmation."""
+    db = get_db()
+    booking = booking_repo.find_booking(db, booking_id)
+    if not booking:
+        raise NotFoundError('Booking')
+    if booking['status'] != 'CONFIRMED':
+        raise BusinessError('NOT_CONFIRMED', 'Booking must be confirmed for check-in')
+
+    tickets = booking_repo.get_e_tickets(db, booking_id)
+    if not tickets:
+        raise BusinessError('NO_TICKETS', 'No e-tickets found for this booking')
+    already_checked_in = all(t['status'] == 'CHECKED_IN' for t in tickets)
+
+    with transaction(db):
+        for t in tickets:
+            if t['status'] != 'CHECKED_IN':
+                db.execute("UPDATE e_tickets SET status='CHECKED_IN' WHERE id=?", (t['id'],))
+
+    seat_row = db.execute(
+        """SELECT s.seat_number FROM seat_assignments sa
+           JOIN seats s ON s.id=sa.seat_id WHERE sa.booking_id=? ORDER BY sa.created_at LIMIT 1""",
+        (booking_id,)
+    ).fetchone()
+
+    return {
+        'status': 'CHECKED_IN',
+        'already_checked_in': already_checked_in,
+        'seat_number': seat_row['seat_number'] if seat_row else None,
+        'gate': 'A04',
+        'boarding_group': 'B',
+    }
+
+
 def cancellation_preview(booking_id: str, user_ctx: dict) -> dict:
     db = get_db()
     booking = _require_owner(db, booking_id, user_ctx)
-    if booking['status'] not in ('CONFIRMED', 'PENDING_PAYMENT'):
+    if booking['status'] not in ('CONFIRMED', 'PENDING_PAYMENT', 'PAYMENT_FAILED'):
         raise BusinessError('CANNOT_CANCEL', f'Booking in status {booking["status"]} cannot be cancelled')
     total = booking['total_amount']
     refund = int(total * 0.8)
@@ -256,7 +302,7 @@ def cancellation_preview(booking_id: str, user_ctx: dict) -> dict:
 def cancel_booking(booking_id: str, user_ctx: dict, reason: str, ip: str) -> dict:
     db = get_db()
     booking = _require_owner(db, booking_id, user_ctx)
-    if booking['status'] not in ('CONFIRMED', 'PENDING_PAYMENT'):
+    if booking['status'] not in ('CONFIRMED', 'PENDING_PAYMENT', 'PAYMENT_FAILED'):
         raise BusinessError('CANNOT_CANCEL', f'Booking in status {booking["status"]} cannot be cancelled')
 
     with transaction(db):

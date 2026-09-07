@@ -81,9 +81,17 @@ export const CouponsListPage: React.FC = () => {
       ),
     },
     {
-      accessorKey: 'status',
+      accessorKey: 'is_active',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng Thái" />,
-      cell: ({ row }) => <StatusBadge type="coupon" value={row.original.status || 'ACTIVE'} />,
+      cell: ({ row }) => {
+        const c = row.original;
+        const status = !c.is_active
+          ? 'INACTIVE'
+          : c.valid_until && new Date(c.valid_until) < new Date()
+            ? 'EXPIRED'
+            : 'ACTIVE';
+        return <StatusBadge type="coupon" value={status} />;
+      },
     },
     {
       id: 'validity',

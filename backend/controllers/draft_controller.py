@@ -1,5 +1,5 @@
 from core.router import route
-from core import response, request as req, authentication as auth, validation as val
+from core import response, request as req, authentication as auth, validation as val, middleware
 from database.connection import get_db
 from services import draft_service
 
@@ -53,7 +53,8 @@ def save_contact(handler, draft_id):
     data = req.parse_json_body(handler)
     val.require_fields(data, 'full_name', 'email', 'phone')
     email = val.validate_email(data['email'])
-    draft_service.save_contact(draft_id, user['user_id'], user['role'], data['full_name'], email, data['phone'])
+    phone = val.validate_phone(data['phone'])
+    draft_service.save_contact(draft_id, user['user_id'], user['role'], data['full_name'], email, phone)
     response.success(handler, None, 'Contact saved')
 
 
@@ -95,6 +96,7 @@ def get_seat_holds(handler, draft_id):
 def hold_seat(handler, draft_id):
     db = get_db()
     user = auth.require_auth(handler, db)
+    middleware.check_rate_limit(f'seat-hold:{handler.client_address[0]}', 30, 60)
     data = req.parse_json_body(handler)
     val.require_fields(data, 'seat_id', 'passenger_index')
     result = draft_service.hold_seat(draft_id, user['user_id'], user['role'],

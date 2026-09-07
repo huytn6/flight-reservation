@@ -54,15 +54,19 @@ export const bookingService = {
   },
 
   getETickets: async (bookingId: string): Promise<ETicket[]> => {
-    return $api.get(`/users/me/bookings/${bookingId}/tickets`);
+    return $api.get(`/bookings/${bookingId}/e-tickets`);
   },
 
   getFlightStatus: async (bookingId: string): Promise<any> => {
-    return $api.get(`/users/me/bookings/${bookingId}/flight-status`);
+    return $api.get(`/bookings/${bookingId}/flight-status`);
   },
 
   getCheckInLink: async (bookingId: string): Promise<any> => {
-    return $api.get(`/users/me/bookings/${bookingId}/check-in`);
+    return $api.get(`/bookings/${bookingId}/check-in`);
+  },
+
+  confirmCheckIn: async (bookingId: string): Promise<{ status: string; already_checked_in: boolean; seat_number: string | null; gate: string; boarding_group: string }> => {
+    return $api.post(`/bookings/${bookingId}/check-in`);
   },
 
   resendConfirmation: async (bookingId: string): Promise<void> => {
@@ -70,7 +74,7 @@ export const bookingService = {
   },
 
   sendDocumentsEmail: async (bookingId: string): Promise<void> => {
-    return $api.post(`/users/me/bookings/${bookingId}/send-documents`);
+    return $api.post(`/bookings/${bookingId}/documents/send-email`);
   },
 
   cancelBooking: async (bookingId: string, reason?: string): Promise<void> => {
@@ -78,7 +82,7 @@ export const bookingService = {
   },
 
   lookupBooking: async (pnr: string, lastName?: string): Promise<BookingDetail> => {
-    return $api.get('/bookings/lookup', { params: { pnr, last_name: lastName } });
+    return $api.post('/bookings/lookup', { pnr, last_name: lastName });
   },
 
   getStatusHistory: async (bookingId: string): Promise<any[]> => {
