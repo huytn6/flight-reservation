@@ -83,7 +83,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
   return (
     <Badge
       variant="outline"
-      className={`text-[11px] font-medium px-2.5 py-0.5 rounded-md border shadow-2xs ${config.className} ${className}`}
+      className={`text-[11px] font-medium px-2.5 py-0.5 rounded-md border-0 shadow-none ${config.className} ${className}`}
     >
       {config.label}
     </Badge>

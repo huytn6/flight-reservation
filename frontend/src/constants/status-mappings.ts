@@ -24,41 +24,38 @@ export interface StatusConfig {
 }
 
 // 1. Booking Status Config
+// Muted badge (bg-100/text-800/border-200) — a touch more saturated than the
+// pale bg-50 "soft badge" used elsewhere, without going full solid-fill.
+// PENDING / PENDING_PAYMENT / PAYMENT_PROCESSING all read as "chờ xử lý" to the
+// customer, so they share the same amber — no separate purple for "processing".
 export const BOOKING_STATUS_CONFIG: Record<string, StatusConfig> = {
   [BookingStatusEnum.CONFIRMED]: {
     label: 'Đã xác nhận',
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-    variant: 'secondary',
+    className: 'bg-blue-100 text-blue-800 border-blue-200',
   },
   [BookingStatusEnum.PENDING]: {
     label: 'Chờ thanh toán',
-    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
-    variant: 'secondary',
+    className: 'bg-amber-100 text-amber-800 border-amber-200',
   },
   [BookingStatusEnum.PENDING_PAYMENT]: {
     label: 'Chờ thanh toán',
-    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
-    variant: 'secondary',
+    className: 'bg-amber-100 text-amber-800 border-amber-200',
   },
   [BookingStatusEnum.PAYMENT_PROCESSING]: {
     label: 'Đang xử lý thanh toán',
-    className: 'bg-blue-50 text-blue-700 border-blue-200/80',
-    variant: 'secondary',
+    className: 'bg-amber-100 text-amber-800 border-amber-200',
   },
   [BookingStatusEnum.PAYMENT_FAILED]: {
     label: 'Thanh toán thất bại',
-    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
-    variant: 'secondary',
+    className: 'bg-rose-100 text-rose-800 border-rose-200',
   },
   [BookingStatusEnum.CANCELLED]: {
     label: 'Đã hủy',
-    className: 'bg-slate-100 text-slate-600 border-slate-200',
-    variant: 'outline',
+    className: 'bg-red-100 text-red-800 border-red-200',
   },
   [BookingStatusEnum.COMPLETED]: {
     label: 'Hoàn thành',
-    className: 'bg-sky-50 text-sky-700 border-sky-200/80',
-    variant: 'secondary',
+    className: 'bg-green-100 text-green-800 border-green-200',
   },
 };
 
