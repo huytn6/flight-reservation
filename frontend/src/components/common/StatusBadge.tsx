@@ -11,6 +11,7 @@ import {
   getDraftStatusConfig,
   getCouponStatusConfig,
   getContentStatusConfig,
+  getAuditActionConfig,
   type StatusConfig,
 } from '@/constants/status-mappings';
 
@@ -24,7 +25,8 @@ export type StatusBadgeType =
   | 'seat'
   | 'draft'
   | 'coupon'
-  | 'content';
+  | 'content'
+  | 'auditAction';
 
 interface StatusBadgeProps {
   type: StatusBadgeType;
@@ -70,6 +72,9 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       break;
     case 'content':
       config = getContentStatusConfig(value);
+      break;
+    case 'auditAction':
+      config = getAuditActionConfig(value);
       break;
     default:
       config = { label: value || 'Khác', className: 'bg-slate-100 text-slate-700 border-slate-200' };

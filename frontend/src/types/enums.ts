@@ -119,3 +119,55 @@ export const CouponStatusEnum = {
   EXPIRED: 'EXPIRED',
 } as const;
 export type CouponStatusEnum = (typeof CouponStatusEnum)[keyof typeof CouponStatusEnum];
+
+// Mirrors every `audit_repo.log(...)` action string emitted by the backend
+// (auth/booking/payment services + admin/staff controllers).
+export const AuditActionEnum = {
+  CREATE_BOOKING: 'CREATE_BOOKING',
+  CANCEL_BOOKING: 'CANCEL_BOOKING',
+  CHANGE_SEAT: 'CHANGE_SEAT',
+  CHANGE_FLIGHT: 'CHANGE_FLIGHT',
+  REGISTER: 'REGISTER',
+  LOGIN: 'LOGIN',
+  LOGOUT: 'LOGOUT',
+  CHANGE_PASSWORD: 'CHANGE_PASSWORD',
+  CREATE_PAYMENT: 'CREATE_PAYMENT',
+  PAYMENT_SUCCESS: 'PAYMENT_SUCCESS',
+  PAYMENT_FAILED: 'PAYMENT_FAILED',
+  UPDATE_STATUS: 'UPDATE_STATUS',
+  CREATE_STAFF: 'CREATE_STAFF',
+  CREATE_AIRPORT: 'CREATE_AIRPORT',
+  UPDATE_AIRPORT: 'UPDATE_AIRPORT',
+  DELETE_AIRPORT: 'DELETE_AIRPORT',
+  CREATE_AIRLINE: 'CREATE_AIRLINE',
+  UPDATE_AIRLINE: 'UPDATE_AIRLINE',
+  DELETE_AIRLINE: 'DELETE_AIRLINE',
+  CREATE_AIRCRAFT_TYPE: 'CREATE_AIRCRAFT_TYPE',
+  UPDATE_AIRCRAFT_TYPE: 'UPDATE_AIRCRAFT_TYPE',
+  DELETE_AIRCRAFT_TYPE: 'DELETE_AIRCRAFT_TYPE',
+  CREATE_FLIGHT: 'CREATE_FLIGHT',
+  UPDATE_FLIGHT: 'UPDATE_FLIGHT',
+  CANCEL_FLIGHT: 'CANCEL_FLIGHT',
+  UPDATE_BOOKING_STATUS: 'UPDATE_BOOKING_STATUS',
+  UPDATE_PAYMENT_STATUS: 'UPDATE_PAYMENT_STATUS',
+  UPDATE_REFUND_STATUS: 'UPDATE_REFUND_STATUS',
+  CREATE_COUPON: 'CREATE_COUPON',
+  UPDATE_COUPON: 'UPDATE_COUPON',
+  DEACTIVATE_COUPON: 'DEACTIVATE_COUPON',
+  CREATE_CONTENT: 'CREATE_CONTENT',
+  UPDATE_CONTENT: 'UPDATE_CONTENT',
+  DELETE_CONTENT: 'DELETE_CONTENT',
+  UPDATE_CONTACT: 'UPDATE_CONTACT',
+} as const;
+export type AuditActionEnum = (typeof AuditActionEnum)[keyof typeof AuditActionEnum];
+
+// Badge color group each AuditActionEnum action belongs to.
+export const AuditActionCategoryEnum = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE',
+  SUCCESS: 'SUCCESS',
+  AUTH: 'AUTH',
+  DEFAULT: 'DEFAULT',
+} as const;
+export type AuditActionCategoryEnum = (typeof AuditActionCategoryEnum)[keyof typeof AuditActionCategoryEnum];

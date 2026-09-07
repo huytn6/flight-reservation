@@ -12,6 +12,8 @@ import {
   CabinClassEnum,
   GenderEnum,
   CouponStatusEnum,
+  AuditActionEnum,
+  AuditActionCategoryEnum,
 } from '@/types/enums';
 
 export interface StatusConfig {
@@ -336,4 +338,65 @@ export const CONTENT_STATUS_CONFIG: Record<string, StatusConfig> = {
 
 export const getContentStatusConfig = (status?: string | null): StatusConfig => {
   return CONTENT_STATUS_CONFIG[status || 'DRAFT'] || CONTENT_STATUS_CONFIG.DRAFT;
+};
+
+// 15. Audit Log Action Config
+// Every AuditActionEnum member is mapped to a color category once here, so any
+// screen that renders an audit action (log table, activity widget, filters, ...)
+// gets the same badge color for free via getAuditActionConfig / <StatusBadge type="auditAction" />.
+export const AUDIT_ACTION_CATEGORY_MAP: Record<AuditActionEnum, AuditActionCategoryEnum> = {
+  [AuditActionEnum.CREATE_BOOKING]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.REGISTER]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_PAYMENT]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_STAFF]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_AIRPORT]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_AIRLINE]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_AIRCRAFT_TYPE]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_FLIGHT]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_COUPON]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_CONTENT]: AuditActionCategoryEnum.CREATE,
+
+  [AuditActionEnum.CHANGE_SEAT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.CHANGE_FLIGHT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.CHANGE_PASSWORD]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_AIRPORT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_AIRLINE]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_AIRCRAFT_TYPE]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_FLIGHT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_BOOKING_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_PAYMENT_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_REFUND_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_COUPON]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_CONTENT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_CONTACT]: AuditActionCategoryEnum.UPDATE,
+
+  [AuditActionEnum.CANCEL_BOOKING]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_AIRPORT]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_AIRLINE]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_AIRCRAFT_TYPE]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.CANCEL_FLIGHT]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DEACTIVATE_COUPON]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_CONTENT]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.PAYMENT_FAILED]: AuditActionCategoryEnum.DELETE,
+
+  [AuditActionEnum.PAYMENT_SUCCESS]: AuditActionCategoryEnum.SUCCESS,
+
+  [AuditActionEnum.LOGIN]: AuditActionCategoryEnum.AUTH,
+  [AuditActionEnum.LOGOUT]: AuditActionCategoryEnum.AUTH,
+};
+
+export const AUDIT_ACTION_CATEGORY_STYLE: Record<AuditActionCategoryEnum, string> = {
+  [AuditActionCategoryEnum.CREATE]: 'bg-green-50 text-green-700 border-green-200',
+  [AuditActionCategoryEnum.UPDATE]: 'bg-amber-50 text-amber-700 border-amber-200',
+  [AuditActionCategoryEnum.DELETE]: 'bg-red-50 text-red-700 border-red-200',
+  [AuditActionCategoryEnum.SUCCESS]: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  [AuditActionCategoryEnum.AUTH]: 'bg-purple-50 text-purple-700 border-purple-200',
+  [AuditActionCategoryEnum.DEFAULT]: 'bg-slate-100 text-slate-700 border-slate-200',
+};
+
+export const getAuditActionConfig = (action?: string | null): StatusConfig => {
+  if (!action) return { label: '-', className: AUDIT_ACTION_CATEGORY_STYLE[AuditActionCategoryEnum.DEFAULT] };
+  const category = AUDIT_ACTION_CATEGORY_MAP[action as AuditActionEnum] ?? AuditActionCategoryEnum.DEFAULT;
+  return { label: action, className: AUDIT_ACTION_CATEGORY_STYLE[category] };
 };
