@@ -45,7 +45,7 @@ interface FlightStoreState {
 }
 
 export const useFlightStore = create<FlightStoreState>((set, get) => ({
-  flightType: 'roundtrip',
+  flightType: 'one-way',
   leavingFrom: DEFAULT_ORIGIN_AIRPORT,
   goingTo: null,
 
