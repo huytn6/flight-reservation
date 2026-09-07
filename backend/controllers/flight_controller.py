@@ -11,6 +11,13 @@ def search_flights(handler):
     response.success(handler, result)
 
 
+@route('GET', '/flights/status')
+def flight_status(handler):
+    query = req.get_query_param(handler, 'q', '')
+    result = flight_service.search_flight_status(query)
+    response.success(handler, result)
+
+
 @route('GET', '/flights/flexible-dates')
 def flexible_dates(handler):
     origin = req.get_query_param(handler, 'origin', '')

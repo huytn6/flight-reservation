@@ -1,0 +1,235 @@
+   # Tiến độ xử lý lỗi từ FIX.ipynb
+
+> File này ghi lại: yêu cầu là gì, đã hiểu nguyên nhân ra sao, đã sửa file nào/sửa gì, và phần nào còn cần bạn làm tiếp. Viết theo hướng dễ đọc, không cần biết code cũng hiểu được đang sửa cái gì.
+
+## 1. Yêu cầu ban đầu (từ FIX.ipynb)
+
+File `FIX.ipynb` có 3 mục kèm ảnh chụp màn hình trang đang chạy thật (branding "Expedia" là do đây vốn là template Expedia được chỉnh lại thành UIT Air):
+
+1. **Lịch chọn ngày ở khung tìm kiếm bị "đứng hình"**: luôn hiện cố định tháng 8 và tháng 9/2026, bấm nút mũi tên trái/phải (Previous/Next) để đổi tháng không có tác dụng.
+2. **Trang kết quả tìm kiếm (sau khi bấm Search)**:
+   - Dải ngày/giá phía trên (Sun Aug 9, Mon Aug 10, …) cũng bị lỗi ngày tháng tương tự.
+   - Mỗi chuyến bay bị hiển thị **2 lần giống hệt nhau**.
+   - Giá vé của mọi chuyến bay đều hiện **0đ**.
+   - Bấm vào các thẻ ngày trong tuần không làm trang tải lại / cập nhật giá.
+3. **Sau khi sửa mục 2 thì sửa luôn màn hình xem lại giá vé** (bấm chọn 1 chuyến bay → panel "Review fare to Hanoi"): giá hiện "+$0" và một số tiền vô lý dạng "$1,061,750.20", các thông tin hành lý/hạng ghế/phí đổi vé đều là chữ tiếng Anh cố định, không đúng với chuyến bay thực tế.
+
+## 2. Vì sao lỗi xảy ra (nguyên nhân gốc)
+
+Sau khi đọc code, gốc rễ của gần như toàn bộ nhóm lỗi 1 và 2 là **một chỗ duy nhất**: state ngày tháng của khung tìm kiếm (`DateRangeState`) trước đây **không lưu ngày thật**, mà chỉ lưu một con số ngày-trong-tháng (ví dụ `12`) cùng 2 chuỗi chữ cố định `"August 2026"` / `"September 2026"` được hard-code sẵn. Vì vậy:
+- Lịch không thể "biết" tháng hiện tại là tháng nào để nhích tới/lui → nút Previous/Next vô dụng, lịch tháng 2 (tháng 9) thậm chí không có nút bấm nào cả.
+- Khi qua trang kết quả, con số ngày đó bị đem gán đại vào **tháng hiện tại của máy** (`new Date().setDate(day)`), sai hoàn toàn với ngày người dùng thực sự chọn trên lịch.
+- Ô "dải ngày/giá" (`DatePriceMatrix`) là dữ liệu **giả lập cứng** (`Aug 9 → Aug 15`, giá `$121, $122,...`), không lấy từ API, bấm vào chỉ đổi màu ô được chọn chứ không gọi lại tìm kiếm.
+
+Lỗi mục 3 (giá "+$0", "$1,061,750.20") nằm ở một component khác (`FlightDetailDrawer.tsx`) — toàn bộ khối hiển thị giá/hạng ghế/hành lý/phí đổi vé ở đây là **text và số hard-code sẵn** (copy nguyên từ giao diện mẫu Expedia), không hề đọc dữ liệu chuyến bay/giá vé thật đang được xem.
+
+**Lỗi "mỗi chuyến bay hiện 2 lần"** — kiểm tra kỹ thì đây **không phải lỗi code hiển thị**, mà là **lỗi dữ liệu thật trong database production**: mỗi chuyến bay (và toàn bộ giá vé của nó) đã bị insert **2 lần** với ID khác nhau nhưng nội dung giống hệt nhau. So khớp với `backend/database/seed.py` thì thấy các chuyến bay này (hãng Vietravel `VU`, EVA Air `BR`, China Airlines `CI`, Cathay Pacific `CX`, …) **không nằm trong file seed của repo** — tức là dữ liệu production được nạp bằng một script/nguồn khác ngoài repo, và có vẻ script đó đã chạy nạp dữ liệu **2 lần**. Gọi thẳng API production để xác minh: `VU220` SGN→HAN 09:15 có 2 bản ghi `id` khác nhau, mỗi bản ghi có bộ giá vé (fares) riêng — xác nhận đây là dữ liệu bị nhân đôi thật.
+
+## 3. Đã sửa gì (code, chạy local, có thể build/lint sạch)
+
+| # | File | Sửa gì | Ứng với lỗi |
+|---|------|--------|--------------|
+| 1 | `frontend/src/types/flight.ts` | Đổi `DateRangeState.startDate/endDate` từ số ngày-trong-tháng → chuỗi ngày ISO thật (`"2026-09-12"`). Bỏ 2 field `startMonthName/endMonthName` hard-code. | Gốc rễ lỗi 1 & 2 |
+| 2 | `frontend/src/store/use-flight.ts` | Giá trị mặc định của ngày tìm kiếm giờ tính từ **ngày thật hôm nay** (+1 ngày cho chiều đi, +8 ngày cho chiều về) thay vì hard-code "12 tháng 8". | Gốc rễ lỗi 1 & 2 |
+| 3 | `frontend/src/components/flight/DateRangePickerPopover.tsx` | Viết lại hoàn toàn: lịch giờ tự sinh đúng số ngày/đúng thứ của **bất kỳ tháng năm nào**, nút Previous/Next hoạt động thật (chặn không cho lùi về trước ngày hôm nay), cả 2 lưới tháng đều bấm chọn được, không cho chọn ngày trong quá khứ. | Lỗi 1 |
+| 4 | `frontend/src/components/flight-results/CompactTopSearchBar.tsx` | Sửa chỗ đọc ngày từ URL: trước đây dùng `parseInt("2026-09-12")` → ra số `2026` (sai hoàn toàn); giờ dùng thẳng chuỗi ngày ISO. | Lỗi 1 & 2 |
+| 5 | `frontend/src/components/flight-results/DatePriceMatrix.tsx` | Viết lại: bỏ toàn bộ dữ liệu giá giả cố định, gọi API thật `flights/flexible-dates` để lấy 7 ngày quanh ngày đang tìm kèm giá thật; bấm vào 1 ngày sẽ điều hướng sang URL tìm kiếm với ngày mới → trang tự tải lại kết quả. | Lỗi 2 (ngày tháng + không reload giá) |
+| 6 | `frontend/src/pages/flight-results/index.tsx` | Bỏ đoạn code "vá" ngày kiểu số-ngày-trong-tháng (không còn cần vì lỗi gốc đã sửa). Nối `DatePriceMatrix` với dữ liệu tìm kiếm thật + hàm đổi ngày. Truyền hạng vé thật (`fare`) sang panel xem giá. | Lỗi 2 |
+| 7 | `frontend/src/components/flight-results/FlightCard.tsx` | Bỏ dòng "+$0" giả (trước đây luôn hiện vì field `priceDiff` không bao giờ được set); hiện đúng giá vé thật, định dạng tiền Việt (`1.061.750 đ`) thay vì `$`. | Lỗi 2 (giá 0đ) |
+| 8 | `frontend/src/components/flight-results/FlightDetailDrawer.tsx` | Bỏ toàn bộ text/số hard-code (`+$0`, `$X.20`, "Cabin: Economy", "Carry-on 15 lbs", "Change fee: $17"...). Thay bằng dữ liệu hạng vé thật đang chọn: giá thật (VNĐ), hạng ghế thật, hành lý ký gửi/xách tay thật (kg), có/không hoàn vé thật, phí đổi vé thật. | Lỗi 3 |
+
+Đã kiểm tra sau khi sửa:
+- `tsc -b --noEmit`: **0 lỗi kiểu dữ liệu**.
+- `oxlint`: **0 lỗi mới** (chỉ còn các warning có sẵn từ trước, không liên quan phần vừa sửa).
+- `vite build`: **build thành công**.
+
+## 4. Dọn dữ liệu chuyến bay bị nhân đôi trên production DB
+
+Theo yêu cầu, đã viết script kiểm tra + dọn trực tiếp trên database production (`mysql.uitair.donotaccess.com`), với nguyên tắc an toàn:
+- Gom nhóm các chuyến bay **giống hệt nhau 100%** (cùng số hiệu, hãng, sân bay đi/đến, giờ đi/đến).
+- Với mỗi nhóm trùng: **giữ lại bản ghi cũ nhất**, xoá các bản sao còn lại (cùng toàn bộ giá vé/số ghế/sơ đồ ghế con của bản sao đó).
+- **Nếu bất kỳ bản ghi nào trong nhóm đã có khách đặt vé thật** (`booking_segments`) → **bỏ qua toàn bộ nhóm đó, không đụng vào**, để không làm hỏng vé của khách đã đặt.
+
+**Kết quả:**
+- Chạy thử (dry-run, chưa xoá gì): phát hiện **5490 nhóm chuyến bay bị trùng** — 5487 nhóm an toàn để dọn, **3 nhóm bị bỏ qua** vì đã có khách đặt vé thật (`VU220` các ngày 18/8, 22/8, 12/9 — cần bạn/admin xem xét thủ công, không tự động đụng vào).
+- Đã chạy xoá thật và **dừng theo yêu cầu của bạn ở giữa chừng**: đã dọn được **~1974/5487** dòng trùng, **0 lỗi**. Vì mỗi lần xoá là 1 transaction riêng (xoá xong 1 cặp mới qua cặp tiếp theo), dừng giữa chừng **không để lại dữ liệu dở dang** — chỉ là mới dọn được gần 36%, còn khoảng 3513 dòng trùng chưa dọn. Nếu muốn dọn tiếp, chỉ cần chạy lại — script tự bỏ qua các chuyến đã dọn rồi.
+
+## 5. Đã test những gì trên production
+
+Không sửa được code trực tiếp trên production được (xem mục 6), nên phần test chia làm 2 phần:
+
+**A. Test API thật trên `https://uitair.donotaccess.com` (đọc dữ liệu, không tạo/xoá gì)**
+
+Đăng nhập cả 3 tài khoản demo (`customer@example.com`, `staff@example.com`, `admin@example.com`) → **thành công cả 3**. Sau đó gọi thử các API chính của từng vai trò:
+
+| Vai trò | Chức năng đã test | Kết quả |
+|---|---|---|
+| Khách hàng | Xem hồ sơ (`users/me`) | ✅ 200 |
+| Khách hàng | Xem đơn đặt vé của tôi (`users/me/bookings`) | ✅ 200 |
+| Khách hàng | Chuyến bay đã lưu (`users/me/saved-flights`) | ✅ 200 |
+| Khách hàng | Theo dõi giá vé (`users/me/price-alerts`) | ✅ 200 |
+| Khách hàng | Tìm chuyến bay một chiều & khứ hồi (`flights/search`) | ✅ 200 |
+| Khách hàng | Giá theo ngày linh hoạt (`flights/flexible-dates` — dữ liệu cho `DatePriceMatrix` mới sửa) | ✅ 200, có giá thật |
+| Nhân viên | Danh sách đơn đặt vé (`staff/bookings`) + xem chi tiết 1 đơn | ✅ 200 |
+| Nhân viên | Danh sách ticket hỗ trợ khách hàng (`staff/support/tickets`) | ✅ 200 |
+| Nhân viên | Khách hàng (role CUSTOMER) gọi API của nhân viên | ✅ bị chặn đúng, trả về 403 |
+| Admin | Dashboard tổng quan (`admin/dashboard/summary`) | ✅ 200 |
+| Admin | Quản lý chuyến bay, khách hàng, sân bay, hãng bay, nhân viên, mã giảm giá, thanh toán (`admin/*`) | ✅ 200 hết |
+| Admin | Khách hàng (role CUSTOMER) gọi API của admin | ✅ bị chặn đúng, trả về 403 |
+| Hệ thống | `health check` | ✅ ok, database kết nối bình thường |
+
+→ **Toàn bộ chức năng backend của cả 3 vai trò đều hoạt động bình thường**, kể cả phân quyền (khách hàng không truy cập được API dành riêng cho nhân viên/admin).
+
+Phát hiện phụ (không nằm trong FIX.ipynb, chưa sửa để tránh lan phạm vi ngoài yêu cầu): panel "Flight details" (`FlightDetailModal.tsx`) mở từ màn hình xem giá vé cũng còn vài chỗ hard-code (loại tàu bay, khoảng cách bay luôn là "721 mi"...) — style giống lỗi mục 3, nên sửa tương tự nếu bạn muốn ở lượt sau.
+
+**B. Test code đã sửa bằng cách chạy frontend local trỏ thẳng vào backend production**
+- Dùng đúng cấu hình có sẵn của dự án: `cd frontend && npm run dev:prod` (đã ghi trong bộ nhớ trước đó của mình — không cần chạy backend/MySQL ở máy local, gọi thẳng API production).
+- Không có công cụ trình duyệt thật trong phiên làm việc này để tự bấm/chụp ảnh màn hình, nên phần kiểm tra bằng mắt (lịch đổi tháng mượt không, panel giá hiện đúng số không...) **bạn cần tự mở thử sau khi deploy** — mình đã kiểm tra kỹ bằng đọc code + build/type-check sạch, nhưng chưa tận mắt xác nhận trên trình duyệt.
+
+## 6. Vòng sửa lỗi thứ 2 (lỗi số 4-8 trong FIX.ipynb + lỗi "yêu thích chuyến bay")
+
+File `FIX.ipynb` được bổ sung thêm 5 mục lỗi mới (số 4-8) kèm ảnh chụp thật, và bạn yêu cầu sửa thêm lỗi "yêu thích chuyến bay không hoạt động". Đây là lỗi gì, do đâu, và đã sửa ra sao:
+
+### 6.1. Lỗi 4 — Vé khứ hồi không hiện đủ 2 chặng trong "Hành Trình Chuyến Bay"
+
+**Yêu cầu:** khi khách đặt vé khứ hồi, trang chi tiết đơn hàng phải hiện cả chuyến đi lẫn chuyến về (ngày giờ đi/đến của cả 2 chặng).
+
+**Nguyên nhân thật sự** (đào sâu hơn hiện tượng): trang chi tiết đơn hàng (`booking-detail`) thực ra **đã code đúng** — nó lặp qua toàn bộ danh sách chặng bay trả về từ API để hiển thị, không giới hạn 1 chặng. Vấn đề nằm ở **bước chọn chuyến bay phía trước**: khi tìm kiếm khứ hồi, sau khi khách chọn xong chuyến **đi**, hệ thống **bỏ qua luôn bước chọn chuyến về** và đưa thẳng khách sang bước thanh toán — nên đơn hàng tạo ra từ đầu đã chỉ có 1 chặng, chứ không phải lỗi hiển thị. Backend (`create_booking`) và giỏ hàng tạm (`booking-drafts`) đã hỗ trợ sẵn nhiều chặng, chỉ là giao diện tìm kiếm chưa dùng tới.
+
+**Đã sửa:**
+- `frontend/src/pages/flight-results/index.tsx`: thêm luồng chọn 2 bước cho vé khứ hồi — chọn xong **chuyến đi** thì trang tự chuyển sang danh sách **chuyến về** (dữ liệu đã có sẵn từ API tìm kiếm, không cần gọi lại), có thanh trạng thái "1. Chuyến đi / 2. Chuyến về" và nút "Đổi lại chuyến đi". Chọn xong cả 2 chặng mới chuyển sang trang xem lại chuyến đi.
+- `frontend/src/pages/review-trip/index.tsx`: nhận mảng nhiều chặng (`legs`) thay vì chỉ 1 chuyến, tạo giỏ hàng tạm với đủ cả 2 chặng, hiển thị rõ nhãn "CHUYẾN ĐI" / "CHUYẾN VỀ" từng chặng.
+- `frontend/src/components/flight-results/FlightDetailDrawer.tsx`: nút xác nhận đổi chữ theo ngữ cảnh ("Chọn chuyến đi" / "Chọn chuyến về" / "Chọn chuyến bay này").
+
+### 6.2. Lỗi 5 — Giá gợi ý theo từng ngày bị "cố định"
+
+**Yêu cầu:** giá hiện ở mỗi ngày gợi ý phải là giá rẻ nhất thật của ngày đó.
+
+**Kết quả kiểm tra: đây KHÔNG phải lỗi code.** Mình test trực tiếp API `flights/flexible-dates`:
+- Đổi sang tuyến khác (HAN→DAD) → ra giá khác hẳn (818.650đ thay vì 1.061.750đ) → chứng tỏ hàm tính đúng theo tuyến.
+- Hỏi ngày không có chuyến bay nào (tháng 10) → trả về `null` đúng như kỳ vọng, không trả bừa 1 số cố định.
+
+Sở dĩ 7 ngày liền nhau đều ra đúng 1.061.750đ là vì **dữ liệu chuyến bay demo** (bộ dữ liệu bị nạp trùng nói ở mục 4) có chuyến `VU220` với giá `1.061.750đ` lặp lại y hệt mỗi ngày trong suốt giai đoạn 17/8-15/9 — đúng là giá rẻ nhất thật của từng ngày, chỉ là dữ liệu mẫu quá lặp lại nên nhìn giống bug. Không cần sửa code; sau khi dọn xong dữ liệu trùng (mục 4) và có thêm dữ liệu đa dạng hơn, giá sẽ tự nhiên khác nhau giữa các ngày.
+
+### 6.3. Lỗi 6 — Một chiều vẫn cho chọn 2 ngày (như khứ hồi)
+
+**Nguyên nhân:** lịch chọn ngày dùng chung cho cả 2 loại vé, không biết đang ở chế độ "Một Chiều" để chỉ cho chọn 1 ngày. Ngoài ra, khi tìm kiếm, hệ thống **luôn gửi kèm ngày về** lên URL dù là vé một chiều, khiến trang kết quả tưởng nhầm là khứ hồi.
+
+**Đã sửa:**
+- `frontend/src/components/flight/DateRangePickerPopover.tsx`: thêm chế độ `singleDate` — khi bật, chỉ hiện 1 ngày, bấm ngày nào chọn ngay ngày đó (không còn chọn khoảng).
+- `frontend/src/components/flight/BookingSearchCard.tsx`, `frontend/src/components/flight-results/CompactTopSearchBar.tsx`: bật `singleDate` khi đang chọn "Một Chiều"; **không gửi ngày về lên URL** khi là một chiều.
+- `frontend/src/pages/flight-results/index.tsx`: sửa cách xác định loại vé (một chiều/khứ hồi) — ưu tiên đọc đúng tham số `trip` từ URL thay vì đoán qua việc có ngày về hay không.
+
+### 6.4. Lỗi 7 — Bộ lọc (Filter by) không lọc được gì
+
+**Nguyên nhân:** toàn bộ khung lọc bên trái trang kết quả là giao diện tĩnh, dữ liệu và giá đều gõ chết cứng (`$156`, `Nonstop (40)`...), các ô checkbox chỉ đổi màu khi bấm chứ không có tác dụng gì với danh sách chuyến bay.
+
+**Đã sửa:** viết lại `frontend/src/components/flight-results/FlightFilterSidebar.tsx` thành bộ lọc thật, tính toán từ đúng danh sách chuyến bay đang hiện:
+- **Điểm dừng** (bay thẳng) — đếm & giá "từ" thật.
+- **Hãng hàng không** — tự liệt kê đúng các hãng đang có trong kết quả, kèm số chuyến & giá thấp nhất mỗi hãng.
+- **Giờ khởi hành** (Sáng/Chiều/Tối muộn/Đêm khuya) — tính theo giờ khởi hành thật của từng chuyến.
+- **Giá tối đa** (VNĐ) — thanh kéo theo đúng khoảng giá thấp nhất/cao nhất của kết quả hiện tại.
+
+Bấm lọc sẽ lọc ngay danh sách chuyến bay hiển thị (`frontend/src/pages/flight-results/index.tsx`), có thông báo riêng + nút "Xoá bộ lọc" khi lọc ra 0 kết quả. Đã bỏ 2 mục hoàn toàn giả trước đó ("Preferred class", "Travel and baggage") vì không có dữ liệu thật tương ứng để lọc.
+
+### 6.5. Lỗi 8 — Tra cứu vé bằng mã PNR báo "Booking not found"
+
+**Nguyên nhân (đã xác minh chính xác bằng cách gọi thử API thật):** trang tra cứu vé (cả trang "Check-in" và trang "Find Your Booking") gọi API tra cứu bằng phương thức **GET** kèm query string, nhưng backend chỉ nhận **POST** kèm dữ liệu JSON ở route `/bookings/lookup`. Vì gửi sai kiểu, request bị router hiểu nhầm thành "lấy chi tiết đơn hàng có id = lookup" (khớp với route `GET /bookings/{booking_id}`) — và vì không có đơn hàng nào có id là chữ "lookup", nên luôn báo lỗi "Booking not found", bất kể PNR nhập vào đúng hay sai.
+
+**Đã sửa:** `frontend/src/services/booking.ts` — đổi `lookupBooking` từ GET query-string sang đúng POST kèm JSON body như backend yêu cầu. Đồng thời sửa `frontend/src/pages/booking-lookup/index.tsx` vì nó đang đọc sai cấu trúc dữ liệu trả về (tưởng lồng trong `result.booking.*` nhưng thực tế API trả phẳng `result.*`) — nếu không sửa luôn chỗ này, sau khi sửa GET→POST trang vẫn hiện "undefined" thay vì thông tin vé thật.
+
+Đã kiểm tra trực tiếp bằng `curl`: gọi đúng kiểu POST với PNR `JWW41B` trả về đầy đủ thông tin vé thật (chuyến bay, giờ bay, hành khách...).
+
+### 6.6. Lỗi "Yêu thích chuyến bay" không hoạt động
+
+**Nguyên nhân:** nút tim (❤) để lưu chuyến bay yêu thích thực ra **lưu được** (API lưu/bỏ lưu chạy đúng — đã test trực tiếp), nhưng trang "Chuyến bay đã lưu" hiện **trống điểm đi/điểm đến** (hiện "undefined → undefined") vì câu truy vấn ở backend lấy danh sách chuyến bay đã lưu **quên nối bảng sân bay** để lấy mã điểm đi/đến — chỉ có số hiệu chuyến bay và giờ bay, khiến trang hiển thị trông như bị hỏng.
+
+**Đã sửa:** `backend/repositories/user_repo.py` — hàm `list_saved_flights` nối thêm bảng `airports` (đi và đến) để trả về đầy đủ mã sân bay đi (`origin`) / đến (`destination`). Đã kiểm tra trực tiếp bằng cách chạy đúng câu truy vấn này trên database production (chỉ đọc) — trả về đúng `origin: SGN, destination: HAN`.
+
+### Đã kiểm tra lại sau vòng sửa lỗi thứ 2
+
+- `tsc -b --noEmit`: **0 lỗi kiểu dữ liệu**.
+- `oxlint`: **0 lỗi mới**.
+- `vite build`: **build thành công**.
+- Test trực tiếp qua API production (chỉ đọc, có dọn lại 2 chuyến bay lưu thử để không để lại rác trong tài khoản demo): xác nhận `flights/flexible-dates`, `bookings/lookup` (POST), và câu truy vấn `saved_flights` đã sửa đều trả đúng dữ liệu thật.
+- **Chưa xác nhận được bằng mắt trên trình duyệt thật** (không có công cụ trình duyệt trong phiên này) — cần bạn tự mở thử sau khi deploy, đặc biệt luồng chọn 2 chặng khứ hồi (lỗi 4) và bộ lọc (lỗi 7) vì đây là 2 thay đổi lớn nhất về luồng thao tác.
+
+## 6.6b. Lỗi 9 — Chuyến bay đã đặt (VU220) nhưng tra "Trạng Thái Chuyến Bay" không ra
+
+**Yêu cầu:** chuyến bay đã có trong đơn đặt vé thật (PNR TPI1VA, VU220, SGN→HAN 18/9/2026), nhưng vào trang "Tra Cứu Lịch Cất Cánh & Hạ Cánh Chuyến Bay", gõ đúng "VU220" thì báo "Tìm thấy 0 chuyến bay phù hợp".
+
+**Nguyên nhân:** trang này khi mở lên sẽ tự gọi API tìm chuyến bay `flights/search` **mà không kèm sân bay đi/đến/ngày bay**. API đó luôn yêu cầu đủ 3 thông tin này, thiếu là nó từ chối request — nên danh sách chuyến bay ban đầu của trang **luôn luôn rỗng** (lỗi bị nuốt âm thầm, không hiện ra ngoài). Khi gõ tìm "VU220", trang chỉ đang lọc trên danh sách rỗng đó (lọc ở phía trình duyệt, không gọi lại server) → dù gõ đúng số hiệu chuyến bay thật vẫn luôn ra 0 kết quả.
+
+**Đã sửa:** vì trước giờ hệ thống **chưa có API tra cứu chuyến bay công khai theo số hiệu/thành phố** (chỉ có API tìm kiếm theo tuyến bay cụ thể phục vụ đặt vé), mình đã bổ sung API mới đúng mục đích:
+- `backend/repositories/flight_repo.py` + `backend/services/flight_service.py`: hàm tra cứu chuyến bay theo số hiệu / tên thành phố / tên hãng bay; không nhập gì thì trả về các chuyến bay **sắp khởi hành gần nhất** (tính từ thời điểm hiện tại).
+- `backend/controllers/flight_controller.py`: route mới `GET /flights/status?q=...` (công khai, không cần đăng nhập, giống cách trang này vốn được thiết kế để ai cũng tra được).
+- `frontend/src/services/flight.ts`: hàm gọi API mới `searchFlightStatus`.
+- `frontend/src/pages/flight-status/index.tsx`: gọi thẳng API tra cứu mới (tìm kiếm thật ở server) thay vì gọi nhầm API tìm chuyến bay theo tuyến rồi lọc tay trên danh sách rỗng.
+
+Đã kiểm tra trực tiếp trên database production (chỉ đọc): tìm "VU220" ra đúng các chuyến bay thật đã đặt; không nhập gì thì ra đúng danh sách chuyến bay sắp khởi hành gần nhất tính từ giờ hiện tại (không còn lẫn chuyến bay đã bay từ nhiều tuần trước).
+
+## 6.7. Lỗi 10 — Ở mục "yêu thích", bấm "Xem Giá Vé" không ra được giá
+
+**Yêu cầu:** ở trang "Chuyến bay đã lưu", thêm chuyến bay vào yêu thích xong, bấm "Xem Giá Vé" thì không xem được giá.
+
+**Nguyên nhân — có 2 lớp, đều đã tìm ra và sửa:**
+
+1. **Lớp 1 (đã sửa từ mục 6.6, chỉ đang chờ deploy):** vì backend production chưa được deploy code mới, câu truy vấn "chuyến bay đã lưu" vẫn thiếu điểm đi/đến → `sf.origin`/`sf.destination` là `undefined`. Ảnh chụp của bạn cho thấy đúng hiện tượng này: card chuyến bay lưu trống điểm đi/đến.
+2. **Lớp 2 (lỗi mới, vừa tìm ra và sửa):** nút "Xem Giá Vé" chỉ gửi điểm đi/đến lên trang tìm kiếm, **không gửi kèm ngày bay**. Ngay cả khi điểm đi/đến đúng, trang kết quả vẫn tự mặc định tìm chuyến bay cho "ngày mai" — khác hẳn ngày chuyến bay bạn đã lưu — nên vẫn không ra kết quả đúng như mong đợi. Ảnh chụp thứ 2 xác nhận: `leavingFrom=undefined&goingTo=undefined` → trang hiện "Leaving from: undefined (undefined)" và báo lỗi "Origin airport undefined not found".
+
+**Đã sửa:**
+- `frontend/src/pages/saved-flights/index.tsx`: nút "Xem Giá Vé" giờ gửi đúng `origin`, `destination` **và** `departure_date` (lấy từ ngày giờ bay thật của chuyến đã lưu), báo lỗi rõ ràng thay vì điều hướng mù nếu thiếu dữ liệu.
+- `frontend/src/pages/flight-results/index.tsx`: thêm lớp phòng vệ — nếu link nào đó lỡ thiếu tham số và tạo ra chữ `"undefined"`/`"null"` trong URL, trang sẽ coi như không có tham số (dùng mặc định SGN/HAN) thay vì hiển thị "undefined" ra giao diện.
+
+Lỗi này sẽ **chỉ hết hẳn sau khi bạn deploy code** (vì phụ thuộc lớp 1 — sửa backend). Nếu chưa deploy mà thử lại, "Xem Giá Vé" sẽ báo thông báo lỗi rõ ràng ("Thiếu thông tin điểm đi/điểm đến...") thay vì im lặng dẫn sang trang lỗi như trước.
+
+## 6.8. Lỗi 11 — "Route GET /flights/status not found" khi test lại
+
+**Đây không phải lỗi code mới.** Bạn test bằng cách chạy `npm run dev:prod` (chỉ chạy frontend ở máy bạn, gọi thẳng vào backend **production**), nhưng route `/flights/status` (vừa thêm ở mục 6.6b để sửa lỗi 9) **mới chỉ có trong code local**, chưa được deploy lên server production — nên server production trả lời "route không tồn tại" là đúng, không phải bug.
+
+Đã xác minh bằng cách gọi thẳng production: route mới → báo not found; route cũ (`flights/search`) → vẫn chạy bình thường (200). Nghĩa là code không có gì sai thêm — chỉ đơn giản là **các fix ở backend (route `/flights/status`, lỗi "yêu thích chuyến bay" ở mục 6.6) sẽ luôn báo lỗi/không có tác dụng cho tới khi bạn deploy code lên production.**
+
+→ Đã hỏi bạn và bạn chọn: tiếp tục để mình sửa các lỗi tiếp theo, phần deploy bạn sẽ tự làm sau. Ghi nhớ: **danh sách các thay đổi backend đang chờ deploy** tính đến thời điểm này:
+- `backend/repositories/user_repo.py` (lỗi yêu thích chuyến bay — mục 6.6)
+- `backend/repositories/flight_repo.py`, `backend/services/flight_service.py`, `backend/controllers/flight_controller.py` (route `/flights/status` — mục 6.6b)
+
+## 7. Việc còn lại / cần bạn làm
+
+1. **Deploy code lên production**: thư mục này hiện **chưa kết nối git** (`git status` báo not a git repository), trong khi hệ thống chỉ deploy tự động khi push lên nhánh `main` trên GitHub (xem `.github/workflows/deploy.yml`). Theo lựa chọn bạn đã chọn, mình chỉ sửa code ở đây — **bạn tự commit/push** (hoặc cho mình biết remote GitHub để mình push giúp).
+2. **Mở thử trên trình duyệt** sau khi deploy để xác nhận bằng mắt, đặc biệt: luồng chọn chuyến đi → chuyến về cho vé khứ hồi (lỗi 4), một chiều chỉ chọn được 1 ngày (lỗi 6), bộ lọc bên trái hoạt động (lỗi 7), tra cứu PNR ra đúng vé (lỗi 8), trang "Chuyến bay đã lưu" hiện đúng điểm đi/đến.
+3. **Dữ liệu chuyến bay trùng**: theo yêu cầu ở vòng 1, mình đã **dừng lại giữa chừng** — hiện còn khoảng **3513 dòng trùng chưa dọn** (đã dọn ~1974/5487) và **3 nhóm cần bạn tự xem xét thủ công** vì đã có khách đặt vé thật. Muốn dọn tiếp thì báo mình chạy lại script. (Lưu ý: dọn dữ liệu này cũng sẽ giúp lỗi 5 — giá theo ngày — trông tự nhiên hơn vì bớt lặp dữ liệu.)
+4. (Tuỳ chọn) Sửa nốt các chỗ hard-code còn sót trong `FlightDetailModal.tsx` (loại tàu bay, khoảng cách bay luôn "721 mi"...) nếu bạn muốn đồng bộ hoàn toàn — phát hiện phụ, không nằm trong yêu cầu FIX.ipynb.
+
+## 8. Danh sách file đã thay đổi
+
+**Vòng 1 (lỗi 1-3):**
+- `frontend/src/types/flight.ts`
+- `frontend/src/store/use-flight.ts`
+- `frontend/src/components/flight/DateRangePickerPopover.tsx`
+- `frontend/src/components/flight-results/CompactTopSearchBar.tsx`
+- `frontend/src/pages/flight-results/index.tsx`
+- `frontend/src/components/flight-results/DatePriceMatrix.tsx`
+- `frontend/src/components/flight-results/FlightCard.tsx`
+- `frontend/src/components/flight-results/FlightDetailDrawer.tsx`
+- Dữ liệu (không phải file code): dọn bản ghi `flights`/`fares`/`fare_inventories`/`seats`/`seat_maps` bị nhân đôi trực tiếp trên MySQL production.
+
+**Vòng 2 (lỗi 4-8 + yêu thích chuyến bay):**
+- `frontend/src/pages/flight-results/index.tsx` (thêm luồng chọn chuyến đi/về, nối bộ lọc thật, sửa cách xác định một chiều/khứ hồi)
+- `frontend/src/pages/review-trip/index.tsx` (nhận & hiển thị nhiều chặng bay, tạo giỏ hàng tạm nhiều chặng)
+- `frontend/src/components/flight/DateRangePickerPopover.tsx` (chế độ chọn 1 ngày cho vé một chiều)
+- `frontend/src/components/flight/BookingSearchCard.tsx` (không gửi ngày về khi một chiều)
+- `frontend/src/components/flight-results/CompactTopSearchBar.tsx` (không gửi ngày về khi một chiều)
+- `frontend/src/components/flight-results/FlightFilterSidebar.tsx` (viết lại thành bộ lọc thật)
+- `frontend/src/components/flight-results/FlightDetailDrawer.tsx` (chữ nút xác nhận đổi theo ngữ cảnh)
+- `frontend/src/services/booking.ts` (sửa `lookupBooking` GET→POST, đúng kiểu dữ liệu trả về)
+- `frontend/src/pages/booking-lookup/index.tsx` (đọc đúng cấu trúc dữ liệu tra cứu PNR)
+- `backend/repositories/user_repo.py` (nối bảng sân bay cho danh sách chuyến bay đã lưu)
+
+**Vòng 3 (lỗi 9 & 10):**
+- `backend/repositories/flight_repo.py` (API tra cứu chuyến bay công khai theo số hiệu/thành phố/hãng bay)
+- `backend/services/flight_service.py` (service tương ứng)
+- `backend/controllers/flight_controller.py` (route mới `GET /flights/status`)
+- `frontend/src/services/flight.ts` (hàm gọi API `searchFlightStatus`, type `FlightStatusItem`)
+- `frontend/src/pages/flight-status/index.tsx` (dùng đúng API tra cứu thay vì lọc tay trên danh sách luôn rỗng)
+- `frontend/src/pages/saved-flights/index.tsx` (nút "Xem Giá Vé" gửi đúng điểm đi/đến + ngày bay thật)
+- `frontend/src/pages/flight-results/index.tsx` (phòng vệ chống hiện chữ "undefined" khi link thiếu tham số)

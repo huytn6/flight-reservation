@@ -2,58 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { flightService } from '@/services/flight';
+import { flightService, type FlightStatusItem } from '@/services/flight';
 import { Plane, Search, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const FlightStatusPage: React.FC = () => {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
-  const [flights, setFlights] = useState<any[]>([]);
+  const [flights, setFlights] = useState<FlightStatusItem[]>([]);
 
   useEffect(() => {
-    loadInitialFlights();
+    runSearch('');
   }, []);
 
-  // /flights/search requires a specific origin+destination+date; there is no public
-  // "list every flight" endpoint. Show today's flights on the busiest seeded route
-  // (SGN <-> HAN) as a real, non-empty default view instead of calling search with
-  // no criteria (which always fails validation and silently left the page empty).
-  const DEFAULT_ORIGIN = 'SGN';
-  const DEFAULT_DESTINATION = 'HAN';
-
-  const loadFlights = async (origin: string, destination: string, date: string) => {
+  const runSearch = async (q: string) => {
     setLoading(true);
     try {
-      const res = await flightService.searchFlights({ origin, destination, departure_date: date });
-      setFlights(res.outbound?.flights || []);
+      const res = await flightService.searchFlightStatus(q);
+      setFlights(res || []);
+      if (q.trim()) toast.info(`Tìm thấy ${res?.length || 0} chuyến bay phù hợp`);
     } catch (err: any) {
       setFlights([]);
-      toast.error(err.message || 'Không thể tải danh sách chuyến bay');
+      toast.error(err.message || 'Tra cứu tình trạng chuyến bay thất bại');
     } finally {
       setLoading(false);
     }
   };
 
-  const loadInitialFlights = () => {
-    const today = new Date().toISOString().slice(0, 10);
-    loadFlights(DEFAULT_ORIGIN, DEFAULT_DESTINATION, today);
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const flightNumber = query.trim().toUpperCase();
-    if (!flightNumber) {
-      loadInitialFlights();
-      return;
-    }
-    const filtered = flights.filter((f) => f.flight_number?.toUpperCase().includes(flightNumber));
-    if (filtered.length === 0) {
-      toast.info('Không tìm thấy chuyến bay trong danh sách đang hiển thị — thử tra cứu tuyến bay khác.');
-      return;
-    }
-    setFlights(filtered);
-    toast.info(`Tìm thấy ${filtered.length} chuyến bay phù hợp`);
+    runSearch(query.trim());
   };
 
   const getStatusBadge = (status?: string) => {
@@ -125,7 +103,7 @@ export const FlightStatusPage: React.FC = () => {
                   <span className="font-mono font-bold text-sm text-[#0065eb] bg-blue-50 px-2.5 py-0.5 rounded">
                     {f.flight_number}
                   </span>
-                  <span className="text-xs text-slate-600 font-medium">{f.airline?.name || 'Hãng bay'}</span>
+                  <span className="text-xs text-slate-600 font-medium">{f.airline_name || 'Hãng bay'}</span>
                 </div>
                 {getStatusBadge(f.status)}
               </div>
@@ -133,7 +111,7 @@ export const FlightStatusPage: React.FC = () => {
               <div className="flex items-center justify-between gap-3 text-xs">
                 <div>
                   <p className="text-[11px] text-slate-400">KHỞI HÀNH</p>
-                  <p className="font-bold text-sm text-slate-900">{f.departure_airport?.city || 'SGN'}</p>
+                  <p className="font-bold text-sm text-slate-900">{f.departure_city || 'SGN'}</p>
                   <p className="font-mono text-slate-500 text-[11px]">
                     {f.departure_time ? new Date(f.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '08:30'}
                   </p>
@@ -146,7 +124,7 @@ export const FlightStatusPage: React.FC = () => {
 
                 <div className="text-right">
                   <p className="text-[11px] text-slate-400">ĐIỂM ĐẾN</p>
-                  <p className="font-bold text-sm text-slate-900">{f.arrival_airport?.city || 'HAN'}</p>
+                  <p className="font-bold text-sm text-slate-900">{f.arrival_city || 'HAN'}</p>
                   <p className="font-mono text-slate-500 text-[11px]">
                     {f.arrival_time ? new Date(f.arrival_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '10:45'}
                   </p>

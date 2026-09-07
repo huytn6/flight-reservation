@@ -2,27 +2,39 @@ import React, { useState } from 'react';
 import { X, CheckCircle2, DollarSign, Scale, ShieldCheck, Heart } from 'lucide-react';
 import type { FlightResultItem } from './FlightCard';
 import { FlightDetailModal } from './FlightDetailModal';
+import type { FareOption } from '@/services/flight';
+
+const CABIN_LABELS: Record<string, string> = {
+  ECONOMY: 'Phổ thông',
+  PREMIUM_ECONOMY: 'Phổ thông đặc biệt',
+  BUSINESS: 'Thương gia',
+  FIRST: 'Hạng nhất',
+};
 
 export interface FlightDetailDrawerProps {
   isOpen: boolean;
   flight: FlightResultItem | null;
+  fare?: FareOption | null;
   onClose: () => void;
   onSelectFare: (flight: FlightResultItem) => void;
   onOpenFareComparison?: () => void;
   onOpenFareRules?: () => void;
   onToggleSave?: () => void;
   isSaved?: boolean;
+  confirmLabel?: string;
 }
 
 export const FlightDetailDrawer: React.FC<FlightDetailDrawerProps> = ({
   isOpen,
   flight,
+  fare,
   onClose,
   onSelectFare,
   onOpenFareComparison,
   onOpenFareRules,
   onToggleSave,
   isSaved = false,
+  confirmLabel = 'Chọn',
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -132,37 +144,41 @@ export const FlightDetailDrawer: React.FC<FlightDetailDrawerProps> = ({
 
           {/* Fare Card Container */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col gap-4">
-            
-            {/* Price Difference & Subtext */}
+
+            {/* Total price & Subtext */}
             <div className="flex flex-col">
-              <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                +$0
+              <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                {flight.price.toLocaleString('vi-VN')} đ
               </span>
               <span className="text-xs text-slate-500 font-normal mt-0.5">
-                ${flight.price}.20 roundtrip for 1 traveler
+                {flight.roundtripLabel || 'Giá vé đã gồm thuế & phí'} · 1 hành khách
               </span>
             </div>
 
             {/* Cabin Class Title */}
             <div className="text-xs font-bold text-slate-900 border-t border-gray-100 pt-3">
-              Cabin: Economy
+              Hạng ghế: {CABIN_LABELS[fare?.cabin_code || 'ECONOMY'] || fare?.cabin_name || 'Phổ thông'}
             </div>
 
             {/* Included Benefits checklist */}
             <div className="flex flex-col gap-3 text-xs sm:text-sm text-slate-800 font-medium">
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#1b7b4a] shrink-0 stroke-[2.5]" />
-                <span>Carry-on bag included (15 lbs)</span>
+                <span>Hành lý xách tay: {fare?.carry_on_kg ?? 7} kg</span>
               </div>
 
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-[#1b7b4a] shrink-0 stroke-[2.5]" />
-                <span>1st checked bag included (44 lbs)</span>
+                <span>Hành lý ký gửi: {fare?.baggage_kg ?? 0} kg</span>
               </div>
 
-              <div className="flex items-center gap-2.5 text-slate-600">
-                <X className="w-4 h-4 text-slate-500 shrink-0 stroke-[2]" />
-                <span>Non-refundable</span>
+              <div className={`flex items-center gap-2.5 ${fare?.is_refundable ? 'text-slate-800' : 'text-slate-600'}`}>
+                {fare?.is_refundable ? (
+                  <CheckCircle2 className="w-4 h-4 text-[#1b7b4a] shrink-0 stroke-[2.5]" />
+                ) : (
+                  <X className="w-4 h-4 text-slate-500 shrink-0 stroke-[2]" />
+                )}
+                <span>{fare?.is_refundable ? 'Được hoàn vé' : 'Không hoàn vé'}</span>
               </div>
 
               <div className="flex items-center justify-between gap-2 text-slate-800">
@@ -170,9 +186,13 @@ export const FlightDetailDrawer: React.FC<FlightDetailDrawerProps> = ({
                   <div className="w-4 h-4 rounded-full bg-slate-800 text-white flex items-center justify-center shrink-0">
                     <DollarSign className="w-2.5 h-2.5 stroke-[3]" />
                   </div>
-                  <span>Change fee:</span>
+                  <span>Phí đổi vé:</span>
                 </div>
-                <span className="text-slate-900 font-bold">$17</span>
+                <span className="text-slate-900 font-bold">
+                  {fare?.is_changeable
+                    ? `${(fare?.change_fee ?? 0).toLocaleString('vi-VN')} đ`
+                    : 'Không đổi được'}
+                </span>
               </div>
             </div>
 
@@ -182,7 +202,7 @@ export const FlightDetailDrawer: React.FC<FlightDetailDrawerProps> = ({
                 onClick={() => onSelectFare(flight)}
                 className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-bold rounded-full py-3 px-6 text-sm shadow-xs transition-colors cursor-pointer"
               >
-                Select
+                {confirmLabel}
               </button>
             </div>
 

@@ -9,6 +9,20 @@ const DEFAULT_ORIGIN_AIRPORT: Airport = {
   sublabel: 'Tan Son Nhat Intl., Vietnam',
 };
 
+const toIsoDate = (d: Date): string => d.toISOString().split('T')[0];
+
+const defaultDepartureDate = (): Date => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d;
+};
+
+const defaultReturnDate = (): Date => {
+  const d = defaultDepartureDate();
+  d.setDate(d.getDate() + 7);
+  return d;
+};
+
 interface FlightStoreState {
   flightType: FlightType;
   leavingFrom: Airport;
@@ -36,10 +50,8 @@ export const useFlightStore = create<FlightStoreState>((set, get) => ({
   goingTo: null,
 
   dateRange: {
-    startDate: 12,
-    endDate: 19,
-    startMonthName: 'August 2026',
-    endMonthName: 'September 2026',
+    startDate: toIsoDate(defaultDepartureDate()),
+    endDate: toIsoDate(defaultReturnDate()),
   },
 
   passengers: {

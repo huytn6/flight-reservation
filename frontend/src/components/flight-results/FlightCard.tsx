@@ -15,7 +15,6 @@ export interface FlightResultItem {
   duration: string;
   stops: string;
   price: number;
-  priceDiff?: string; // e.g. "+$0" or "+$31"
   seatsLeftText?: string; // e.g. "4 left at"
   roundtripLabel?: string;
 }
@@ -99,15 +98,11 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
         )}
 
         <span className="text-xs sm:text-sm font-bold text-[#141d38] leading-tight">
-          {flight.priceDiff || `+$0`}
-        </span>
-
-        <span className="text-[10px] text-slate-500 font-normal">
-          ${flight.price}
+          {flight.price.toLocaleString('vi-VN')} đ
         </span>
 
         <span className="text-[10px] text-[#526077] font-normal tracking-tight">
-          {flight.roundtripLabel || 'Roundtrip per traveler'}
+          {flight.roundtripLabel || 'Giá vé đã gồm thuế & phí'}
         </span>
       </div>
 

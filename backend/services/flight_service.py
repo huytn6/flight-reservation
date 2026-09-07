@@ -104,6 +104,12 @@ def _search_one_way(leg_data: dict, options: dict) -> dict:
     }
 
 
+def search_flight_status(query: str) -> list:
+    db = get_db()
+    rows = flight_repo.search_flight_status(db, (query or '').strip())
+    return [dict(r) for r in rows]
+
+
 def get_flexible_dates(origin: str, destination: str, base_date: str) -> list:
     db = get_db()
     dep_row = airport_repo.find_airport_by_iata(db, origin)

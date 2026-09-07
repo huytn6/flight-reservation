@@ -11,10 +11,10 @@ export interface PassengerState {
 }
 
 export interface DateRangeState {
-  startDate: number;
-  endDate: number;
-  startMonthName: string;
-  endMonthName: string;
+  /** ISO date string, e.g. "2026-09-12" */
+  startDate: string;
+  /** ISO date string, e.g. "2026-09-19" */
+  endDate: string;
 }
 
 export interface FlightSearchParams {

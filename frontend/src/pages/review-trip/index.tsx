@@ -6,7 +6,7 @@ import {
   type AncillaryItem,
   type InsuranceOption,
 } from '@/services/draft';
-import { flightService } from '@/services/flight';
+import { flightService, type FlightOffer, type FareOption } from '@/services/flight';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -18,8 +18,11 @@ export const ReviewTrip: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const passedFlight = location.state?.flight;
-  const passedFare = location.state?.fare;
+  // Preferred: an array of legs [{flight, fare}, ...] — one item for one-way, two for round-trip.
+  const passedLegs: Array<{ flight: FlightOffer; fare?: FareOption }> | undefined = location.state?.legs;
+  // Back-compat: a single flight/fare passed directly (older navigation shape).
+  const passedFlight = location.state?.flight || passedLegs?.[0]?.flight;
+  const passedFare = location.state?.fare || passedLegs?.[0]?.fare;
 
   const [draftId, setDraftId] = useState<string | null>(searchParams.get('draft_id'));
   const [breakdown, setBreakdown] = useState<PriceBreakdown | null>(null);
@@ -40,11 +43,18 @@ export const ReviewTrip: React.FC = () => {
     try {
       let currentId = draftId;
       if (!currentId) {
-        let flightId = passedFlight?.id;
-        let fareId = passedFare?.id || passedFlight?.fares?.[0]?.id;
+        let legItems: Array<{ flight_id: string; fare_id: string }> = (passedLegs || [])
+          .filter((l) => l.flight?.id && (l.fare?.id || l.flight.fares?.[0]?.id))
+          .map((l) => ({ flight_id: l.flight.id, fare_id: (l.fare?.id || l.flight.fares?.[0]?.id) as string }));
 
-        // If no passed flight state, search first available flight & fare from real backend API
-        if (!flightId || !fareId) {
+        // Back-compat: single flight/fare passed directly, no legs array
+        if (legItems.length === 0 && passedFlight?.id) {
+          const fareId = passedFare?.id || passedFlight?.fares?.[0]?.id;
+          if (fareId) legItems = [{ flight_id: passedFlight.id, fare_id: fareId }];
+        }
+
+        // If nothing was passed at all, search first available flight & fare from real backend API
+        if (legItems.length === 0) {
           const availableFlights = await flightService.searchFlights({
             origin: 'SGN',
             destination: 'HAN',
@@ -53,18 +63,17 @@ export const ReviewTrip: React.FC = () => {
             ? availableFlights
             : availableFlights.outbound?.flights || (availableFlights as any).items || [];
           if (list.length > 0 && list[0].fares?.length > 0) {
-            flightId = list[0].id;
-            fareId = list[0].fares[0].id;
+            legItems = [{ flight_id: list[0].id, fare_id: list[0].fares[0].id }];
           }
         }
 
-        if (!flightId || !fareId) {
+        if (legItems.length === 0) {
           toast.error('Không tìm thấy chuyến bay khả dụng để xem lại');
           navigate('/');
           return;
         }
 
-        const newDraft = await draftService.createDraft([{ flight_id: flightId, fare_id: fareId }]);
+        const newDraft = await draftService.createDraft(legItems);
         currentId = newDraft.id;
         setDraftId(currentId);
       }
@@ -181,7 +190,34 @@ export const ReviewTrip: React.FC = () => {
               <h2 className="text-sm font-semibold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
                 Hành Trình Đã Chọn
               </h2>
-              {passedFlight ? (
+              {passedLegs && passedLegs.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  {passedLegs.map((leg, idx) => {
+                    const legFare = leg.fare || leg.flight.fares?.[0];
+                    return (
+                      <div key={idx} className="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-xl">
+                        <div>
+                          {passedLegs.length > 1 && (
+                            <span className="inline-block text-[10px] font-bold text-[#0065eb] bg-blue-50 rounded px-1.5 py-0.5 mb-1">
+                              {idx === 0 ? 'CHUYẾN ĐI' : 'CHUYẾN VỀ'}
+                            </span>
+                          )}
+                          <p className="font-bold text-slate-900">
+                            {leg.flight.airline?.name || 'Vietnam Airlines'} ({leg.flight.flight_number})
+                          </p>
+                          <p className="text-slate-500 mt-0.5">
+                            {leg.flight.departure_airport?.city} → {leg.flight.arrival_airport?.city}
+                            {leg.flight.departure_time ? ` · ${new Date(leg.flight.departure_time).toLocaleString('vi-VN')}` : ''}
+                          </p>
+                        </div>
+                        <span className="font-mono text-slate-800 font-bold bg-white px-2.5 py-1 rounded border border-slate-200">
+                          {legFare?.fare_name || 'Hạng Phổ Thông'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : passedFlight ? (
                 <div className="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-xl">
                   <div>
                     <span className="font-bold text-slate-900">

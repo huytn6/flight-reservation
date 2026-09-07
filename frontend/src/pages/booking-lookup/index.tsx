@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { bookingService, type BookingDetail } from '@/services/booking';
+import { bookingService, type BookingLookupResult } from '@/services/booking';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, CheckCircle2 } from 'lucide-react';
@@ -11,7 +11,7 @@ export const BookingLookup: React.FC = () => {
   const [pnr, setPnr] = useState('');
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<BookingDetail | null>(null);
+  const [result, setResult] = useState<BookingLookupResult | null>(null);
   const navigate = useNavigate();
 
   const handleLookup = async (e: React.FormEvent) => {
@@ -80,18 +80,28 @@ export const BookingLookup: React.FC = () => {
           <div className="flex items-center justify-between border-b pb-3">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              <span className="font-black text-lg text-slate-900 font-mono">PNR: {result.booking.pnr}</span>
+              <span className="font-black text-lg text-slate-900 font-mono">PNR: {result.pnr}</span>
             </div>
-            <StatusBadge type="booking" value={result.booking.status} />
+            <StatusBadge type="booking" value={result.status} />
           </div>
 
           <div className="text-xs text-slate-600 space-y-1">
-            <p><span className="font-bold text-slate-800">Passenger/Contact:</span> {result.booking.contact_name} ({result.booking.contact_email})</p>
-            <p><span className="font-bold text-slate-800">Total Amount:</span> {result.booking.total_amount.toLocaleString()} VND</p>
+            <p><span className="font-bold text-slate-800">Passenger/Contact:</span> {result.contact_name}</p>
+            {result.flight_number && (
+              <p>
+                <span className="font-bold text-slate-800">Flight:</span> {result.flight_number}
+                {result.airline_name ? ` (${result.airline_name})` : ''}
+                {result.departure_city && result.arrival_city ? ` — ${result.departure_city} → ${result.arrival_city}` : ''}
+              </p>
+            )}
+            {result.departure_time && (
+              <p><span className="font-bold text-slate-800">Departure:</span> {new Date(result.departure_time).toLocaleString('vi-VN')}</p>
+            )}
+            <p><span className="font-bold text-slate-800">Total Amount:</span> {result.total_amount.toLocaleString()} VND</p>
           </div>
 
           <Button
-            onClick={() => navigate(`/bookings/${result.booking.id}`)}
+            onClick={() => navigate(`/bookings/${result.id}`)}
             className="bg-blue-600 text-white font-bold rounded-xl mt-2 w-fit"
           >
             View Full Booking & E-Tickets

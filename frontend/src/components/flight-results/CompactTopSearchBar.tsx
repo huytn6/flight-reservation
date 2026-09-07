@@ -90,15 +90,11 @@ export const CompactTopSearchBar: React.FC = () => {
       });
     }
     if (startD && endD) {
-      const startNum = parseInt(startD, 10);
-      const endNum = parseInt(endD, 10);
-      if (!isNaN(startNum) && !isNaN(endNum)) {
-        setDateRange({
-          ...dateRange,
-          startDate: startNum,
-          endDate: endNum,
-        });
-      }
+      setDateRange({
+        ...dateRange,
+        startDate: startD,
+        endDate: endD,
+      });
     }
     if (cabin) {
       setCabinClass(cabin);
@@ -113,13 +109,15 @@ export const CompactTopSearchBar: React.FC = () => {
       goingTo: goingTo?.code || 'HAN',
       goingToCity: goingTo?.city || 'Hanoi',
       startDate: dateRange.startDate.toString(),
-      endDate: dateRange.endDate.toString(),
       adults: passengers.adults.toString(),
       children: passengers.children.toString(),
       cabinClass: passengers.cabinClass,
-    }).toString();
+    });
+    if (flightType === 'roundtrip') {
+      queryParams.set('endDate', dateRange.endDate.toString());
+    }
 
-    navigate(`/Flights-Search?${queryParams}`);
+    navigate(`/Flights-Search?${queryParams.toString()}`);
   };
 
   const filteredAirports = airports.filter(
@@ -277,6 +275,7 @@ export const CompactTopSearchBar: React.FC = () => {
               onChange={setDateRange}
               isOpen={dateOpen}
               onOpenChange={setDateOpen}
+              singleDate={flightType === 'one-way'}
             />
           </div>
 

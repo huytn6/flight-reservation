@@ -1,234 +1,194 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Lock, Sun, Sunset, Moon, Sunrise } from 'lucide-react';
+import { Sun, Sunset, Moon, Sunrise } from 'lucide-react';
+import type { FlightOffer } from '@/services/flight';
 
-export const FlightFilterSidebar: React.FC = () => {
-  const [nonstopChecked, setNonstopChecked] = useState(false);
-  const [vnAirChecked, setVnAirChecked] = useState(false);
-  const [vjAirChecked, setVjAirChecked] = useState(false);
-  const [basicEcoChecked, setBasicEcoChecked] = useState(false);
+export type DepartureSlot = 'earlyMorning' | 'morning' | 'afternoon' | 'evening';
 
-  // Time tile selection states
-  const [selectedBaggage, setSelectedBaggage] = useState<string | null>(null);
-  const [selectedDepTime, setSelectedDepTime] = useState<string | null>(null);
-  const [selectedArrTime, setSelectedArrTime] = useState<string | null>(null);
+export interface FlightFilters {
+  nonstopOnly: boolean;
+  airlines: string[];
+  depSlot: DepartureSlot | null;
+  maxPrice: number | null;
+}
+
+export const DEFAULT_FLIGHT_FILTERS: FlightFilters = {
+  nonstopOnly: false,
+  airlines: [],
+  depSlot: null,
+  maxPrice: null,
+};
+
+export const getDepartureSlot = (isoDateTime?: string): DepartureSlot | null => {
+  if (!isoDateTime) return null;
+  const hour = new Date(isoDateTime).getHours();
+  if (hour < 5) return 'earlyMorning';
+  if (hour < 12) return 'morning';
+  if (hour < 18) return 'afternoon';
+  return 'evening';
+};
+
+export const applyFlightFilters = (flights: FlightOffer[], filters: FlightFilters): FlightOffer[] =>
+  flights.filter((f) => {
+    if (filters.nonstopOnly && f.stops !== 0) return false;
+    if (filters.airlines.length > 0 && !filters.airlines.includes(f.airline?.iata_code || '')) return false;
+    if (filters.depSlot && getDepartureSlot(f.departure_time) !== filters.depSlot) return false;
+    if (filters.maxPrice !== null && (f.cheapest_total ?? 0) > filters.maxPrice) return false;
+    return true;
+  });
+
+interface FlightFilterSidebarProps {
+  flights: FlightOffer[];
+  filters: FlightFilters;
+  onChange: (filters: FlightFilters) => void;
+}
+
+const formatVnd = (n: number) => `${n.toLocaleString('vi-VN')}đ`;
+
+export const FlightFilterSidebar: React.FC<FlightFilterSidebarProps> = ({ flights, filters, onChange }) => {
+  const nonstopFlights = flights.filter((f) => f.stops === 0);
+  const nonstopFrom = nonstopFlights.length
+    ? Math.min(...nonstopFlights.map((f) => f.cheapest_total ?? Infinity))
+    : null;
+
+  const airlineMap = new Map<string, { name: string; count: number; from: number }>();
+  for (const f of flights) {
+    const code = f.airline?.iata_code || '?';
+    const price = f.cheapest_total ?? Infinity;
+    const existing = airlineMap.get(code);
+    if (existing) {
+      existing.count += 1;
+      existing.from = Math.min(existing.from, price);
+    } else {
+      airlineMap.set(code, { name: f.airline?.name || code, count: 1, from: price });
+    }
+  }
+  const airlineOptions = Array.from(airlineMap.entries()).sort((a, b) => a[1].from - b[1].from);
+
+  const depSlotStats = (slot: DepartureSlot) => {
+    const matching = flights.filter((f) => getDepartureSlot(f.departure_time) === slot);
+    return {
+      count: matching.length,
+      from: matching.length ? Math.min(...matching.map((f) => f.cheapest_total ?? Infinity)) : null,
+    };
+  };
+
+  const prices = flights.map((f) => f.cheapest_total ?? 0).filter((p) => p > 0);
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
+  const currentMax = filters.maxPrice ?? maxPrice;
+
+  const toggleAirline = (code: string) => {
+    const next = filters.airlines.includes(code)
+      ? filters.airlines.filter((c) => c !== code)
+      : [...filters.airlines, code];
+    onChange({ ...filters, airlines: next });
+  };
+
+  const toggleDepSlot = (slot: DepartureSlot) => {
+    onChange({ ...filters, depSlot: filters.depSlot === slot ? null : slot });
+  };
+
+  const depSlotButton = (slot: DepartureSlot, label: string, hint: string, Icon: React.ElementType) => {
+    const stats = depSlotStats(slot);
+    return (
+      <button
+        type="button"
+        onClick={() => toggleDepSlot(slot)}
+        disabled={stats.count === 0}
+        className={`rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
+          filters.depSlot === slot
+            ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
+            : 'bg-transparent border border-slate-400 hover:border-slate-600'
+        }`}
+      >
+        <Icon className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
+        <span className="text-xs font-bold text-[#141d38]">{label}</span>
+        <span className="text-[10px] text-[#526077] font-normal">{hint}</span>
+        {stats.from !== null && (
+          <span className="text-[10px] text-[#0065eb] font-semibold">Từ {formatVnd(stats.from)}</span>
+        )}
+      </button>
+    );
+  };
 
   return (
     <aside className="w-full lg:w-64 flex flex-col gap-6 self-start shrink-0 text-[#141d38] font-sans select-none">
-      
-      {/* Title */}
       <h3 className="font-bold text-[#141d38] text-xl sm:text-2xl tracking-tight -mb-1">
-        Filter by
+        Bộ lọc
       </h3>
 
-      {/* Stops Filter Section */}
+      {/* Stops */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-[#141d38]">
-          <span>Stops</span>
-          <span>From</span>
+          <span>Điểm dừng</span>
         </div>
         <div className="flex items-center justify-between py-0.5">
-          <div className="flex items-center gap-2 cursor-pointer">
-            <Checkbox 
-              id="nonstop"
-              checked={nonstopChecked}
-              onCheckedChange={(c) => setNonstopChecked(!!c)}
-            />
-            <label htmlFor="nonstop" className="text-xs text-[#141d38] font-normal cursor-pointer">Nonstop (40)</label>
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => onChange({ ...filters, nonstopOnly: !filters.nonstopOnly })}>
+            <Checkbox id="nonstop" checked={filters.nonstopOnly} onCheckedChange={(c) => onChange({ ...filters, nonstopOnly: !!c })} />
+            <label htmlFor="nonstop" className="text-xs text-[#141d38] font-normal cursor-pointer">
+              Bay thẳng ({nonstopFlights.length})
+            </label>
           </div>
-          <span className="text-xs font-bold text-[#141d38]">$156</span>
+          {nonstopFrom !== null && <span className="text-xs font-bold text-[#141d38]">Từ {formatVnd(nonstopFrom)}</span>}
         </div>
       </div>
 
-      {/* Airlines Filter Section */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-[#141d38]">
-          <span>Airlines</span>
-          <span>From</span>
-        </div>
+      {/* Airlines */}
+      {airlineOptions.length > 0 && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between py-0.5">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <Checkbox 
-                id="vnAir"
-                checked={vnAirChecked}
-                onCheckedChange={(c) => setVnAirChecked(!!c)}
-              />
-              <label htmlFor="vnAir" className="text-xs text-[#141d38] font-normal cursor-pointer">Vietnam Airlines (22)</label>
-            </div>
-            <span className="text-xs font-bold text-[#141d38]">$187</span>
+          <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-[#141d38]">
+            <span>Hãng hàng không</span>
           </div>
-
-          <div className="flex items-center justify-between py-0.5">
-            <div className="flex items-center gap-2 cursor-pointer">
-              <Checkbox 
-                id="vjAir"
-                checked={vjAirChecked}
-                onCheckedChange={(c) => setVjAirChecked(!!c)}
-              />
-              <label htmlFor="vjAir" className="text-xs text-[#141d38] font-normal cursor-pointer">Vietjet Air (18)</label>
-            </div>
-            <span className="text-xs font-bold text-[#141d38]">$156</span>
+          <div className="flex flex-col gap-2">
+            {airlineOptions.map(([code, info]) => (
+              <div key={code} className="flex items-center justify-between py-0.5">
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => toggleAirline(code)}>
+                  <Checkbox id={`air-${code}`} checked={filters.airlines.includes(code)} onCheckedChange={() => toggleAirline(code)} />
+                  <label htmlFor={`air-${code}`} className="text-xs text-[#141d38] font-normal cursor-pointer">
+                    {info.name} ({info.count})
+                  </label>
+                </div>
+                <span className="text-xs font-bold text-[#141d38]">Từ {formatVnd(info.from)}</span>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Preferred Class Section */}
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-[#141d38]">
-          <span>Preferred class</span>
-          <span>From</span>
-        </div>
-        <div className="flex items-center justify-between py-0.5">
-          <div className="flex items-center gap-2 cursor-pointer">
-            <Checkbox 
-              id="basicEco"
-              checked={basicEcoChecked}
-              onCheckedChange={(c) => setBasicEcoChecked(!!c)}
-            />
-            <label htmlFor="basicEco" className="text-xs text-[#141d38] font-normal cursor-pointer">Basic economy (40)</label>
+      {/* Price */}
+      {maxPrice > 0 && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-[#141d38]">
+            <span>Giá tối đa</span>
+            <span className="text-[#0065eb]">{formatVnd(currentMax)}</span>
           </div>
-          <span className="text-xs font-bold text-[#141d38]">$156</span>
+          <input
+            type="range"
+            min={minPrice}
+            max={maxPrice}
+            step={Math.max(1, Math.round((maxPrice - minPrice) / 50))}
+            value={currentMax}
+            onChange={(e) => onChange({ ...filters, maxPrice: Number(e.target.value) })}
+            className="w-full accent-[#0065eb] cursor-pointer"
+          />
+          <div className="flex justify-between text-[10px] text-[#526077]">
+            <span>{formatVnd(minPrice)}</span>
+            <span>{formatVnd(maxPrice)}</span>
+          </div>
         </div>
-        <span className="text-[11px] text-[#526077] font-normal ml-6 leading-tight">
-          Fares may not include seats or bags
-        </span>
-      </div>
+      )}
 
-      {/* Travel and baggage Section */}
+      {/* Departure time */}
       <div className="flex flex-col gap-2">
-        <span className="text-xs sm:text-sm font-bold text-[#141d38]">Travel and baggage</span>
-        <div className="w-[130px]">
-          {/* Carry-on bag included */}
-          <button 
-            onClick={() => setSelectedBaggage(selectedBaggage === 'carry-on' ? null : 'carry-on')}
-            className={`w-full rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 cursor-pointer text-center transition-all ${
-              selectedBaggage === 'carry-on'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Lock className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-[11px] font-bold text-[#141d38] leading-tight">Carry-on bag included</span>
-            <span className="text-[10px] text-[#526077] font-normal">$156</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Departure time Section */}
-      <div className="flex flex-col gap-2">
-        <span className="text-xs sm:text-sm font-bold text-[#141d38]">Departure time in Hanoi</span>
-        
+        <span className="text-xs sm:text-sm font-bold text-[#141d38]">Giờ khởi hành</span>
         <div className="grid grid-cols-2 gap-2">
-          {/* Morning */}
-          <button 
-            onClick={() => setSelectedDepTime(selectedDepTime === 'morning' ? null : 'morning')}
-            className={`rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all ${
-              selectedDepTime === 'morning'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Sun className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-xs font-bold text-[#141d38]">Morning</span>
-            <span className="text-[10px] text-[#526077] font-normal">(5:00am - 11:59am)</span>
-          </button>
-
-          {/* Afternoon */}
-          <button 
-            onClick={() => setSelectedDepTime(selectedDepTime === 'afternoon' ? null : 'afternoon')}
-            className={`rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all ${
-              selectedDepTime === 'afternoon'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Sunset className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-xs font-bold text-[#141d38]">Afternoon</span>
-            <span className="text-[10px] text-[#526077] font-normal">(12:00pm - 5:59pm)</span>
-          </button>
-        </div>
-
-        {/* Evening (Starts row 2 left) */}
-        <div className="w-1/2 pr-1">
-          <button 
-            onClick={() => setSelectedDepTime(selectedDepTime === 'evening' ? null : 'evening')}
-            className={`w-full rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all ${
-              selectedDepTime === 'evening'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Moon className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-xs font-bold text-[#141d38]">Evening</span>
-            <span className="text-[10px] text-[#526077] font-normal">(6:00pm - 11:59pm)</span>
-          </button>
+          {depSlotButton('morning', 'Sáng', '(5:00 - 11:59)', Sun)}
+          {depSlotButton('afternoon', 'Chiều/Tối', '(12:00 - 17:59)', Sunset)}
+          {depSlotButton('evening', 'Tối muộn', '(18:00 - 23:59)', Moon)}
+          {depSlotButton('earlyMorning', 'Đêm khuya', '(0:00 - 4:59)', Sunrise)}
         </div>
       </div>
-
-      {/* Arrival time Section */}
-      <div className="flex flex-col gap-2">
-        <span className="text-xs sm:text-sm font-bold text-[#141d38]">Arrival time in Ho Chi Minh City</span>
-        
-        <div className="grid grid-cols-2 gap-2">
-          {/* Early Morning */}
-          <button 
-            onClick={() => setSelectedArrTime(selectedArrTime === 'early-morning' ? null : 'early-morning')}
-            className={`rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all ${
-              selectedArrTime === 'early-morning'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Sunrise className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-xs font-bold text-[#141d38]">Early Morning</span>
-            <span className="text-[10px] text-[#526077] font-normal">(12:00am - 4:59am)</span>
-          </button>
-
-          {/* Morning */}
-          <button 
-            onClick={() => setSelectedArrTime(selectedArrTime === 'morning' ? null : 'morning')}
-            className={`rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all ${
-              selectedArrTime === 'morning'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Sun className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-xs font-bold text-[#141d38]">Morning</span>
-            <span className="text-[10px] text-[#526077] font-normal">(5:00am - 11:59am)</span>
-          </button>
-
-          {/* Afternoon */}
-          <button 
-            onClick={() => setSelectedArrTime(selectedArrTime === 'afternoon' ? null : 'afternoon')}
-            className={`rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all ${
-              selectedArrTime === 'afternoon'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Sunset className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-xs font-bold text-[#141d38]">Afternoon</span>
-            <span className="text-[10px] text-[#526077] font-normal">(12:00pm - 5:59pm)</span>
-          </button>
-
-          {/* Evening */}
-          <button 
-            onClick={() => setSelectedArrTime(selectedArrTime === 'evening' ? null : 'evening')}
-            className={`rounded-xl p-2.5 flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer transition-all ${
-              selectedArrTime === 'evening'
-                ? 'bg-[#0065eb]/10 border-2 border-[#141d38] shadow-xs'
-                : 'bg-transparent border border-slate-400 hover:border-slate-600'
-            }`}
-          >
-            <Moon className="w-4 h-4 text-[#141d38] stroke-[1.5]" />
-            <span className="text-xs font-bold text-[#141d38]">Evening</span>
-            <span className="text-[10px] text-[#526077] font-normal">(6:00pm - 11:59pm)</span>
-          </button>
-        </div>
-      </div>
-
     </aside>
   );
 };

@@ -66,6 +66,21 @@ export interface FlightOffer {
   cheapest_total: number;
 }
 
+/** Flat shape returned by GET /flights/status (public flight-status lookup). */
+export interface FlightStatusItem {
+  id: string;
+  flight_number: string;
+  airline_name: string;
+  airline_code?: string;
+  departure_city: string;
+  departure_iata?: string;
+  arrival_city: string;
+  arrival_iata?: string;
+  departure_time: string;
+  arrival_time: string;
+  status: FlightStatusEnum;
+}
+
 export interface SearchFlightResult {
   origin: string;
   destination: string;
@@ -107,6 +122,11 @@ export interface SavedFlight {
 export const flightService = {
   searchFlights: async (payload: SearchFlightPayload): Promise<SearchFlightResponse> => {
     return $api.post('/flights/search', payload);
+  },
+
+  /** Public flight-status lookup by flight number / city / airline name. Empty query returns upcoming flights. */
+  searchFlightStatus: async (query: string): Promise<FlightStatusItem[]> => {
+    return $api.get('/flights/status', { params: { q: query } });
   },
 
   getFlexibleDates: async (origin: string, destination: string, date: string): Promise<Array<{ date: string; min_price: number | null }>> => {

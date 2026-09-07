@@ -1,5 +1,6 @@
 import json
 import uuid
+import datetime
 from utils.date_utils import utcnow_iso
 
 
@@ -17,6 +18,34 @@ def search_flights(db, dep_airport_id, arr_airport_id, date):
              AND DATE(f.departure_time)=? AND f.status!='CANCELLED'
            ORDER BY f.departure_time""",
         (dep_airport_id, arr_airport_id, date)
+    ).fetchall()
+
+
+def search_flight_status(db, query: str, limit: int = 20):
+    """Public flight-status lookup: by flight number, city, or airline name.
+    With no query, returns the soonest upcoming flights."""
+    base = (
+        "SELECT f.*, al.name as airline_name, al.iata_code as airline_code, "
+        "dep.city as departure_city, dep.iata_code as departure_iata, "
+        "arr.city as arrival_city, arr.iata_code as arrival_iata "
+        "FROM flights f "
+        "JOIN airlines al ON al.id=f.airline_id "
+        "JOIN airports dep ON dep.id=f.departure_airport_id "
+        "JOIN airports arr ON arr.id=f.arrival_airport_id "
+    )
+    if query:
+        like = f'%{query}%'
+        return db.execute(
+            base + "WHERE f.flight_number LIKE ? OR dep.city LIKE ? OR arr.city LIKE ? OR al.name LIKE ? "
+            "ORDER BY f.departure_time LIMIT ?",
+            (like, like, like, like, limit)
+        ).fetchall()
+    # departure_time is stored as "YYYY-MM-DD HH:MM:SS" (space-separated, no 'T'/microseconds) —
+    # match that exact format so the string comparison below sorts correctly.
+    now_str = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    return db.execute(
+        base + "WHERE f.departure_time >= ? ORDER BY f.departure_time LIMIT ?",
+        (now_str, limit)
     ).fetchall()
 
 

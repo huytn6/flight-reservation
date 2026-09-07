@@ -71,13 +71,15 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
       goingTo: goingTo?.code || 'HAN',
       goingToCity: goingTo?.city || 'Hanoi',
       startDate: dateRange.startDate.toString(),
-      endDate: dateRange.endDate.toString(),
       adults: passengers.adults.toString(),
       children: passengers.children.toString(),
       cabinClass: passengers.cabinClass,
-    }).toString();
+    });
+    if (flightType === 'roundtrip') {
+      queryParams.set('endDate', dateRange.endDate.toString());
+    }
 
-    navigate(`/Flights-Search?${queryParams}`);
+    navigate(`/Flights-Search?${queryParams.toString()}`);
   };
 
   return (
@@ -139,6 +141,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
               onChange={setDateRange}
               isOpen={dateOpen}
               onOpenChange={setDateOpen}
+              singleDate={flightType === 'one-way'}
             />
           </div>
 

@@ -1,33 +1,85 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { flightService } from '@/services/flight';
 
-interface DatePriceItem {
-  dayName: string;
-  date: string;
-  price: number;
-  isLowest?: boolean;
+interface DatePriceMatrixProps {
+  origin: string;
+  destination: string;
+  selectedDate: string; // ISO yyyy-mm-dd
+  onSelectDate: (isoDate: string) => void;
 }
 
-const DATES_DATA: DatePriceItem[] = [
-  { dayName: 'Sun', date: 'Aug 9', price: 121 },
-  { dayName: 'Mon', date: 'Aug 10', price: 122 },
-  { dayName: 'Tue', date: 'Aug 11', price: 123 },
-  { dayName: 'Wed', date: 'Aug 12', price: 111, isLowest: true },
-  { dayName: 'Thu', date: 'Aug 13', price: 111, isLowest: true },
-  { dayName: 'Fri', date: 'Aug 14', price: 121 },
-  { dayName: 'Sat', date: 'Aug 15', price: 144 },
-];
+interface DateOption {
+  date: string;
+  min_price: number | null;
+}
 
-export const DatePriceMatrix: React.FC = () => {
-  const [selectedIndex, setSelectedIndex] = useState(3); // Wed, Aug 12
+const formatDayLabel = (iso: string): { dayName: string; date: string } => {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(y, (m || 1) - 1, d || 1);
+  return {
+    dayName: dt.toLocaleDateString('vi-VN', { weekday: 'short' }),
+    date: dt.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
+  };
+};
+
+export const DatePriceMatrix: React.FC<DatePriceMatrixProps> = ({
+  origin,
+  destination,
+  selectedDate,
+  onSelectDate,
+}) => {
+  const [options, setOptions] = useState<DateOption[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!origin || !destination || !selectedDate) return;
+    setLoading(true);
+    flightService
+      .getFlexibleDates(origin, destination, selectedDate)
+      .then((res) => {
+        if (!cancelled) setOptions(res);
+      })
+      .catch(() => {
+        if (!cancelled) setOptions([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [origin, destination, selectedDate]);
+
+  const lowestPrice = options.reduce<number | null>((min, opt) => {
+    if (opt.min_price === null) return min;
+    if (min === null || opt.min_price < min) return opt.min_price;
+    return min;
+  }, null);
+
+  if (loading && options.length === 0) {
+    return (
+      <div className="w-full grid grid-cols-4 sm:grid-cols-7 gap-2 mb-6 font-sans">
+        {Array.from({ length: 7 }).map((_, idx) => (
+          <div key={idx} className="h-[58px] rounded-xl bg-slate-100 animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  if (options.length === 0) return null;
 
   return (
     <div className="w-full grid grid-cols-4 sm:grid-cols-7 gap-2 mb-6 font-sans">
-      {DATES_DATA.map((item, idx) => {
-        const isSelected = idx === selectedIndex;
+      {options.map((item) => {
+        const isSelected = item.date === selectedDate;
+        const isLowest = item.min_price !== null && item.min_price === lowestPrice;
+        const { dayName, date } = formatDayLabel(item.date);
         return (
           <button
-            key={idx}
-            onClick={() => setSelectedIndex(idx)}
+            key={item.date}
+            type="button"
+            onClick={() => onSelectDate(item.date)}
             className={`flex flex-col items-center justify-center py-2.5 px-1.5 rounded-xl transition-colors cursor-pointer ${
               isSelected
                 ? 'bg-white border-2 border-[#0065eb]'
@@ -35,14 +87,14 @@ export const DatePriceMatrix: React.FC = () => {
             }`}
           >
             <span className={`text-xs font-normal leading-tight ${isSelected ? 'text-[#0065eb] font-semibold' : 'text-slate-700'}`}>
-              {item.dayName}, {item.date}
+              {dayName}, {date}
             </span>
             <span
               className={`text-sm font-bold mt-0.5 leading-tight ${
-                isSelected ? 'text-[#0065eb]' : 'text-slate-900'
+                isSelected ? 'text-[#0065eb]' : isLowest ? 'text-emerald-600' : 'text-slate-900'
               }`}
             >
-              ${item.price}
+              {item.min_price !== null ? `${item.min_price.toLocaleString('vi-VN')}đ` : 'Hết vé'}
             </span>
           </button>
         );

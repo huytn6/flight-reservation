@@ -11,7 +11,12 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { CompactTopSearchBar } from '@/components/flight-results/CompactTopSearchBar';
-import { FlightFilterSidebar } from '@/components/flight-results/FlightFilterSidebar';
+import {
+  FlightFilterSidebar,
+  DEFAULT_FLIGHT_FILTERS,
+  applyFlightFilters,
+  type FlightFilters,
+} from '@/components/flight-results/FlightFilterSidebar';
 import { DatePriceMatrix } from '@/components/flight-results/DatePriceMatrix';
 import { FlightCard, type FlightResultItem } from '@/components/flight-results/FlightCard';
 import { SortDropdown } from '@/components/flight-results/SortDropdown';
@@ -31,13 +36,6 @@ const sanitizeIsoDate = (inputStr: string | null, fallbackOffsetDays = 1): strin
   if (/^\d{4}-\d{2}-\d{2}$/.test(inputStr)) {
     return inputStr;
   }
-  // Single/double digit day number like "12" or "19"
-  const dayNum = parseInt(inputStr, 10);
-  if (!isNaN(dayNum) && dayNum >= 1 && dayNum <= 31) {
-    const d = new Date();
-    d.setDate(dayNum);
-    return d.toISOString().split('T')[0];
-  }
   // Generic date string parsing
   const parsed = new Date(inputStr);
   if (!isNaN(parsed.getTime())) {
@@ -53,9 +51,14 @@ export const FlightResults: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
 
+  // A stale link (e.g. built from a missing value via a template string) can literally
+  // contain the text "undefined"/"null" — treat that the same as a missing param.
+  const cleanParam = (value: string | null): string | null =>
+    value && value !== 'undefined' && value !== 'null' ? value : null;
+
   // Support both parameter formats (origin/leavingFrom, destination/goingTo, etc.)
-  const origin = searchParams.get('origin') || searchParams.get('leavingFrom') || 'SGN';
-  const destination = searchParams.get('destination') || searchParams.get('goingTo') || 'HAN';
+  const origin = cleanParam(searchParams.get('origin')) || cleanParam(searchParams.get('leavingFrom')) || 'SGN';
+  const destination = cleanParam(searchParams.get('destination')) || cleanParam(searchParams.get('goingTo')) || 'HAN';
   
   const rawDep = searchParams.get('departure_date') || searchParams.get('startDate');
   const rawRet = searchParams.get('return_date') || searchParams.get('endDate');
@@ -63,17 +66,35 @@ export const FlightResults: React.FC = () => {
   const departureDate = sanitizeIsoDate(rawDep, 1);
   const returnDate = rawRet ? sanitizeIsoDate(rawRet, 5) : undefined;
   
-  const tripParam = searchParams.get('trip_type') || searchParams.get('trip') || '';
-  const tripType = tripParam.toUpperCase().includes('ROUND') || returnDate ? 'ROUND_TRIP' : 'ONE_WAY';
+  const tripParam = (searchParams.get('trip_type') || searchParams.get('trip') || '').toLowerCase();
+  const tripType: 'ONE_WAY' | 'ROUND_TRIP' = tripParam.includes('one')
+    ? 'ONE_WAY'
+    : tripParam.includes('round')
+    ? 'ROUND_TRIP'
+    : returnDate
+    ? 'ROUND_TRIP'
+    : 'ONE_WAY';
 
   const [sortOption, setSortOption] = useState('price');
   const [loading, setLoading] = useState(true);
-  const [flightOffers, setFlightOffers] = useState<FlightOffer[]>([]);
+  const [outboundOffers, setOutboundOffers] = useState<FlightOffer[]>([]);
+  const [inboundOffers, setInboundOffers] = useState<FlightOffer[]>([]);
+
+  // For round trips: 'outbound' while picking the departing flight, 'inbound' while picking the return flight
+  const [legStage, setLegStage] = useState<'outbound' | 'inbound'>('outbound');
+  const [selectedLegs, setSelectedLegs] = useState<Array<{ flight: FlightOffer; fare?: FareOption }>>([]);
+
+  const [filters, setFilters] = useState<FlightFilters>(DEFAULT_FLIGHT_FILTERS);
 
   // Selected item for drawer
   const [selectedFlight, setSelectedFlight] = useState<FlightResultItem | null>(null);
   const [selectedRawOffer, setSelectedRawOffer] = useState<FlightOffer | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const currentOffers = tripType === 'ROUND_TRIP' && legStage === 'inbound' ? inboundOffers : outboundOffers;
+  const filteredOffers = applyFlightFilters(currentOffers, filters);
+  const currentLegOrigin = legStage === 'inbound' ? destination : origin;
+  const currentLegDestination = legStage === 'inbound' ? origin : destination;
 
   // Fare Comparison Modal State
   const [fareComparisonModal, setFareComparisonModal] = useState<FareOption[] | null>(null);
@@ -103,6 +124,9 @@ export const FlightResults: React.FC = () => {
 
   const fetchFlights = async () => {
     setLoading(true);
+    setLegStage('outbound');
+    setSelectedLegs([]);
+    setFilters(DEFAULT_FLIGHT_FILTERS);
     try {
       const res = await flightService.searchFlights({
         trip_type: tripType as any,
@@ -113,14 +137,21 @@ export const FlightResults: React.FC = () => {
         sort: sortOption as any,
       });
 
-      // Normalize flights list from backend real API response
-      const rawList: FlightOffer[] = Array.isArray(res) 
-        ? res 
-        : res.outbound?.flights || res.legs?.[0]?.flights || (res as any).items || [];
-      setFlightOffers(rawList);
+      if (tripType === 'ROUND_TRIP' && res.outbound && res.inbound) {
+        setOutboundOffers(res.outbound.flights || []);
+        setInboundOffers(res.inbound.flights || []);
+      } else {
+        // Normalize flights list from backend real API response
+        const rawList: FlightOffer[] = Array.isArray(res)
+          ? res
+          : res.outbound?.flights || res.legs?.[0]?.flights || (res as any).items || [];
+        setOutboundOffers(rawList);
+        setInboundOffers([]);
+      }
     } catch (err: any) {
       toast.error(err.message || 'Tải danh sách chuyến bay thất bại');
-      setFlightOffers([]);
+      setOutboundOffers([]);
+      setInboundOffers([]);
     } finally {
       setLoading(false);
     }
@@ -176,8 +207,18 @@ export const FlightResults: React.FC = () => {
     }
   };
 
+  const handleSelectDate = (isoDate: string) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('origin', origin);
+    next.set('destination', destination);
+    next.set('departure_date', isoDate);
+    next.delete('startDate');
+    if (returnDate) next.set('return_date', returnDate);
+    navigate(`/flights/search?${next.toString()}`);
+  };
+
   const handleFlightCardClick = (flight: FlightResultItem) => {
-    const raw = flightOffers.find((f) => f.id === flight.id);
+    const raw = currentOffers.find((f) => f.id === flight.id);
     setSelectedFlight(flight);
     setSelectedRawOffer(raw || null);
     setIsDrawerOpen(true);
@@ -185,21 +226,38 @@ export const FlightResults: React.FC = () => {
 
   const handleConfirmFare = (_flight: FlightResultItem) => {
     setIsDrawerOpen(false);
-    if (selectedRawOffer) {
-      const selectedFare = selectedRawOffer.fares?.[0];
-      navigate('/review-trip', {
-        state: {
-          flight: selectedRawOffer,
-          fare: selectedFare,
-        },
-      });
-    } else {
+    if (!selectedRawOffer) {
       navigate('/review-trip');
+      return;
     }
+    const selectedFare = selectedRawOffer.fares?.[0];
+    const legs = [...selectedLegs, { flight: selectedRawOffer, fare: selectedFare }];
+
+    if (tripType === 'ROUND_TRIP' && legStage === 'outbound') {
+      // Outbound picked — now let the traveler pick the return flight before continuing
+      setSelectedLegs(legs);
+      setLegStage('inbound');
+      setSelectedFlight(null);
+      setSelectedRawOffer(null);
+      setFilters(DEFAULT_FLIGHT_FILTERS);
+      toast.success('Đã chọn chuyến đi. Vui lòng chọn chuyến về.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    navigate('/review-trip', { state: { legs } });
+  };
+
+  const handleBackToOutbound = () => {
+    setLegStage('outbound');
+    setSelectedLegs([]);
+    setSelectedFlight(null);
+    setSelectedRawOffer(null);
+    setFilters(DEFAULT_FLIGHT_FILTERS);
   };
 
   // Convert real API FlightOffer -> FlightResultItem
-  const flightResultItems: FlightResultItem[] = flightOffers.map((f) => {
+  const flightResultItems: FlightResultItem[] = filteredOffers.map((f) => {
     const depTimeStr = f.departure_time ? new Date(f.departure_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '08:30';
     const arrTimeStr = f.arrival_time ? new Date(f.arrival_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) : '10:45';
     const durationHours = Math.floor((f.duration_minutes || 120) / 60);
@@ -211,10 +269,10 @@ export const FlightResults: React.FC = () => {
       flightNumber: f.flight_number,
       departureTime: depTimeStr,
       arrivalTime: arrTimeStr,
-      departureAirportCode: f.departure_airport?.iata_code || origin,
-      arrivalAirportCode: f.arrival_airport?.iata_code || destination,
-      departureCity: f.departure_airport?.city || origin,
-      arrivalCity: f.arrival_airport?.city || destination,
+      departureAirportCode: f.departure_airport?.iata_code || currentLegOrigin,
+      arrivalAirportCode: f.arrival_airport?.iata_code || currentLegDestination,
+      departureCity: f.departure_airport?.city || currentLegOrigin,
+      arrivalCity: f.arrival_airport?.city || currentLegDestination,
       duration: `${durationHours}h ${durationMins}m`,
       stops: f.stops === 0 ? 'Bay thẳng' : `${f.stops} điểm dừng`,
       price: f.cheapest_total || 1500000,
@@ -228,19 +286,40 @@ export const FlightResults: React.FC = () => {
       <CompactTopSearchBar />
 
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 mt-6">
+        {tripType === 'ROUND_TRIP' && (
+          <div className="flex items-center gap-3 mb-4 text-xs font-medium">
+            <span className={`px-3 py-1.5 rounded-full ${legStage === 'outbound' ? 'bg-[#0065eb] text-white' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`}>
+              1. Chuyến đi {legStage !== 'outbound' && selectedLegs[0] ? `— ${selectedLegs[0].flight.flight_number}` : ''}
+            </span>
+            <span className={`px-3 py-1.5 rounded-full ${legStage === 'inbound' ? 'bg-[#0065eb] text-white' : 'bg-slate-100 text-slate-500'}`}>
+              2. Chuyến về
+            </span>
+            {legStage === 'inbound' && (
+              <button onClick={handleBackToOutbound} className="text-[#0065eb] hover:underline cursor-pointer">
+                Đổi lại chuyến đi
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="flex flex-col lg:flex-row gap-8">
-          <FlightFilterSidebar />
+          <FlightFilterSidebar flights={currentOffers} filters={filters} onChange={setFilters} />
 
           <main className="flex-1 flex flex-col gap-4 min-w-0">
-            <DatePriceMatrix />
+            <DatePriceMatrix
+              origin={currentLegOrigin}
+              destination={currentLegDestination}
+              selectedDate={legStage === 'inbound' && returnDate ? returnDate : departureDate}
+              onSelectDate={handleSelectDate}
+            />
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 my-1">
               <div className="flex flex-col">
                 <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                  Chuyến Bay {origin} → {destination}
+                  Chuyến Bay {currentLegOrigin} → {currentLegDestination}
                 </h1>
                 <div className="flex items-center gap-1 text-xs text-slate-500 font-medium mt-0.5">
-                  <span>Tìm thấy {flightOffers.length} chuyến bay phù hợp ({departureDate})</span>
+                  <span>Tìm thấy {filteredOffers.length} chuyến bay phù hợp ({legStage === 'inbound' ? returnDate : departureDate})</span>
                   <Info className="w-3.5 h-3.5 text-slate-400" />
                 </div>
               </div>
@@ -255,12 +334,20 @@ export const FlightResults: React.FC = () => {
                 <Loader2 className="w-8 h-8 animate-spin text-[#0065eb] mb-2" />
                 <p className="text-xs text-slate-600 font-medium">Đang tìm kiếm chuyến bay tốt nhất cho bạn...</p>
               </div>
-            ) : flightOffers.length === 0 ? (
+            ) : currentOffers.length === 0 ? (
               <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center flex flex-col items-center">
                 <p className="text-base font-bold text-slate-800">Không tìm thấy chuyến bay phù hợp cho chặng bay này</p>
                 <p className="text-xs text-slate-500 mt-1 mb-4">Vui lòng thử chọn ngày bay hoặc sân bay khác.</p>
                 <Button onClick={() => navigate('/')} className="bg-[#0065eb] text-white text-xs font-normal rounded-lg px-5 shadow-none">
                   Tìm kiếm chuyến bay khác
+                </Button>
+              </div>
+            ) : filteredOffers.length === 0 ? (
+              <div className="bg-white p-12 rounded-2xl border border-slate-200 text-center flex flex-col items-center">
+                <p className="text-base font-bold text-slate-800">Không có chuyến bay nào khớp với bộ lọc đang chọn</p>
+                <p className="text-xs text-slate-500 mt-1 mb-4">Thử bỏ bớt điều kiện lọc để xem thêm chuyến bay.</p>
+                <Button onClick={() => setFilters(DEFAULT_FLIGHT_FILTERS)} className="bg-[#0065eb] text-white text-xs font-normal rounded-lg px-5 shadow-none">
+                  Xoá bộ lọc
                 </Button>
               </div>
             ) : (
@@ -368,12 +455,14 @@ export const FlightResults: React.FC = () => {
       <FlightDetailDrawer
         isOpen={isDrawerOpen}
         flight={selectedFlight}
+        fare={selectedRawOffer?.fares?.[0] || null}
         onClose={() => setIsDrawerOpen(false)}
         onSelectFare={handleConfirmFare}
         onOpenFareComparison={() => selectedRawOffer && handleOpenFareComparison(selectedRawOffer.id)}
         onOpenFareRules={() => selectedRawOffer?.fares?.[0] && handleOpenFareRules(selectedRawOffer.fares[0].id)}
         onToggleSave={() => selectedRawOffer && handleToggleSaveFlight(selectedRawOffer.id)}
         isSaved={Boolean(selectedRawOffer && savedFlightIds.includes(selectedRawOffer.id))}
+        confirmLabel={tripType === 'ROUND_TRIP' ? (legStage === 'outbound' ? 'Chọn chuyến đi' : 'Chọn chuyến về') : 'Chọn chuyến bay này'}
       />
     </div>
   );

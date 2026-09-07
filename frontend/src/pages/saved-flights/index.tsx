@@ -32,6 +32,21 @@ export const SavedFlights: React.FC = () => {
     }
   };
 
+  const handleViewPrice = (sf: SavedFlight) => {
+    if (!sf.origin || !sf.destination) {
+      toast.error('Thiếu thông tin điểm đi/điểm đến của chuyến bay đã lưu');
+      return;
+    }
+    const params = new URLSearchParams({
+      origin: sf.origin,
+      destination: sf.destination,
+    });
+    if (sf.departure_time) {
+      params.set('departure_date', sf.departure_time.slice(0, 10));
+    }
+    navigate(`/flights/search?${params.toString()}`);
+  };
+
   const handleUnsave = async (id: string, routeName: string) => {
     try {
       await flightService.unsaveFlight(id);
@@ -162,7 +177,7 @@ export const SavedFlights: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <Button
                         type="button"
-                        onClick={() => navigate(`/flights-search?leavingFrom=${sf.origin}&goingTo=${sf.destination}`)}
+                        onClick={() => handleViewPrice(sf)}
                         size="sm"
                         className="bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs h-8 px-3 rounded-lg cursor-pointer shadow-none flex items-center gap-1"
                       >
