@@ -161,13 +161,13 @@ export const AuditActionEnum = {
 } as const;
 export type AuditActionEnum = (typeof AuditActionEnum)[keyof typeof AuditActionEnum];
 
-// Badge color group each AuditActionEnum action belongs to.
+// Badge color group each AuditActionEnum action belongs to. Kept to the 3 standard
+// CRUD-outcome colors (tạo mới/thành công, cập nhật, xóa/hủy/thất bại) plus one
+// neutral fallback — not one color per action, to avoid a rainbow of badges.
 export const AuditActionCategoryEnum = {
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
   DELETE: 'DELETE',
-  SUCCESS: 'SUCCESS',
-  AUTH: 'AUTH',
   DEFAULT: 'DEFAULT',
 } as const;
 export type AuditActionCategoryEnum = (typeof AuditActionCategoryEnum)[keyof typeof AuditActionCategoryEnum];

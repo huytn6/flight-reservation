@@ -45,7 +45,6 @@ export const AdminAudit: React.FC = () => {
         <StatusBadge
           type="auditAction"
           value={row.getValue<string>("action")}
-          className="font-mono font-semibold tracking-wide"
         />
       ),
     },

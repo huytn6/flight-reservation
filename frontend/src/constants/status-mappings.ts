@@ -380,23 +380,66 @@ export const AUDIT_ACTION_CATEGORY_MAP: Record<AuditActionEnum, AuditActionCateg
   [AuditActionEnum.DELETE_CONTENT]: AuditActionCategoryEnum.DELETE,
   [AuditActionEnum.PAYMENT_FAILED]: AuditActionCategoryEnum.DELETE,
 
-  [AuditActionEnum.PAYMENT_SUCCESS]: AuditActionCategoryEnum.SUCCESS,
+  // PAYMENT_SUCCESS is a positive outcome, same color as CREATE.
+  [AuditActionEnum.PAYMENT_SUCCESS]: AuditActionCategoryEnum.CREATE,
 
-  [AuditActionEnum.LOGIN]: AuditActionCategoryEnum.AUTH,
-  [AuditActionEnum.LOGOUT]: AuditActionCategoryEnum.AUTH,
+  // LOGIN/LOGOUT are neither a mutation nor a failure — neutral, same as DEFAULT.
+  [AuditActionEnum.LOGIN]: AuditActionCategoryEnum.DEFAULT,
+  [AuditActionEnum.LOGOUT]: AuditActionCategoryEnum.DEFAULT,
 };
 
+// Standard 3-color CRUD-outcome palette + 1 neutral — deliberately not one hue per action.
 export const AUDIT_ACTION_CATEGORY_STYLE: Record<AuditActionCategoryEnum, string> = {
   [AuditActionCategoryEnum.CREATE]: 'bg-green-50 text-green-700 border-green-200',
   [AuditActionCategoryEnum.UPDATE]: 'bg-amber-50 text-amber-700 border-amber-200',
   [AuditActionCategoryEnum.DELETE]: 'bg-red-50 text-red-700 border-red-200',
-  [AuditActionCategoryEnum.SUCCESS]: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  [AuditActionCategoryEnum.AUTH]: 'bg-purple-50 text-purple-700 border-purple-200',
   [AuditActionCategoryEnum.DEFAULT]: 'bg-slate-100 text-slate-700 border-slate-200',
+};
+
+// Human-readable Vietnamese label for each action code, so the UI never shows a
+// raw backend constant like "PAYMENT_SUCCESS" to the admin.
+export const AUDIT_ACTION_LABEL: Record<AuditActionEnum, string> = {
+  [AuditActionEnum.CREATE_BOOKING]: 'Tạo đặt vé',
+  [AuditActionEnum.CANCEL_BOOKING]: 'Hủy đặt vé',
+  [AuditActionEnum.CHANGE_SEAT]: 'Đổi ghế ngồi',
+  [AuditActionEnum.CHANGE_FLIGHT]: 'Đổi chuyến bay',
+  [AuditActionEnum.REGISTER]: 'Đăng ký tài khoản',
+  [AuditActionEnum.LOGIN]: 'Đăng nhập',
+  [AuditActionEnum.LOGOUT]: 'Đăng xuất',
+  [AuditActionEnum.CHANGE_PASSWORD]: 'Đổi mật khẩu',
+  [AuditActionEnum.CREATE_PAYMENT]: 'Tạo thanh toán',
+  [AuditActionEnum.PAYMENT_SUCCESS]: 'Thanh toán thành công',
+  [AuditActionEnum.PAYMENT_FAILED]: 'Thanh toán thất bại',
+  [AuditActionEnum.UPDATE_STATUS]: 'Cập nhật trạng thái',
+  [AuditActionEnum.CREATE_STAFF]: 'Tạo tài khoản nhân viên',
+  [AuditActionEnum.CREATE_AIRPORT]: 'Thêm sân bay',
+  [AuditActionEnum.UPDATE_AIRPORT]: 'Cập nhật sân bay',
+  [AuditActionEnum.DELETE_AIRPORT]: 'Xóa sân bay',
+  [AuditActionEnum.CREATE_AIRLINE]: 'Thêm hãng hàng không',
+  [AuditActionEnum.UPDATE_AIRLINE]: 'Cập nhật hãng hàng không',
+  [AuditActionEnum.DELETE_AIRLINE]: 'Xóa hãng hàng không',
+  [AuditActionEnum.CREATE_AIRCRAFT_TYPE]: 'Thêm loại máy bay',
+  [AuditActionEnum.UPDATE_AIRCRAFT_TYPE]: 'Cập nhật loại máy bay',
+  [AuditActionEnum.DELETE_AIRCRAFT_TYPE]: 'Xóa loại máy bay',
+  [AuditActionEnum.CREATE_FLIGHT]: 'Tạo chuyến bay',
+  [AuditActionEnum.UPDATE_FLIGHT]: 'Cập nhật chuyến bay',
+  [AuditActionEnum.CANCEL_FLIGHT]: 'Hủy chuyến bay',
+  [AuditActionEnum.UPDATE_BOOKING_STATUS]: 'Cập nhật trạng thái đặt vé',
+  [AuditActionEnum.UPDATE_PAYMENT_STATUS]: 'Cập nhật trạng thái thanh toán',
+  [AuditActionEnum.UPDATE_REFUND_STATUS]: 'Cập nhật trạng thái hoàn tiền',
+  [AuditActionEnum.CREATE_COUPON]: 'Tạo mã giảm giá',
+  [AuditActionEnum.UPDATE_COUPON]: 'Cập nhật mã giảm giá',
+  [AuditActionEnum.DEACTIVATE_COUPON]: 'Vô hiệu hóa mã giảm giá',
+  [AuditActionEnum.CREATE_CONTENT]: 'Tạo nội dung CMS',
+  [AuditActionEnum.UPDATE_CONTENT]: 'Cập nhật nội dung CMS',
+  [AuditActionEnum.DELETE_CONTENT]: 'Xóa nội dung CMS',
+  [AuditActionEnum.UPDATE_CONTACT]: 'Cập nhật thông tin liên hệ',
 };
 
 export const getAuditActionConfig = (action?: string | null): StatusConfig => {
   if (!action) return { label: '-', className: AUDIT_ACTION_CATEGORY_STYLE[AuditActionCategoryEnum.DEFAULT] };
   const category = AUDIT_ACTION_CATEGORY_MAP[action as AuditActionEnum] ?? AuditActionCategoryEnum.DEFAULT;
-  return { label: action, className: AUDIT_ACTION_CATEGORY_STYLE[category] };
+  // Unknown/future action codes fall back to the raw string instead of crashing.
+  const label = AUDIT_ACTION_LABEL[action as AuditActionEnum] ?? action;
+  return { label, className: AUDIT_ACTION_CATEGORY_STYLE[category] };
 };
