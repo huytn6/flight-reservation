@@ -20,10 +20,7 @@ services:
       start_period: 20s
 
   flyway:
-    image: flight-flyway:dev
-    build:
-      context: .
-      dockerfile: deployment/flyway.Dockerfile
+    image: flyway/flyway:10
     depends_on:
       mysql:
         condition: service_healthy

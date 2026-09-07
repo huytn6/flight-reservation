@@ -36,7 +36,7 @@ trap rollback ERR
 git checkout --force "${TARGET_SHA}"
 export IMAGE_TAG="${TARGET_SHA}"
 
-docker compose --env-file "${ENV_FILE}" --profile tools build backend frontend flyway
+docker compose --env-file "${ENV_FILE}" build backend frontend
 docker compose --env-file "${ENV_FILE}" up -d mysql
 docker compose --env-file "${ENV_FILE}" --profile tools run --rm flyway
 docker compose --env-file "${ENV_FILE}" up -d --no-build backend frontend
