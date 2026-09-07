@@ -1,5 +1,6 @@
 import React from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
 import { Sun, Sunset, Moon, Sunrise } from 'lucide-react';
 import type { FlightOffer } from '@/services/flight';
 
@@ -74,9 +75,15 @@ export const FlightFilterSidebar: React.FC<FlightFilterSidebarProps> = ({ flight
   };
 
   const prices = flights.map((f) => f.cheapest_total ?? 0).filter((p) => p > 0);
-  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const cheapest = prices.length ? Math.min(...prices) : 0;
   const maxPrice = prices.length ? Math.max(...prices) : 0;
-  const currentMax = filters.maxPrice ?? maxPrice;
+  // When every result costs the same, cheapest === maxPrice leaves the track with a
+  // zero-width range and the handle simply cannot move. Open the low end down to a
+  // rounded floor so the control still works on single-price routes.
+  const minPrice =
+    cheapest < maxPrice ? cheapest : Math.max(0, Math.floor((cheapest * 0.5) / 100_000) * 100_000);
+  const priceStep = Math.max(1_000, Math.round((maxPrice - minPrice) / 40 / 1_000) * 1_000);
+  const currentMax = Math.min(Math.max(filters.maxPrice ?? maxPrice, minPrice), maxPrice);
 
   const toggleAirline = (code: string) => {
     const next = filters.airlines.includes(code)
@@ -163,14 +170,14 @@ export const FlightFilterSidebar: React.FC<FlightFilterSidebarProps> = ({ flight
             <span>Giá tối đa</span>
             <span className="text-[#0065eb]">{formatVnd(currentMax)}</span>
           </div>
-          <input
-            type="range"
+          <Slider
             min={minPrice}
             max={maxPrice}
-            step={Math.max(1, Math.round((maxPrice - minPrice) / 50))}
-            value={currentMax}
-            onChange={(e) => onChange({ ...filters, maxPrice: Number(e.target.value) })}
-            className="w-full accent-[#0065eb] cursor-pointer"
+            step={priceStep}
+            value={[currentMax]}
+            onValueChange={([next]) => onChange({ ...filters, maxPrice: next })}
+            aria-label="Giá tối đa"
+            className="py-1.5"
           />
           <div className="flex justify-between text-[10px] text-[#526077]">
             <span>{formatVnd(minPrice)}</span>
