@@ -33,13 +33,15 @@ export const CabinClassEnum = {
 } as const;
 export type CabinClassEnum = (typeof CabinClassEnum)[keyof typeof CabinClassEnum];
 
+// Matches the exact set the backend accepts (see admin_controller.py's
+// `valid_statuses` for PATCH /admin/flights/{id} and background_jobs.update_flight_status).
 export const FlightStatusEnum = {
   SCHEDULED: 'SCHEDULED',
+  BOARDING: 'BOARDING',
   DELAYED: 'DELAYED',
+  DEPARTED: 'DEPARTED',
+  ARRIVED: 'ARRIVED',
   CANCELLED: 'CANCELLED',
-  IN_FLIGHT: 'IN_FLIGHT',
-  LANDED: 'LANDED',
-  COMPLETED: 'COMPLETED',
 } as const;
 export type FlightStatusEnum = (typeof FlightStatusEnum)[keyof typeof FlightStatusEnum];
 

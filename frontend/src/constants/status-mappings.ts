@@ -12,6 +12,7 @@ import {
   CabinClassEnum,
   GenderEnum,
   CouponStatusEnum,
+  PassengerTypeEnum,
   AuditActionEnum,
   AuditActionCategoryEnum,
 } from '@/types/enums';
@@ -98,28 +99,28 @@ export const getPaymentStatusConfig = (status?: string | null): StatusConfig => 
 // 3. Flight Status Config
 export const FLIGHT_STATUS_CONFIG: Record<string, StatusConfig> = {
   [FlightStatusEnum.SCHEDULED]: {
-    label: 'Đúng lịch khởi hành',
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    label: 'Đã lên lịch (Đúng giờ)',
+    className: 'bg-slate-100 text-slate-700 border-slate-200',
   },
-  [FlightStatusEnum.DELAYED]: {
-    label: 'Bị hoãn chuyến',
+  [FlightStatusEnum.BOARDING]: {
+    label: 'Đang lên máy bay',
     className: 'bg-amber-50 text-amber-700 border-amber-200/80',
   },
-  [FlightStatusEnum.CANCELLED]: {
-    label: 'Hủy chuyến',
-    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
+  [FlightStatusEnum.DELAYED]: {
+    label: 'Tạm hoãn (Chậm chuyến)',
+    className: 'bg-purple-50 text-purple-700 border-purple-200/80',
   },
-  [FlightStatusEnum.IN_FLIGHT]: {
-    label: 'Đang trên không',
+  [FlightStatusEnum.DEPARTED]: {
+    label: 'Đang thực hiện chuyến bay',
     className: 'bg-blue-50 text-blue-700 border-blue-200/80',
   },
-  [FlightStatusEnum.LANDED]: {
-    label: 'Đã hạ cánh',
-    className: 'bg-sky-50 text-sky-700 border-sky-200/80',
+  [FlightStatusEnum.ARRIVED]: {
+    label: 'Đã hạ cánh an toàn',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
   },
-  [FlightStatusEnum.COMPLETED]: {
-    label: 'Hoàn tất lịch trình',
-    className: 'bg-slate-100 text-slate-700 border-slate-200',
+  [FlightStatusEnum.CANCELLED]: {
+    label: 'Đã hủy chuyến',
+    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
   },
 };
 
@@ -246,6 +247,16 @@ export const getGenderLabel = (gender?: string | null): string => {
     case GenderEnum.MALE: return 'Nam';
     case GenderEnum.FEMALE: return 'Nữ';
     default: return 'Khác';
+  }
+};
+
+// 10b. Passenger Type Labels
+export const getPassengerTypeLabel = (type?: string | null): string => {
+  switch (type) {
+    case PassengerTypeEnum.ADULT: return 'Người lớn';
+    case PassengerTypeEnum.CHILD: return 'Trẻ em';
+    case PassengerTypeEnum.INFANT: return 'Em bé';
+    default: return type || 'Hành khách';
   }
 };
 
