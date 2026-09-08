@@ -366,6 +366,16 @@ def get_seat_assignments(db, booking_id):
     ).fetchall()
 
 
+def get_seat_assignments_detailed(db, booking_id):
+    return db.execute(
+        """SELECT sa.segment_id, sa.passenger_id, s.seat_number, s.seat_type
+           FROM seat_assignments sa
+           JOIN seats s ON s.id=sa.seat_id
+           WHERE sa.booking_id=?""",
+        (booking_id,)
+    ).fetchall()
+
+
 def find_seat_assignment(db, segment_id, passenger_id, booking_id):
     return db.execute(
         "SELECT * FROM seat_assignments WHERE segment_id=? AND passenger_id=? AND booking_id=?",

@@ -12,6 +12,9 @@ import {
   CabinClassEnum,
   GenderEnum,
   CouponStatusEnum,
+  PassengerTypeEnum,
+  AuditActionEnum,
+  AuditActionCategoryEnum,
 } from '@/types/enums';
 
 export interface StatusConfig {
@@ -21,41 +24,38 @@ export interface StatusConfig {
 }
 
 // 1. Booking Status Config
+// Muted badge (bg-100/text-800/border-200) — a touch more saturated than the
+// pale bg-50 "soft badge" used elsewhere, without going full solid-fill.
+// PENDING / PENDING_PAYMENT / PAYMENT_PROCESSING all read as "chờ xử lý" to the
+// customer, so they share the same amber — no separate purple for "processing".
 export const BOOKING_STATUS_CONFIG: Record<string, StatusConfig> = {
   [BookingStatusEnum.CONFIRMED]: {
     label: 'Đã xác nhận',
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-    variant: 'secondary',
+    className: 'bg-blue-100 text-blue-800 border-blue-200',
   },
   [BookingStatusEnum.PENDING]: {
     label: 'Chờ thanh toán',
-    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
-    variant: 'secondary',
+    className: 'bg-amber-100 text-amber-800 border-amber-200',
   },
   [BookingStatusEnum.PENDING_PAYMENT]: {
     label: 'Chờ thanh toán',
-    className: 'bg-amber-50 text-amber-700 border-amber-200/80',
-    variant: 'secondary',
+    className: 'bg-amber-100 text-amber-800 border-amber-200',
   },
   [BookingStatusEnum.PAYMENT_PROCESSING]: {
     label: 'Đang xử lý thanh toán',
-    className: 'bg-blue-50 text-blue-700 border-blue-200/80',
-    variant: 'secondary',
+    className: 'bg-amber-100 text-amber-800 border-amber-200',
   },
   [BookingStatusEnum.PAYMENT_FAILED]: {
     label: 'Thanh toán thất bại',
-    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
-    variant: 'secondary',
+    className: 'bg-rose-100 text-rose-800 border-rose-200',
   },
   [BookingStatusEnum.CANCELLED]: {
     label: 'Đã hủy',
-    className: 'bg-slate-100 text-slate-600 border-slate-200',
-    variant: 'outline',
+    className: 'bg-red-100 text-red-800 border-red-200',
   },
   [BookingStatusEnum.COMPLETED]: {
     label: 'Hoàn thành',
-    className: 'bg-sky-50 text-sky-700 border-sky-200/80',
-    variant: 'secondary',
+    className: 'bg-green-100 text-green-800 border-green-200',
   },
 };
 
@@ -96,28 +96,28 @@ export const getPaymentStatusConfig = (status?: string | null): StatusConfig => 
 // 3. Flight Status Config
 export const FLIGHT_STATUS_CONFIG: Record<string, StatusConfig> = {
   [FlightStatusEnum.SCHEDULED]: {
-    label: 'Đúng lịch khởi hành',
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    label: 'Đã lên lịch (Đúng giờ)',
+    className: 'bg-slate-100 text-slate-700 border-slate-200',
   },
-  [FlightStatusEnum.DELAYED]: {
-    label: 'Bị hoãn chuyến',
+  [FlightStatusEnum.BOARDING]: {
+    label: 'Đang lên máy bay',
     className: 'bg-amber-50 text-amber-700 border-amber-200/80',
   },
-  [FlightStatusEnum.CANCELLED]: {
-    label: 'Hủy chuyến',
-    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
+  [FlightStatusEnum.DELAYED]: {
+    label: 'Tạm hoãn (Chậm chuyến)',
+    className: 'bg-purple-50 text-purple-700 border-purple-200/80',
   },
-  [FlightStatusEnum.IN_FLIGHT]: {
-    label: 'Đang trên không',
+  [FlightStatusEnum.DEPARTED]: {
+    label: 'Đang thực hiện chuyến bay',
     className: 'bg-blue-50 text-blue-700 border-blue-200/80',
   },
-  [FlightStatusEnum.LANDED]: {
-    label: 'Đã hạ cánh',
-    className: 'bg-sky-50 text-sky-700 border-sky-200/80',
+  [FlightStatusEnum.ARRIVED]: {
+    label: 'Đã hạ cánh an toàn',
+    className: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
   },
-  [FlightStatusEnum.COMPLETED]: {
-    label: 'Hoàn tất lịch trình',
-    className: 'bg-slate-100 text-slate-700 border-slate-200',
+  [FlightStatusEnum.CANCELLED]: {
+    label: 'Đã hủy chuyến',
+    className: 'bg-rose-50 text-rose-700 border-rose-200/80',
   },
 };
 
@@ -247,6 +247,16 @@ export const getGenderLabel = (gender?: string | null): string => {
   }
 };
 
+// 10b. Passenger Type Labels
+export const getPassengerTypeLabel = (type?: string | null): string => {
+  switch (type) {
+    case PassengerTypeEnum.ADULT: return 'Người lớn';
+    case PassengerTypeEnum.CHILD: return 'Trẻ em';
+    case PassengerTypeEnum.INFANT: return 'Em bé';
+    default: return type || 'Hành khách';
+  }
+};
+
 // 11. Seat Status Config
 export const SEAT_STATUS_CONFIG: Record<string, StatusConfig> = {
   [SeatStatusEnum.AVAILABLE]: {
@@ -336,4 +346,108 @@ export const CONTENT_STATUS_CONFIG: Record<string, StatusConfig> = {
 
 export const getContentStatusConfig = (status?: string | null): StatusConfig => {
   return CONTENT_STATUS_CONFIG[status || 'DRAFT'] || CONTENT_STATUS_CONFIG.DRAFT;
+};
+
+// 15. Audit Log Action Config
+// Every AuditActionEnum member is mapped to a color category once here, so any
+// screen that renders an audit action (log table, activity widget, filters, ...)
+// gets the same badge color for free via getAuditActionConfig / <StatusBadge type="auditAction" />.
+export const AUDIT_ACTION_CATEGORY_MAP: Record<AuditActionEnum, AuditActionCategoryEnum> = {
+  [AuditActionEnum.CREATE_BOOKING]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.REGISTER]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_PAYMENT]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_STAFF]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_AIRPORT]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_AIRLINE]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_AIRCRAFT_TYPE]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_FLIGHT]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_COUPON]: AuditActionCategoryEnum.CREATE,
+  [AuditActionEnum.CREATE_CONTENT]: AuditActionCategoryEnum.CREATE,
+
+  [AuditActionEnum.CHANGE_SEAT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.CHANGE_FLIGHT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.CHANGE_PASSWORD]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_AIRPORT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_AIRLINE]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_AIRCRAFT_TYPE]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_FLIGHT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_BOOKING_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_PAYMENT_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_REFUND_STATUS]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_COUPON]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_CONTENT]: AuditActionCategoryEnum.UPDATE,
+  [AuditActionEnum.UPDATE_CONTACT]: AuditActionCategoryEnum.UPDATE,
+
+  [AuditActionEnum.CANCEL_BOOKING]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_AIRPORT]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_AIRLINE]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_AIRCRAFT_TYPE]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.CANCEL_FLIGHT]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DEACTIVATE_COUPON]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.DELETE_CONTENT]: AuditActionCategoryEnum.DELETE,
+  [AuditActionEnum.PAYMENT_FAILED]: AuditActionCategoryEnum.DELETE,
+
+  // PAYMENT_SUCCESS is a positive outcome, same color as CREATE.
+  [AuditActionEnum.PAYMENT_SUCCESS]: AuditActionCategoryEnum.CREATE,
+
+  // LOGIN/LOGOUT are neither a mutation nor a failure — neutral, same as DEFAULT.
+  [AuditActionEnum.LOGIN]: AuditActionCategoryEnum.DEFAULT,
+  [AuditActionEnum.LOGOUT]: AuditActionCategoryEnum.DEFAULT,
+};
+
+// Standard 3-color CRUD-outcome palette + 1 neutral — deliberately not one hue per action.
+export const AUDIT_ACTION_CATEGORY_STYLE: Record<AuditActionCategoryEnum, string> = {
+  [AuditActionCategoryEnum.CREATE]: 'bg-green-50 text-green-700 border-green-200',
+  [AuditActionCategoryEnum.UPDATE]: 'bg-amber-50 text-amber-700 border-amber-200',
+  [AuditActionCategoryEnum.DELETE]: 'bg-red-50 text-red-700 border-red-200',
+  [AuditActionCategoryEnum.DEFAULT]: 'bg-slate-100 text-slate-700 border-slate-200',
+};
+
+// Human-readable Vietnamese label for each action code, so the UI never shows a
+// raw backend constant like "PAYMENT_SUCCESS" to the admin.
+export const AUDIT_ACTION_LABEL: Record<AuditActionEnum, string> = {
+  [AuditActionEnum.CREATE_BOOKING]: 'Tạo đặt vé',
+  [AuditActionEnum.CANCEL_BOOKING]: 'Hủy đặt vé',
+  [AuditActionEnum.CHANGE_SEAT]: 'Đổi ghế ngồi',
+  [AuditActionEnum.CHANGE_FLIGHT]: 'Đổi chuyến bay',
+  [AuditActionEnum.REGISTER]: 'Đăng ký tài khoản',
+  [AuditActionEnum.LOGIN]: 'Đăng nhập',
+  [AuditActionEnum.LOGOUT]: 'Đăng xuất',
+  [AuditActionEnum.CHANGE_PASSWORD]: 'Đổi mật khẩu',
+  [AuditActionEnum.CREATE_PAYMENT]: 'Tạo thanh toán',
+  [AuditActionEnum.PAYMENT_SUCCESS]: 'Thanh toán thành công',
+  [AuditActionEnum.PAYMENT_FAILED]: 'Thanh toán thất bại',
+  [AuditActionEnum.UPDATE_STATUS]: 'Cập nhật trạng thái',
+  [AuditActionEnum.CREATE_STAFF]: 'Tạo tài khoản nhân viên',
+  [AuditActionEnum.CREATE_AIRPORT]: 'Thêm sân bay',
+  [AuditActionEnum.UPDATE_AIRPORT]: 'Cập nhật sân bay',
+  [AuditActionEnum.DELETE_AIRPORT]: 'Xóa sân bay',
+  [AuditActionEnum.CREATE_AIRLINE]: 'Thêm hãng hàng không',
+  [AuditActionEnum.UPDATE_AIRLINE]: 'Cập nhật hãng hàng không',
+  [AuditActionEnum.DELETE_AIRLINE]: 'Xóa hãng hàng không',
+  [AuditActionEnum.CREATE_AIRCRAFT_TYPE]: 'Thêm loại máy bay',
+  [AuditActionEnum.UPDATE_AIRCRAFT_TYPE]: 'Cập nhật loại máy bay',
+  [AuditActionEnum.DELETE_AIRCRAFT_TYPE]: 'Xóa loại máy bay',
+  [AuditActionEnum.CREATE_FLIGHT]: 'Tạo chuyến bay',
+  [AuditActionEnum.UPDATE_FLIGHT]: 'Cập nhật chuyến bay',
+  [AuditActionEnum.CANCEL_FLIGHT]: 'Hủy chuyến bay',
+  [AuditActionEnum.UPDATE_BOOKING_STATUS]: 'Cập nhật trạng thái đặt vé',
+  [AuditActionEnum.UPDATE_PAYMENT_STATUS]: 'Cập nhật trạng thái thanh toán',
+  [AuditActionEnum.UPDATE_REFUND_STATUS]: 'Cập nhật trạng thái hoàn tiền',
+  [AuditActionEnum.CREATE_COUPON]: 'Tạo mã giảm giá',
+  [AuditActionEnum.UPDATE_COUPON]: 'Cập nhật mã giảm giá',
+  [AuditActionEnum.DEACTIVATE_COUPON]: 'Vô hiệu hóa mã giảm giá',
+  [AuditActionEnum.CREATE_CONTENT]: 'Tạo nội dung CMS',
+  [AuditActionEnum.UPDATE_CONTENT]: 'Cập nhật nội dung CMS',
+  [AuditActionEnum.DELETE_CONTENT]: 'Xóa nội dung CMS',
+  [AuditActionEnum.UPDATE_CONTACT]: 'Cập nhật thông tin liên hệ',
+};
+
+export const getAuditActionConfig = (action?: string | null): StatusConfig => {
+  if (!action) return { label: '-', className: AUDIT_ACTION_CATEGORY_STYLE[AuditActionCategoryEnum.DEFAULT] };
+  const category = AUDIT_ACTION_CATEGORY_MAP[action as AuditActionEnum] ?? AuditActionCategoryEnum.DEFAULT;
+  // Unknown/future action codes fall back to the raw string instead of crashing.
+  const label = AUDIT_ACTION_LABEL[action as AuditActionEnum] ?? action;
+  return { label, className: AUDIT_ACTION_CATEGORY_STYLE[category] };
 };

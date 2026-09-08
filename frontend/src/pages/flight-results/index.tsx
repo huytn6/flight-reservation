@@ -225,9 +225,8 @@ export const FlightResults: React.FC = () => {
   };
 
   const handleConfirmFare = (_flight: FlightResultItem) => {
-    setIsDrawerOpen(false);
     if (!selectedRawOffer) {
-      navigate('/review-trip');
+      setIsDrawerOpen(false);
       return;
     }
     const selectedFare = selectedRawOffer.fares?.[0];
@@ -235,6 +234,7 @@ export const FlightResults: React.FC = () => {
 
     if (tripType === 'ROUND_TRIP' && legStage === 'outbound') {
       // Outbound picked — now let the traveler pick the return flight before continuing
+      setIsDrawerOpen(false);
       setSelectedLegs(legs);
       setLegStage('inbound');
       setSelectedFlight(null);
@@ -245,6 +245,14 @@ export const FlightResults: React.FC = () => {
       return;
     }
 
+    if (!isAuthenticated) {
+      setIsDrawerOpen(false);
+      toast.error('Vui lòng đăng nhập để tiếp tục đặt vé');
+      navigate('/signin');
+      return;
+    }
+
+    setIsDrawerOpen(false);
     navigate('/review-trip', { state: { legs } });
   };
 

@@ -6,6 +6,7 @@ import { EnterpriseDataTable } from '@/components/datatable/EnterpriseDataTable'
 import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
+import { CodeBadge } from '@/components/common/CodeBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -52,11 +53,7 @@ export const AirportsListPage: React.FC = () => {
     {
       accessorKey: 'iata_code',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Mã IATA" />,
-      cell: ({ row }) => (
-        <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
-          {row.original.iata_code}
-        </span>
-      ),
+      cell: ({ row }) => <CodeBadge>{row.original.iata_code}</CodeBadge>,
     },
     {
       accessorKey: 'name',

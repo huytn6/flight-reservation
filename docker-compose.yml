@@ -37,10 +37,7 @@ services:
     logging: *default-logging
 
   flyway:
-    image: flight-flyway:10-mysql
-    build:
-      context: .
-      dockerfile: deployment/flyway.Dockerfile
+    image: flyway/flyway:10
     profiles: [tools]
     depends_on:
       mysql:

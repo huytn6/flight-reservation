@@ -7,6 +7,7 @@ import { DataTableColumnHeader } from '@/components/datatable';
 import { ConfirmDeleteDialog } from '@/components/admin/ConfirmDeleteDialog';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { CodeBadge } from '@/components/common/CodeBadge';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Edit2, Trash2, Eye, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -53,11 +54,7 @@ export const FlightsListPage: React.FC = () => {
     {
       accessorKey: 'flight_number',
       header: ({ column }) => <DataTableColumnHeader column={column} title="Mã Chuyến Bay" />,
-      cell: ({ row }) => (
-        <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200/70 tracking-wider">
-          {row.original.flight_number}
-        </span>
-      ),
+      cell: ({ row }) => <CodeBadge>{row.original.flight_number}</CodeBadge>,
     },
     {
       accessorKey: 'airline',

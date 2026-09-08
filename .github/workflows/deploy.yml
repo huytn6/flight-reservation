@@ -40,10 +40,9 @@ jobs:
 
       - name: Validate Flyway migrations
         run: |
-          docker build -f deployment/flyway.Dockerfile -t flight-flyway:ci .
           docker run --rm --network host \
             -v "${{ github.workspace }}/backend/database/migrations:/flyway/sql:ro" \
-            flight-flyway:ci \
+            flyway/flyway:10 \
             -url="jdbc:mysql://127.0.0.1:3306/flight_booking_test?sslMode=DISABLED&allowPublicKeyRetrieval=true" \
             -user=root -password=root -baselineOnMigrate=true migrate
 

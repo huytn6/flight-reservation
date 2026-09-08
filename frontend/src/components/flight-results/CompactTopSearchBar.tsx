@@ -130,18 +130,8 @@ export const CompactTopSearchBar: React.FC = () => {
     <div className="bg-white border-b border-slate-100 pt-4 pb-3 font-sans">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 flex flex-col gap-3">
         
-        {/* Flight Type Sub-tabs (Khứ Hồi / Một Chiều / Nhiều Thành Phố) */}
+        {/* Flight Type Sub-tabs (Một Chiều / Khứ Hồi / Nhiều Thành Phố) */}
         <div className="flex items-center gap-6 border-b border-slate-100 pb-2 text-sm sm:text-base font-normal">
-          <button
-            onClick={() => setFlightType('roundtrip')}
-            className={`pb-2 transition-all cursor-pointer ${
-              flightType === 'roundtrip'
-                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
-                : 'text-slate-600 hover:text-slate-900 font-normal'
-            }`}
-          >
-            Khứ Hồi
-          </button>
           <button
             onClick={() => setFlightType('one-way')}
             className={`pb-2 transition-all cursor-pointer ${
@@ -151,6 +141,16 @@ export const CompactTopSearchBar: React.FC = () => {
             }`}
           >
             Một Chiều
+          </button>
+          <button
+            onClick={() => setFlightType('roundtrip')}
+            className={`pb-2 transition-all cursor-pointer ${
+              flightType === 'roundtrip'
+                ? 'text-slate-900 border-b-2 border-slate-900 font-semibold'
+                : 'text-slate-600 hover:text-slate-900 font-normal'
+            }`}
+          >
+            Khứ Hồi
           </button>
           <button
             onClick={() => setFlightType('multi-city')}

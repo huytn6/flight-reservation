@@ -536,7 +536,22 @@ def admin_get_booking(handler, booking_id):
     if not booking:
         from core.exceptions import NotFoundError
         raise NotFoundError('Booking')
-    response.success(handler, dict(booking))
+    segments = booking_repo.get_booking_segments(db, booking_id)
+    passengers = booking_repo.get_booking_passengers(db, booking_id)
+    seat_assignments = booking_repo.get_seat_assignments_detailed(db, booking_id)
+    from repositories import payment_repo
+    payments = payment_repo.list_payments_for_booking(db, booking_id)
+    response.success(handler, {
+        'booking': dict(booking),
+        'segments': [dict(s) for s in segments],
+        'passengers': [dict(p) for p in passengers],
+        'seat_assignments': [dict(sa) for sa in seat_assignments],
+        'payments': [dict(p) for p in payments],
+    })
+
+
+BOOKING_STATUSES = ('PENDING_PAYMENT', 'PAYMENT_PROCESSING', 'CONFIRMED', 'PAYMENT_FAILED',
+                    'CANCELLED', 'COMPLETED', 'CHANGE_PENDING')
 
 
 BOOKING_STATUSES = ('PENDING_PAYMENT', 'PAYMENT_PROCESSING', 'CONFIRMED', 'PAYMENT_FAILED',
