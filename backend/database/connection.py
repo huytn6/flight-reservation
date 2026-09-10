@@ -16,6 +16,7 @@ def _ensure_database():
         user=config.DB_USER,
         password=config.DB_PASSWORD,
         charset='utf8mb4',
+        use_pure=True,
     )
     try:
         cur = conn.cursor()
@@ -69,6 +70,7 @@ def get_db() -> _Connection:
             database=config.DB_NAME,
             autocommit=True,
             charset='utf8mb4',
+            use_pure=True,
         )
         _local.conn = _Connection(raw)
     return _local.conn

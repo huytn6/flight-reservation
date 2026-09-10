@@ -104,6 +104,11 @@ export const FlightStatusPage: React.FC = () => {
                     {f.flight_number}
                   </span>
                   <span className="text-xs text-slate-600 font-medium">{f.airline_name || 'Hãng bay'}</span>
+                  {f.departure_time && (
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      {new Date(f.departure_time).toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    </span>
+                  )}
                 </div>
                 {getStatusBadge(f.status)}
               </div>

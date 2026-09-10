@@ -70,6 +70,18 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
   const [viewYear, setViewYear] = useState(startParsed.getFullYear());
   const [viewMonth, setViewMonth] = useState(startParsed.getMonth());
 
+  // Once a full range is picked, activeTab is left on 'end'. Without this, reopening
+  // the popover later and clicking a day keeps editing the return date instead of the
+  // departure date — the departure date looks "stuck" no matter what the user clicks.
+  React.useEffect(() => {
+    if (isOpen) {
+      setActiveTab('start');
+      setViewYear(startParsed.getFullYear());
+      setViewMonth(startParsed.getMonth());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
   const today = startOfToday();
   const isCurrentMonthOrEarlier =
     viewYear < today.getFullYear() ||
@@ -117,6 +129,11 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
         onChange({ ...dateRange, startDate: dayIso, endDate: dayIso });
       } else {
         onChange({ ...dateRange, endDate: dayIso });
+        // Range is now complete. Switch back to 'start' so the next click (without
+        // the user having to press the "departure date" tab first) begins a fresh
+        // pick instead of silently continuing to edit the return date forever —
+        // that was why the departure date looked "stuck" after finishing a range.
+        setActiveTab('start');
       }
     }
   };

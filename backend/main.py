@@ -59,7 +59,8 @@ def setup_scheduler():
     from core.scheduler import register, start
     from services.background_jobs import (
         release_expired_seats, expire_drafts, price_alert_checker,
-        update_flight_status, mark_bookings_completed, notification_dispatcher
+        update_flight_status, mark_bookings_completed, notification_dispatcher,
+        extend_flight_schedule
     )
     register('release_expired_seats', 30, release_expired_seats)
     register('expire_drafts', 60, expire_drafts)
@@ -67,6 +68,9 @@ def setup_scheduler():
     register('update_flight_status', 60, update_flight_status)
     register('mark_bookings_completed', 300, mark_bookings_completed)
     register('notification_dispatcher', 15, notification_dispatcher)
+    # Runs immediately on startup (scheduler fires any job whose last_run is 0
+    # right away), then every 6h — keeps the schedule topped up automatically.
+    register('extend_flight_schedule', 6 * 3600, extend_flight_schedule)
     start()
 
 

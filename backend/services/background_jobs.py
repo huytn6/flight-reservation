@@ -9,6 +9,27 @@ def _now():
     return datetime.datetime.utcnow().isoformat()
 
 
+SCHEDULE_HORIZON_DAYS = 45
+
+
+def extend_flight_schedule():
+    """Keep flights available from today through SCHEDULE_HORIZON_DAYS out.
+
+    Without this, the schedule is whatever was seeded once and never grows, so
+    every date eventually runs out of flights and every search starts showing
+    "no tickets" (FIX.ipynb #15/#16). Cheap to run often: dates that already
+    have their flights are skipped.
+    """
+    from database.connection import get_db
+    from services.flight_schedule_service import ensure_schedule_range
+    db = get_db()
+    today = datetime.date.today()
+    horizon = today + datetime.timedelta(days=SCHEDULE_HORIZON_DAYS)
+    created = ensure_schedule_range(db, today, horizon)
+    if created:
+        logger.info('Extended flight schedule: created %d flights through %s', created, horizon)
+
+
 def release_expired_seats():
     from database.connection import get_db
     from repositories import booking_repo, flight_repo

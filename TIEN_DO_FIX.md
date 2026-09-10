@@ -209,12 +209,83 @@ Bạn yêu cầu đẩy các fix lên repo (`https://github.com/huytn6/flight-re
 
 **Vướng mắc cuối cùng — cần bạn (hoặc người quản lý server) xử lý:** Bước deploy thật lên server (`103.186.64.195`) bị lỗi **3 lần liên tiếp**, cùng 1 nguyên nhân: server không tải được Docker image `python:3.12-slim` từ Docker Hub (`dial tcp ...:443: i/o timeout` khi kéo image). Đây là **lỗi kết nối mạng từ server tới Docker Hub**, không phải lỗi code — mình không có quyền SSH vào server đó nên không tự sửa được. Tin tốt: script deploy có cơ chế **tự động rollback về bản cũ an toàn** mỗi lần fail, nên **production hiện không bị gián đoạn**, chỉ là chưa cập nhật fix mới.
 
+## 6.10. Lỗi 12 — Lịch chọn ngày khứ hồi bị "cố định" sau khi chọn xong
+
+**Yêu cầu:** chọn ngày đi/ngày về (VD ngày 11 và 12) thì được, nhưng sau đó muốn quay lại đổi ngày đi thì lịch không cho bấm nữa, ngày đi cứ đứng yên.
+
+**Nguyên nhân:** `DateRangePickerPopover.tsx` dùng 1 biến ẩn `activeTab` để nhớ đang sửa "ngày đi" hay "ngày về". Bấm xong ngày đi, biến này tự chuyển sang "ngày về" — hợp lý cho lần bấm đầu. Nhưng sau khi bấm xong cả 2 ngày, **không có chỗ nào chuyển nó về lại "ngày đi"**, kể cả khi đóng lịch lại rồi mở lên lần sau. Hậu quả: mọi cú bấm tiếp theo (kể cả ở phiên mở lịch mới) đều bị hiểu nhầm là đang sửa ngày về, nên ngày đi hiển thị đứng yên không đổi — đúng như hiện tượng bạn mô tả.
+
+**Đã sửa:** `frontend/src/components/flight/DateRangePickerPopover.tsx` — thêm đoạn tự động đưa về chế độ "sửa ngày đi" mỗi khi mở lịch lên lại (kèm đưa lịch về đúng tháng của ngày đi hiện tại), thay vì giữ nguyên trạng thái ẩn từ lần trước.
+
+**Đã kiểm tra:** đọc kỹ lại toàn bộ logic bấm chọn ngày, dựng lại từng bước bấm (11 → 12 → đóng lịch → mở lại → bấm ngày khác) để xác nhận đúng chỗ hỏng trước khi sửa. Không có công cụ trình duyệt trong phiên này để tự bấm-thử trực quan — **bạn nên tự mở thử lại đúng kịch bản trên** sau khi có bản build mới.
+
+> **Cập nhật — lỗi 12 chưa hết hẳn (bạn báo lại thành lỗi 14):** fix ở trên chỉ tự động về "sửa ngày đi" khi **đóng lịch rồi mở lại**. Nếu chọn xong 2 ngày (VD 17-18) mà **chưa đóng lịch**, bấm tiếp một ngày lớn hơn ngày đi vẫn bị hiểu nhầm là đang sửa ngày về → ngày đi vẫn đứng yên ở 17. Xem lỗi 14 (mục 6.12) — đã sửa dứt điểm cả 2 trường hợp.
+
+## 6.12. Lỗi 14 — Lịch chọn ngày vẫn "cố định" ngay trong lúc đang mở (không cần đóng lịch)
+
+**Yêu cầu:** chọn ngày 17 và 18 thì được, nhưng sau đó nếu bấm 1 ngày lớn hơn 17 (VD 20), ngày đi cứ đứng yên ở 17, không đổi.
+
+**Nguyên nhân:** đây là phần lỗi 12 chưa sửa hết. Sau khi bấm xong ngày về (ngày 18), biến ẩn nhớ "đang sửa ngày đi hay ngày về" vẫn đứng ở "ngày về" — bản sửa lần trước chỉ đưa nó về "ngày đi" lúc **mở lại lịch**, chưa xử lý lúc **vẫn đang mở lịch** mà bấm tiếp. Nên hễ bấm ngày nào từ 17 trở lên (chưa đóng lịch), hệ thống vẫn tưởng đang chỉnh ngày về → ngày đi không bao giờ đổi trừ khi bấm ngày nhỏ hơn ngày đi hiện tại.
+
+**Đã sửa:** `frontend/src/components/flight/DateRangePickerPopover.tsx` — ngay khi bấm xong ngày về (chọn xong trọn 1 cặp ngày đi/về), tự động chuyển lại về chế độ "sửa ngày đi" **luôn, không cần đóng lịch**. Nhờ vậy, mỗi lần vừa chọn xong 1 cặp ngày, cú bấm tiếp theo mặc định sẽ chọn lại ngày đi mới (giống cách Google Flights hoạt động) — muốn chỉnh riêng ngày về thì bấm vào chữ ngày về ở đầu lịch (nút này vẫn hoạt động như cũ).
+
+**Đã kiểm tra:** dựng lại đúng kịch bản bạn mô tả (17 → 18 → 20) từng bước trên giấy theo code mới — ngày đi đổi đúng thành 20 (không còn đứng yên). Chạy `tsc -b --noEmit`: 0 lỗi. Không có công cụ trình duyệt trong phiên này để tự bấm-thử — **bạn nên tự mở thử lại đúng kịch bản 17 → 18 → 20** sau khi có bản build mới để xác nhận bằng mắt.
+
+## 6.11. Lỗi 13 — Tra cứu chuyến bay ra kết quả trùng lặp
+
+**Yêu cầu:** tìm chuyến bay bị hiện trùng lặp nhiều chuyến giống hệt nhau.
+
+**Nguyên nhân:** kiểm tra lại đúng như đã ghi ở mục 2 (dòng 26) — đây không phải lỗi ở code tìm kiếm (đã tự gọi thử API tìm kiếm với database sạch, ra đúng kết quả không trùng), mà là **dữ liệu `flights` trong database production còn sót bản ghi trùng thật**. Gọi thẳng API production để xác minh lại (tuyến SGN→HAN ngày 08/09/2026): 20 dòng trả về cho 13 chuyến thực, 7 số hiệu chuyến bay bị lặp đúng 2 lần (khác `id`, giống hệt số hiệu/giờ bay/giá). Khớp với việc đợt dọn dữ liệu ở mục 4 mới xử lý được **~1974/5487** nhóm trùng rồi dừng theo yêu cầu của bạn — còn khoảng **3513 nhóm chưa dọn**, nay lộ ra thành lỗi 13 này.
+
+**Đã sửa (khác cách làm ở mục 4 — lần này sửa tận gốc):** thay vì chạy script xoá tay 1 lần trên production, lần này viết thành migration chính thức `backend/database/migrations/V4__dedupe_flights_and_prevent_recurrence.sql`:
+1. Dọn nốt các bản ghi trùng — vẫn giữ đúng nguyên tắc an toàn cũ: **bỏ qua** mọi nhóm đã có khách đặt vé thật, giữ ghế, hoặc đã được ai lưu yêu thích; chỉ xoá các bản trùng "sạch" (chưa ai đụng tới) và luôn giữ lại bản ghi cũ nhất trong mỗi nhóm.
+2. Thêm ràng buộc `UNIQUE(flight_number, departure_time)` ở tầng database — đảm bảo lỗi này **không thể tái diễn nữa** dù có seed lại dữ liệu mẫu hay tạo chuyến bay tay qua trang admin, thay vì phải nhớ dọn tay mỗi lần như trước.
+
+**Đã kiểm tra:** chạy thử migration này trên database local (XAMPP) — dọn sạch không lỗi; khởi động lại backend nhiều lần để xác nhận nó **tự chạy lại an toàn** mỗi lần backend khởi động (theo đúng cơ chế `init_schema()` sẵn có của dự án) mà không báo lỗi ràng buộc đã tồn tại.
+
+**CHƯA áp dụng lên production** — migration này sẽ tự chạy trên production vào lần deploy kế tiếp (qua Flyway), nhưng cần bạn xác nhận trước vì nó xoá dữ liệu thật (dù đã giới hạn phạm vi an toàn giống hệt nguyên tắc mục 4). Lưu ý: đợt deploy trước đang bị chặn bởi lỗi hạ tầng ở mục 6.9 (server không kéo được Docker image) — chưa rõ đã được xử lý xong chưa.
+
+## 6.13. Lỗi 15 & 16 — Chọn khứ hồi/một chiều "hết vé" rất nhiều, local và production khác nhau
+
+**Yêu cầu (lỗi 15):** kiểm tra vì sao chọn khứ hồi/một chiều lại ra "hết vé" nhiều đến vậy, kiểm tra dữ liệu và giải thích.
+**Yêu cầu (lỗi 16):** trên link deploy (production) thông tin chuyến bay vẫn bình thường, nhưng ở máy local lại bị "hết vé" — kiểm tra vì sao khác nhau. (VD: khứ hồi SGN→HAN, đi 06/09/2026, về 10/09/2026.)
+
+**Đã kiểm tra dữ liệu thật (không sửa code trước, chỉ đọc):**
+- Gọi API `flights/flexible-dates` trên **production** cho nhiều tuyến (SGN-HAN, SGN-DAD, HAN-DAD, SGN-PQC, SGN-BKK, SGN-SIN, SGN-NRT, HAN-SIN) ở nhiều mốc ngày: **mọi tuyến đều có giá mỗi ngày liên tục từ hiện tại đến hết 30/09/2026**, nhưng **từ 01/10/2026 trở đi thì hoàn toàn không còn chuyến bay nào** (`min_price: null` mọi tuyến, mọi ngày).
+- Đối chiếu với `backend/services/background_jobs.py`: dự án có 6 job chạy nền (giải phóng ghế giữ chỗ, hết hạn giỏ hàng tạm, cảnh báo giá, cập nhật trạng thái bay, hoàn tất đơn, thông báo) nhưng **không có job nào tự tạo thêm chuyến bay mới** cho tương lai.
+
+**Nguyên nhân gốc (giải thích cho lỗi 15):** dữ liệu chuyến bay thật trên production **không đến từ `seed.py` trong repo** (đã ghi nhận từ mục 2) — nó được nạp 1 lần từ một nguồn ngoài repo, tạo lịch cố định cho khoảng 1 tháng rồi dừng hẳn, không có cơ chế tự nối dài. Đây là "quả bom hẹn giờ": mỗi ngày trôi qua lịch còn lại càng ngắn, và sau 30/09/2026 **mọi tìm kiếm khứ hồi/một chiều, ở mọi tuyến, đều sẽ ra "hết vé"** vì không còn chuyến bay nào ở tương lai — không phải lỗi logic tìm kiếm.
+
+**Nguyên nhân khác biệt local vs production (giải thích cho lỗi 16):** máy local dùng đúng `backend/database/seed.py` của repo — script này (trước khi sửa) chỉ tạo chuyến bay cho **~1 tuần kể từ ngày chạy seed**, không phải cả tháng như production. Ví dụ bạn test ngày đi 06/09/2026 — nhưng nếu bạn seed local vào khoảng 07-08/09/2026, script chỉ tạo chuyến từ 08/09 trở đi → 06/09 **chưa từng có dữ liệu**, nên báo "hết vé" dù trên production (đã có sẵn cả tháng) vẫn tra ra bình thường. Đây không phải lỗi code tìm kiếm, mà do 2 nơi có 2 tập dữ liệu khác độ dài khác nhau.
+
+**Đã sửa tận gốc (xử lý cả 2 lỗi cùng lúc, đúng hướng bạn chọn — thêm job tự động):**
+1. Viết mới `backend/services/flight_schedule_service.py`: gom lịch bay hàng ngày (14 tuyến, bay đều mỗi ngày) thành 1 danh sách mẫu (`DAILY_FLIGHT_TEMPLATE`) và 1 hàm dùng chung `ensure_schedule_range(db, ngày_bắt_đầu, ngày_kết_thúc)` — tạo chuyến bay + giá vé + tồn kho ghế + sơ đồ ghế cho bất kỳ khoảng ngày nào còn thiếu (bỏ qua ngày đã có sẵn, an toàn để gọi lại nhiều lần).
+2. `backend/database/seed.py`: bỏ hẳn danh sách gần 70 dòng chuyến bay gõ tay theo từng ngày lệch (`flight_definitions` + `day_offset`) — giờ chỉ còn 1 dòng gọi `ensure_schedule_range` cho 7 ngày tới, dễ đọc hơn hẳn (đúng yêu cầu ở lỗi 13).
+3. Thêm job mới `extend_flight_schedule` (`backend/services/background_jobs.py`) — tự động đảm bảo **luôn có sẵn chuyến bay từ hôm nay đến 45 ngày sau**, chạy ngay khi backend khởi động và lặp lại mỗi 6 giờ (đăng ký ở `backend/main.py`). Nhờ vậy production sẽ không bao giờ hết lịch bay nữa (kể cả sau khi bàn giao, không ai đụng vào code), và local mỗi lần chạy backend cũng tự có đủ 45 ngày dữ liệu — không còn khác biệt local/production nữa.
+
+**Đã kiểm tra:** chạy thử trên database local (XAMPP) — job tự chạy khi backend khởi động, tạo thêm chuyến bay đúng thứ tự ngày tăng dần, không lỗi; gọi lại API tìm kiếm trong lúc job đang chạy vẫn trả về bình thường (job chạy nền, không chặn request). Lưu ý: lần chạy đầu tiên khá chậm (do tạo hàng nghìn dòng ghế cho từng chuyến — chấp nhận được vì chỉ chậm ở lần đầu, các lần sau mỗi 6h chỉ thêm đúng 1 ngày mới nên rất nhanh). `tsc -b --noEmit` (frontend, không đổi gì) vẫn 0 lỗi; cú pháp Python của cả 4 file đã sửa: hợp lệ.
+
+**Chưa deploy lên production** — cùng nằm trong danh sách chờ xác nhận ở mục 7.
+
+## 6.14. Lỗi 13 (tái phát) — Tìm theo mã chuyến bay ra rất nhiều kết quả trông như trùng lặp
+
+**Yêu cầu:** tra cứu theo mã chuyến bay (trang "Tra Cứu Lịch Cất Cánh & Hạ Cánh") bị liệt kê ra rất nhiều chuyến bay.
+
+**Nguyên nhân — hệ quả trực tiếp của fix lỗi 15/16 vừa làm:** trước đây mỗi số hiệu (VD `VN100`) chỉ tồn tại vài ngày trong dữ liệu mẫu, nên tra cứu ít khi ra nhiều dòng. Sau khi thêm job tự nối dài lịch bay (mục 6.13), `VN100` giờ bay **đều đặn mỗi ngày** trong suốt 45 ngày tới — tra cứu đúng mã này sẽ khớp tối đa 20 dòng (giới hạn có sẵn của API), mỗi dòng là 1 ngày khác nhau. Đây **không phải dữ liệu trùng lặp giả** (khác lỗi 13 gốc), nhưng giao diện thẻ kết quả (`frontend/src/pages/flight-status/index.tsx`) **chỉ hiện giờ bay, không hiện ngày** — nên 20 chuyến bay hợp lệ của 20 ngày khác nhau nhìn y hệt nhau (cùng mã, cùng giờ, cùng tuyến) như thể bị liệt kê trùng lặp.
+
+**Đã sửa:** thêm hiển thị **ngày bay** (thứ + ngày/tháng/năm) ngay cạnh tên hãng bay trên mỗi thẻ kết quả, để phân biệt rõ các ngày khác nhau của cùng 1 số hiệu chuyến bay thay vì trông như bị trùng.
+
+**Đã kiểm tra:** `tsc -b --noEmit`: 0 lỗi.
+
 ## 7. Việc còn lại / cần bạn làm
 
 1. **Deploy đang bị chặn bởi lỗi hạ tầng, không phải code**: code đã lên GitHub `main` (commit `d3881b7`, `99bbe7d`) và **đã pass toàn bộ test/build**. Chỉ còn bước deploy thật lên server bị lỗi mạng khi kéo Docker image (mục 6.9) — **cần bạn hoặc người quản lý server `103.186.64.195` kiểm tra kết nối tới Docker Hub** (thử `docker pull python:3.12-slim` trực tiếp trên server, kiểm tra DNS/firewall/proxy), rồi vào GitHub Actions bấm "Re-run failed jobs" cho lần chạy mới nhất, hoặc mình chạy lại giúp khi bạn báo đã kiểm tra xong.
 2. **Mở thử trên trình duyệt** sau khi deploy thành công để xác nhận bằng mắt, đặc biệt: luồng chọn chuyến đi → chuyến về cho vé khứ hồi (lỗi 4), một chiều chỉ chọn được 1 ngày (lỗi 6), bộ lọc bên trái hoạt động (lỗi 7), tra cứu PNR ra đúng vé (lỗi 8), tra cứu trạng thái chuyến bay theo số hiệu (lỗi 9), trang "Chuyến bay đã lưu" hiện đúng điểm đi/đến (lỗi 10).
 3. **Dữ liệu chuyến bay trùng**: theo yêu cầu ở vòng 1, mình đã **dừng lại giữa chừng** — hiện còn khoảng **3513 dòng trùng chưa dọn** (đã dọn ~1974/5487) và **3 nhóm cần bạn tự xem xét thủ công** vì đã có khách đặt vé thật. Muốn dọn tiếp thì báo mình chạy lại script. (Lưu ý: dọn dữ liệu này cũng sẽ giúp lỗi 5 — giá theo ngày — trông tự nhiên hơn vì bớt lặp dữ liệu.)
 4. (Tuỳ chọn) Sửa nốt các chỗ hard-code còn sót trong `FlightDetailModal.tsx` (loại tàu bay, khoảng cách bay luôn "721 mi"...) nếu bạn muốn đồng bộ hoàn toàn — phát hiện phụ, không nằm trong yêu cầu FIX.ipynb.
+5. **Xác nhận cho phép deploy fix lỗi 12 & 13**: 2 fix này (mục 6.10, 6.11) hiện chỉ nằm ở máy local, **chưa commit, chưa push**. Riêng migration V4 (lỗi 13) sẽ xoá dữ liệu trùng thật trên production khi deploy — báo lại khi bạn đồng ý để tiến hành commit/push, và kiểm tra xem lỗi hạ tầng Docker Hub ở mục 6.9 đã được xử lý chưa trước khi deploy.
+6. **Mở thử lịch chọn ngày khứ hồi** (lỗi 12 & 14) sau khi deploy: chọn 2 ngày (VD 17-18), **không đóng lịch**, bấm tiếp 1 ngày lớn hơn (VD 20) — xác nhận ngày đi đổi đúng, không còn "cố định". Thử luôn cả kịch bản cũ (đóng lịch rồi mở lại).
+7. **Sau khi deploy fix lỗi 15/16**: theo dõi log backend production lần đầu khởi động lại — sẽ thấy job `extend_flight_schedule` chạy và tạo thêm rất nhiều chuyến bay (nối dài lịch từ mốc hiện có tới 45 ngày sau), có thể mất vài phút cho lần đầu. Sau đó thử tìm kiếm khứ hồi/một chiều cho ngày xa hơn 30/09/2026 (mốc cũ từng hết dữ liệu) để xác nhận không còn "hết vé" nữa.
 
 ## 8. Danh sách file đã thay đổi
 
@@ -252,3 +323,12 @@ Bạn yêu cầu đẩy các fix lên repo (`https://github.com/huytn6/flight-re
 
 **Vòng 4 (fix CI/pipeline, phát sinh khi đẩy code lên GitHub):**
 - `backend/database/connection.py` (bỏ qua lỗi "duplicate key name" khi chạy lại migration nhiều lần — đang chặn toàn bộ pipeline test/deploy)
+
+**Vòng 5 (lỗi 12, 13, 14, 15 & 16 — chưa commit/push, đang chờ bạn xác nhận):**
+- `frontend/src/components/flight/DateRangePickerPopover.tsx` (tự đưa về "sửa ngày đi" mỗi lần mở lịch — lỗi 12; và ngay sau khi chọn xong 1 cặp ngày, kể cả chưa đóng lịch — lỗi 14)
+- `backend/database/migrations/V4__dedupe_flights_and_prevent_recurrence.sql` (dọn nốt chuyến bay trùng còn sót + thêm ràng buộc chống trùng vĩnh viễn — lỗi 13)
+- `backend/services/flight_schedule_service.py` (mới — hàm dùng chung tạo/nối dài lịch bay theo ngày — lỗi 15/16)
+- `backend/database/seed.py` (bỏ danh sách chuyến bay gõ tay theo ngày lệch, gọi hàm dùng chung ở trên — lỗi 15/16)
+- `backend/services/background_jobs.py` (job mới `extend_flight_schedule`, tự nối dài lịch bay mỗi 6h — lỗi 15/16)
+- `backend/main.py` (đăng ký job `extend_flight_schedule` vào scheduler)
+- `frontend/src/pages/flight-status/index.tsx` (hiện thêm ngày bay trên thẻ kết quả — tránh nhìn như trùng lặp khi 1 mã chuyến bay có nhiều ngày)

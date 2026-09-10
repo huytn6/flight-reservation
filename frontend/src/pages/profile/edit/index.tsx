@@ -25,6 +25,28 @@ export const ProfileEdit: React.FC = () => {
   const [accessibility, setAccessibility] = useState('Not provided');
   const [saving, setSaving] = useState(false);
 
+  const currentYear = new Date().getFullYear();
+  const YEAR_OPTIONS = Array.from({ length: 100 }, (_, i) => String(currentYear - i));
+  const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
+  const daysInMonth = (month: string, year: string): number => {
+    const m = parseInt(month, 10);
+    if (!m) return 31;
+    const y = parseInt(year, 10) || 2000; // fallback to a leap year so Feb 29 stays selectable
+    return new Date(y, m, 0).getDate();
+  };
+  const DAY_OPTIONS = Array.from(
+    { length: daysInMonth(dobMonth, dobYear) },
+    (_, i) => String(i + 1).padStart(2, '0')
+  );
+
+  // Keep the selected day valid when month/year changes (e.g. 31 -> Feb)
+  useEffect(() => {
+    const maxDay = daysInMonth(dobMonth, dobYear);
+    if (dobDay && parseInt(dobDay, 10) > maxDay) {
+      setDobDay(String(maxDay).padStart(2, '0'));
+    }
+  }, [dobMonth, dobYear]);
+
   useEffect(() => {
     if (user?.full_name) {
       const parts = user.full_name.trim().split(' ');
@@ -172,27 +194,36 @@ export const ProfileEdit: React.FC = () => {
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold text-slate-800">Date of birth</span>
             <div className="grid grid-cols-3 gap-2.5">
-              <Input
-                value={dobMonth}
-                onChange={(e) => setDobMonth(e.target.value)}
-                placeholder="MM"
-                maxLength={2}
-                className="text-xs rounded-lg border-slate-300 h-9 text-center"
-              />
-              <Input
-                value={dobDay}
-                onChange={(e) => setDobDay(e.target.value)}
-                placeholder="DD"
-                maxLength={2}
-                className="text-xs rounded-lg border-slate-300 h-9 text-center"
-              />
-              <Input
-                value={dobYear}
-                onChange={(e) => setDobYear(e.target.value)}
-                placeholder="YYYY"
-                maxLength={4}
-                className="text-xs rounded-lg border-slate-300 h-9 text-center"
-              />
+              <Select value={dobDay} onValueChange={setDobDay}>
+                <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
+                  <SelectValue placeholder="Day" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {DAY_OPTIONS.map((d) => (
+                    <SelectItem key={d} value={d}>{d}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={dobMonth} onValueChange={setDobMonth}>
+                <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
+                  <SelectValue placeholder="Month" />
+                </SelectTrigger>
+                <SelectContent>
+                  {MONTH_OPTIONS.map((m) => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={dobYear} onValueChange={setDobYear}>
+                <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
+                  <SelectValue placeholder="Year" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {YEAR_OPTIONS.map((y) => (
+                    <SelectItem key={y} value={y}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
