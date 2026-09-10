@@ -50,7 +50,11 @@ services:
       FLYWAY_PASSWORD: ${MYSQL_MIGRATOR_PASSWORD:?MYSQL_MIGRATOR_PASSWORD is required}
       FLYWAY_SCHEMAS: ${DB_NAME:-flight_booking}
       FLYWAY_BASELINE_ON_MIGRATE: "true"
-    command: migrate
+    # `repair` clears any migration previously recorded as failed (MySQL can't roll
+    # back DDL, so a failed script leaves a "failed" entry that blocks every future
+    # `migrate` until repaired) before actually applying pending migrations. A no-op
+    # when nothing is broken, so safe to run on every deploy.
+    command: repair migrate
     networks: [app]
     logging: *default-logging
 
