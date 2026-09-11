@@ -1090,7 +1090,7 @@ export const Profile: React.FC = () => {
                       <div className="max-h-36 overflow-y-auto flex flex-col gap-2 p-1">
                         {activeTicketDetail.messages.map((m) => (
                           <div key={m.id} className={`p-2.5 rounded-lg text-xs font-normal max-w-[85%] ${
-                            m.sender_type === 'STAFF' ? 'bg-purple-100 text-purple-900 self-start' : 'bg-[#0065eb] text-white self-end'
+                            m.sender_role === 'STAFF' ? 'bg-purple-100 text-purple-900 self-start' : 'bg-[#0065eb] text-white self-end'
                           }`}>
                             <p className="leading-snug">{m.body}</p>
                           </div>

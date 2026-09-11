@@ -28,8 +28,7 @@ export const FlightEditPage: React.FC = () => {
   const loadFlight = async () => {
     setFetching(true);
     try {
-      const res = await adminService.getFlights();
-      const fl = (res.items || []).find((f: any) => f.id === id || f.flight_number === id);
+      const fl = await adminService.getFlight(id!);
       if (fl) {
         setFormData({
           flight_number: fl.flight_number || '',

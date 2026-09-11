@@ -345,8 +345,20 @@ def admin_list_flights(handler):
     auth.require_staff(handler, db)
     page, size = req.get_pagination(handler)
     date_filter = req.get_query_param(handler, 'date', '')
-    rows = flight_repo.list_flights_admin(db, date_filter)
+    q = req.get_query_param(handler, 'q', '')
+    rows = flight_repo.list_flights_admin(db, date_filter, q)
     response.success(handler, paginate([dict(r) for r in rows], page, size))
+
+
+@route('GET', '/admin/flights/{flight_id}')
+def admin_get_flight(handler, flight_id):
+    db = get_db()
+    auth.require_staff(handler, db)
+    flight = flight_repo.get_flight_admin(db, flight_id)
+    if not flight:
+        from core.exceptions import NotFoundError
+        raise NotFoundError('Flight')
+    response.success(handler, dict(flight))
 
 
 @route('POST', '/admin/flights')
@@ -524,7 +536,8 @@ def admin_list_bookings(handler):
     auth.require_staff(handler, db)
     page, size = req.get_pagination(handler)
     status = req.get_query_param(handler, 'status', '')
-    rows = booking_repo.list_all_bookings(db, status or None)
+    q = req.get_query_param(handler, 'q', '')
+    rows = booking_repo.list_all_bookings(db, status or None, q)
     response.success(handler, paginate([dict(r) for r in rows], page, size))
 
 

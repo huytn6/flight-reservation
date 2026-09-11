@@ -86,8 +86,12 @@ export const adminService = {
   },
 
   // Flights & Fares
-  getFlights: async (date = '', page = 1, size = 20): Promise<PaginatedResult<any>> => {
-    return $api.get('/admin/flights', { params: { date, page, size } });
+  getFlights: async (date = '', page = 1, size = 20, q = ''): Promise<PaginatedResult<any>> => {
+    return $api.get('/admin/flights', { params: { date, page, size, q } });
+  },
+
+  getFlight: async (flightId: string): Promise<any> => {
+    return $api.get(`/admin/flights/${flightId}`);
   },
 
   createFlight: async (data: any): Promise<{ id: string }> => {
@@ -135,8 +139,8 @@ export const adminService = {
   },
 
   // Admin Bookings, Payments, Refunds
-  getBookings: async (status = '', page = 1, size = 20): Promise<PaginatedResult<any>> => {
-    return $api.get('/admin/bookings', { params: { status, page, size } });
+  getBookings: async (status = '', page = 1, size = 20, q = ''): Promise<PaginatedResult<any>> => {
+    return $api.get('/admin/bookings', { params: { status, page, size, q } });
   },
 
   getBookingDetail: async (bookingId: string): Promise<any> => {

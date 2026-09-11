@@ -21,8 +21,7 @@ export const FlightDetailPage: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const res = await adminService.getFlights();
-      const fl = (res.items || []).find((f: any) => f.id === id || f.flight_number === id);
+      const fl = await adminService.getFlight(id!);
       setFlight(fl || null);
 
       if (id) {

@@ -18,15 +18,18 @@ export const FlightsListPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    loadFlights();
-  }, []);
+    const handle = setTimeout(() => loadFlights(search), search ? 300 : 0);
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
-  const loadFlights = async () => {
+  const loadFlights = async (q = search) => {
     setLoading(true);
     try {
-      const res = await adminService.getFlights();
+      const res = await adminService.getFlights('', 1, 100, q);
       setFlights(res.items || []);
     } catch (err: any) {
       toast.error(err.message || 'Không thể tải danh sách chuyến bay');
@@ -143,8 +146,10 @@ export const FlightsListPage: React.FC = () => {
         loading={loading}
         searchPlaceholder="Tìm số hiệu chuyến bay, tuyến bay, hãng bay..."
         enableGlobalFilter={true}
+        globalFilter={search}
+        onGlobalFilterChange={setSearch}
         enableRowSelection={true}
-        onRefresh={loadFlights}
+        onRefresh={() => loadFlights()}
       />
 
       <ConfirmDeleteDialog

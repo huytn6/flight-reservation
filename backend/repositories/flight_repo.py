@@ -62,15 +62,29 @@ _LIST_FLIGHTS_ADMIN_SELECT = (
 )
 
 
-def list_flights_admin(db, date_filter=''):
+def list_flights_admin(db, date_filter='', q=''):
+    conditions = []
+    params = []
     if date_filter:
-        return db.execute(
-            _LIST_FLIGHTS_ADMIN_SELECT + "WHERE DATE(f.departure_time)=? ORDER BY f.departure_time DESC",
-            (date_filter,)
-        ).fetchall()
+        conditions.append("DATE(f.departure_time)=?")
+        params.append(date_filter)
+    if q:
+        like = f'%{q}%'
+        conditions.append(
+            "(f.flight_number LIKE ? OR al.name LIKE ? OR dep.iata_code LIKE ? OR arr.iata_code LIKE ? "
+            "OR dep.city LIKE ? OR arr.city LIKE ?)"
+        )
+        params.extend([like, like, like, like, like, like])
+    where = f"WHERE {' AND '.join(conditions)} " if conditions else ""
     return db.execute(
-        _LIST_FLIGHTS_ADMIN_SELECT + "ORDER BY f.departure_time DESC"
+        _LIST_FLIGHTS_ADMIN_SELECT + where + "ORDER BY f.departure_time DESC", params
     ).fetchall()
+
+
+def get_flight_admin(db, flight_id):
+    return db.execute(
+        _LIST_FLIGHTS_ADMIN_SELECT + "WHERE f.id=?", (flight_id,)
+    ).fetchone()
 
 
 def create_flight(db, fid, data: dict):

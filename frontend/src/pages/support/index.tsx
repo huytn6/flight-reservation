@@ -243,7 +243,7 @@ export const Support: React.FC = () => {
                   {/* Messages Conversation Stream */}
                   <div className="flex flex-col gap-4 my-2 max-h-[380px] overflow-y-auto p-4 bg-slate-50/80 rounded-xl border border-slate-100">
                     {activeTicketDetail.messages.map((m) => {
-                      const isStaff = m.sender_type === 'STAFF';
+                      const isStaff = m.sender_role === 'STAFF';
                       return (
                         <div
                           key={m.id}

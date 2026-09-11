@@ -260,12 +260,20 @@ def list_bookings_for_user(db, user_id, status_filter=None):
     ).fetchall()
 
 
-def list_all_bookings(db, status=None):
+def list_all_bookings(db, status=None, q=''):
+    conditions = []
+    params = []
     if status:
-        return db.execute(
-            "SELECT * FROM bookings WHERE status=? ORDER BY created_at DESC", (status,)
-        ).fetchall()
-    return db.execute("SELECT * FROM bookings ORDER BY created_at DESC").fetchall()
+        conditions.append("status=?")
+        params.append(status)
+    if q:
+        like = f'%{q}%'
+        conditions.append("(pnr LIKE ? OR contact_name LIKE ? OR contact_email LIKE ?)")
+        params.extend([like, like, like])
+    where = f"WHERE {' AND '.join(conditions)} " if conditions else ""
+    return db.execute(
+        f"SELECT * FROM bookings {where}ORDER BY created_at DESC", params
+    ).fetchall()
 
 
 # ── Booking segments ──────────────────────────────────────────────────────────

@@ -15,15 +15,18 @@ export const BookingsListPage: React.FC = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    loadBookings();
-  }, []);
+    const handle = setTimeout(() => loadBookings(search), search ? 300 : 0);
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
-  const loadBookings = async () => {
+  const loadBookings = async (q = search) => {
     setLoading(true);
     try {
-      const res = await adminService.getBookings();
+      const res = await adminService.getBookings('', 1, 100, q);
       setBookings(res.items || []);
     } catch (err: any) {
       toast.error(err.message || 'Không thể tải danh sách đơn đặt vé');
@@ -104,8 +107,10 @@ export const BookingsListPage: React.FC = () => {
         loading={loading}
         searchPlaceholder="Tìm mã PNR, tên hành khách, email..."
         enableGlobalFilter={true}
+        globalFilter={search}
+        onGlobalFilterChange={setSearch}
         enableRowSelection={true}
-        onRefresh={loadBookings}
+        onRefresh={() => loadBookings()}
       />
     </div>
   );

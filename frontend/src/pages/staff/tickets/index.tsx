@@ -212,7 +212,7 @@ export const StaffTickets: React.FC = () => {
                 {/* Messages Thread */}
                 <div className="flex flex-col gap-3 my-2 max-h-[380px] overflow-y-auto p-4 bg-slate-50/70 rounded-lg border-0">
                   {activeTicketDetail.messages?.map((m: any) => {
-                    const isStaff = m.sender_type === 'STAFF';
+                    const isStaff = m.sender_role === 'STAFF';
                     return (
                       <div
                         key={m.id}

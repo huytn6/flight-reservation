@@ -14,7 +14,7 @@ export interface SupportMessage {
   id: string;
   ticket_id: string;
   sender_id: string;
-  sender_type: 'CUSTOMER' | 'STAFF';
+  sender_role: 'CUSTOMER' | 'STAFF';
   body: string;
   created_at: string;
 }

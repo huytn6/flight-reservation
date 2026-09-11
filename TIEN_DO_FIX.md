@@ -277,6 +277,41 @@ Bạn yêu cầu đẩy các fix lên repo (`https://github.com/huytn6/flight-re
 
 **Đã kiểm tra:** `tsc -b --noEmit`: 0 lỗi.
 
+## 6.15. Lỗi 16 — Admin trả lời hỗ trợ khách hàng nhưng hiện thành tin nhắn của khách
+
+**Yêu cầu:** bên khách hàng nhắn thì đúng chiều, nhưng khi admin trả lời, tin nhắn của admin lại hiện với nhãn/giao diện "Khách hàng" thay vì "Nhân viên hỗ trợ".
+
+**Nguyên nhân:** backend lưu và trả đúng field `sender_role` (`backend/repositories/support_repo.py`, cột `sender_role` trong bảng `support_messages`) — đã kiểm tra trực tiếp qua API: tin nhắn khách trả `sender_role: "CUSTOMER"`, tin nhắn staff trả `sender_role: "STAFF"`, không hề có field `sender_type`. Nhưng **3 nơi ở frontend đều đọc nhầm field `sender_type`** (không tồn tại → luôn `undefined` → so sánh `=== 'STAFF'` luôn `false` → mọi tin nhắn, kể cả của admin/staff, đều hiện như tin nhắn khách hàng). Lỗi không chỉ ở trang admin mà còn ở cả 2 trang phía khách hàng (dùng chung field sai này).
+
+**Đã sửa (đổi `sender_type` → `sender_role`):**
+- `frontend/src/services/support.ts` (type `SupportMessage`)
+- `frontend/src/pages/staff/tickets/index.tsx` (trang admin/nhân viên xem trong ảnh chụp lỗi)
+- `frontend/src/pages/support/index.tsx` (trang hỗ trợ của khách hàng)
+- `frontend/src/pages/profile/index.tsx` (khung xem hội thoại hỗ trợ trong hồ sơ khách hàng)
+
+**Đã kiểm tra:** gọi API thật (tạo ticket + admin trả lời) trên backend local — xác nhận response trả đúng `sender_role: "CUSTOMER"` / `"STAFF"`, không có `sender_type`.
+
+## 6.16. Lỗi 17 (và 15) — Tạo/tìm chuyến bay xong không thấy trong trang Admin dù tra cứu công khai vẫn ra
+
+**Yêu cầu:** thêm chuyến bay mới (hoặc tra 1 mã chuyến bay có thật, VD `VN1997`) thì trang quản trị "Quản lý Chuyến bay" báo "Không tìm thấy dữ liệu", nhưng trang tra cứu công khai (Theo Dõi Tình Trạng Chuyến Bay) vẫn tìm ra bình thường.
+
+**Nguyên nhân:** `frontend/src/pages/admin/flights/index.tsx` gọi `adminService.getFlights()` **không kèm tham số tìm kiếm** → chỉ tải đúng **20 dòng đầu** (trang 1). Backend sắp toàn bộ bảng `flights` theo `departure_time DESC` rồi mới cắt trang ở tầng Python (không giới hạn ở SQL). Ô tìm kiếm trên trang admin trước giờ chỉ lọc trên 20 dòng **đã tải sẵn** đó (dùng bộ lọc client-side có sẵn của bảng dữ liệu), không hề gọi lại server. Vì có job tự động `extend_flight_schedule` sinh chuyến bay đều đặn mỗi ngày trong 45 ngày × 14 tuyến, bảng `flights` có hàng nghìn dòng — gần như bất kỳ chuyến bay cụ thể nào (mới tạo, hoặc chuyến cũ đã bay xong) đều rơi ngoài 20 dòng đó nên tìm không ra, dù chuyến bay có thật. Cùng lỗi này ở 2 trang con `flights/detail` và `flights/edit` (cũng `getFlights().find(...)` trên cùng 20 dòng) — mở chi tiết/sửa 1 chuyến bay không nằm trong trang 1 sẽ báo "Không tìm thấy chuyến bay".
+
+**Đã sửa tận gốc:**
+- `backend/repositories/flight_repo.py`: `list_flights_admin` nhận thêm tham số `q` — tìm theo số hiệu chuyến bay, tên hãng bay, mã/tên sân bay đi-đến (LIKE, giống hệt cách `search_flight_status` đã làm cho trang tra cứu công khai). Thêm hàm `get_flight_admin(db, flight_id)` lấy đúng 1 chuyến bay theo ID (đầy đủ tên hãng/sân bay như trang danh sách).
+- `backend/controllers/admin_controller.py`: route `GET /admin/flights` đọc thêm query `q`; thêm route mới `GET /admin/flights/{flight_id}` trả về 1 chuyến bay theo ID.
+- `frontend/src/services/admin.ts`: `getFlights()` nhận thêm `q`; thêm hàm `getFlight(flightId)` gọi route mới.
+- `frontend/src/pages/admin/flights/index.tsx`: ô tìm kiếm giờ gọi lại API thật (debounce 300ms) thay vì chỉ lọc trên 20 dòng đã tải.
+- `frontend/src/pages/admin/flights/detail/index.tsx`, `frontend/src/pages/admin/flights/edit/index.tsx`: dùng `adminService.getFlight(id)` (lấy đúng 1 chuyến bay theo ID) thay vì tải danh sách rồi `.find()`.
+
+**Phát hiện thêm khi rà toàn bộ trang admin (đúng yêu cầu kiểm tra rộng hơn):** trang **Quản lý Đặt vé** (`admin/bookings`) bị đúng lỗi kiến trúc y hệt (gọi `getBookings()` không tham số, ô tìm kiếm "Tìm mã PNR, tên hành khách, email..." chỉ lọc trên 20 dòng đầu) — đã sửa cùng cách: `backend/repositories/booking_repo.py` (`list_all_bookings` thêm `q`, tìm theo `pnr`/`contact_name`/`contact_email`), `backend/controllers/admin_controller.py` (route đọc thêm `q`), `frontend/src/services/admin.ts` (`getBookings()` thêm `q`), `frontend/src/pages/admin/bookings/index.tsx` (ô tìm kiếm gọi lại API thật). Các trang admin khác (`customers` đã có sẵn tìm kiếm server-side đúng cách; `airports`/`airlines`/`aircraft-types`/`staff` không phân trang, tải hết nên không dính lỗi này) không phát hiện thêm lỗi tương tự.
+
+**Đã kiểm tra bằng cách gọi API thật trên backend local (không phải chỉ đọc code):** tạo 1 chuyến bay test mới (`ZT999`, SGN→SIN) → xác nhận **không** nằm trong 20 dòng mặc định (tái hiện đúng lỗi) → gọi `GET /admin/flights?q=ZT999` ra đúng chuyến vừa tạo → gọi `GET /admin/flights/{id}` (route mới) trả đúng dữ liệu đầy đủ → đã dọn (hủy) chuyến bay test sau khi kiểm tra xong. `tsc -b --noEmit`: 0 lỗi. Syntax Python cả 3 file backend đã sửa: hợp lệ.
+
+**Chưa xác nhận bằng mắt trên trình duyệt thật** (không có công cụ trình duyệt trong phiên này) — bạn nên tự mở lại đúng kịch bản: tạo chuyến bay mới → tìm ngay trong "Quản lý Chuyến bay" bằng số hiệu vừa tạo; và mở 1 ticket hỗ trợ, trả lời với tài khoản admin/staff, xác nhận tin nhắn của admin hiện đúng bên phải/nhãn "Nhân viên hỗ trợ (Bạn)".
+
+**Lưu ý về tiến độ vòng 5 cũ:** khi rà lại, thấy các fix lỗi 12/13/14/15/16 (mục 6.10–6.13, trước đây ghi "chưa commit, chưa push") **thực ra đã được commit** vào `main` (`29dacaf`, `1786263`) — có vẻ do phiên làm việc song song khác đã đẩy lên. Mục "5" ở phần "Việc còn lại" bên dưới vì vậy đã xong, không cần xác nhận deploy riêng nữa.
+
 ## 7. Việc còn lại / cần bạn làm
 
 1. **Deploy đang bị chặn bởi lỗi hạ tầng, không phải code**: code đã lên GitHub `main` (commit `d3881b7`, `99bbe7d`) và **đã pass toàn bộ test/build**. Chỉ còn bước deploy thật lên server bị lỗi mạng khi kéo Docker image (mục 6.9) — **cần bạn hoặc người quản lý server `103.186.64.195` kiểm tra kết nối tới Docker Hub** (thử `docker pull python:3.12-slim` trực tiếp trên server, kiểm tra DNS/firewall/proxy), rồi vào GitHub Actions bấm "Re-run failed jobs" cho lần chạy mới nhất, hoặc mình chạy lại giúp khi bạn báo đã kiểm tra xong.
@@ -324,7 +359,7 @@ Bạn yêu cầu đẩy các fix lên repo (`https://github.com/huytn6/flight-re
 **Vòng 4 (fix CI/pipeline, phát sinh khi đẩy code lên GitHub):**
 - `backend/database/connection.py` (bỏ qua lỗi "duplicate key name" khi chạy lại migration nhiều lần — đang chặn toàn bộ pipeline test/deploy)
 
-**Vòng 5 (lỗi 12, 13, 14, 15 & 16 — chưa commit/push, đang chờ bạn xác nhận):**
+**Vòng 5 (lỗi 12, 13, 14, 15 & 16 — đã commit lên `main` bởi phiên khác, xem ghi chú ở mục 6.16):**
 - `frontend/src/components/flight/DateRangePickerPopover.tsx` (tự đưa về "sửa ngày đi" mỗi lần mở lịch — lỗi 12; và ngay sau khi chọn xong 1 cặp ngày, kể cả chưa đóng lịch — lỗi 14)
 - `backend/database/migrations/V4__dedupe_flights_and_prevent_recurrence.sql` (dọn nốt chuyến bay trùng còn sót + thêm ràng buộc chống trùng vĩnh viễn — lỗi 13)
 - `backend/services/flight_schedule_service.py` (mới — hàm dùng chung tạo/nối dài lịch bay theo ngày — lỗi 15/16)
@@ -332,3 +367,15 @@ Bạn yêu cầu đẩy các fix lên repo (`https://github.com/huytn6/flight-re
 - `backend/services/background_jobs.py` (job mới `extend_flight_schedule`, tự nối dài lịch bay mỗi 6h — lỗi 15/16)
 - `backend/main.py` (đăng ký job `extend_flight_schedule` vào scheduler)
 - `frontend/src/pages/flight-status/index.tsx` (hiện thêm ngày bay trên thẻ kết quả — tránh nhìn như trùng lặp khi 1 mã chuyến bay có nhiều ngày)
+
+**Vòng 6 (lỗi 16 "chat hiện sai chiều" & lỗi 17/15 "chuyến bay admin tìm không ra" — chưa commit/push):**
+- `frontend/src/services/support.ts` (type `SupportMessage`: `sender_type` → `sender_role` — lỗi 16)
+- `frontend/src/pages/staff/tickets/index.tsx` (đọc đúng `sender_role` để phân biệt tin nhắn admin/khách — lỗi 16)
+- `frontend/src/pages/support/index.tsx`, `frontend/src/pages/profile/index.tsx` (cùng lỗi field sai, ảnh hưởng cả phía khách hàng — lỗi 16)
+- `backend/repositories/flight_repo.py` (`list_flights_admin` thêm tìm kiếm `q` thật; hàm mới `get_flight_admin` lấy 1 chuyến bay theo ID — lỗi 17)
+- `backend/controllers/admin_controller.py` (route `GET /admin/flights` nhận `q`; route mới `GET /admin/flights/{flight_id}` — lỗi 17)
+- `frontend/src/services/admin.ts` (`getFlights`/`getBookings` nhận `q`; hàm mới `getFlight(id)` — lỗi 17)
+- `frontend/src/pages/admin/flights/index.tsx` (ô tìm kiếm gọi API thật thay vì lọc trên 20 dòng đã tải — lỗi 17)
+- `frontend/src/pages/admin/flights/detail/index.tsx`, `frontend/src/pages/admin/flights/edit/index.tsx` (dùng `getFlight(id)` thay vì tải danh sách rồi `.find()` — lỗi 17)
+- `backend/repositories/booking_repo.py` (`list_all_bookings` thêm tìm kiếm `q` thật — phát hiện thêm, cùng lỗi kiến trúc với lỗi 17)
+- `frontend/src/pages/admin/bookings/index.tsx` (ô tìm kiếm gọi API thật — phát hiện thêm)
