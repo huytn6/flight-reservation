@@ -12,7 +12,6 @@ import {
   Search,
   Plus,
   ExternalLink,
-  UserCheck,
   ChevronRight
 } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
@@ -240,7 +239,7 @@ export const AdminLayout: React.FC = () => {
               <Search className="w-3.5 h-3.5 absolute left-2.5 text-slate-400" />
               <Input
                 type="text"
-                placeholder="Tìm chuyến bay, mã đặt chỗ, người dùng..."
+                placeholder="Tìm chuyến bay, mã đặt chỗ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8 pr-12 h-8 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-lg focus:border-[#0065eb] transition-all"
@@ -263,10 +262,6 @@ export const AdminLayout: React.FC = () => {
                   <DropdownMenuItem onClick={() => navigate('/admin/flights/new')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <Plane className="w-3.5 h-3.5 mr-2 text-[#0065eb]" />
                     <span>Tạo chuyến bay mới</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/admin/staff/new')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
-                    <UserCheck className="w-3.5 h-3.5 mr-2 text-blue-600" />
-                    <span>Thêm tài khoản nhân viên</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/admin/bookings')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
                     <CreditCard className="w-3.5 h-3.5 mr-2 text-purple-600" />
