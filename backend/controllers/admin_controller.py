@@ -885,19 +885,23 @@ def admin_dashboard_summary(handler):
     auth.require_staff(handler, db)
     total_bookings = db.execute("SELECT COUNT(*) as cnt FROM bookings").fetchone()['cnt']
     confirmed = db.execute(
-        "SELECT COUNT(*) as cnt FROM bookings WHERE status='CONFIRMED'"
+        "SELECT COUNT(*) as cnt FROM bookings WHERE status IN ('CONFIRMED','COMPLETED')"
+    ).fetchone()['cnt']
+    pending = db.execute(
+        "SELECT COUNT(*) as cnt FROM bookings WHERE status IN ('PENDING_PAYMENT','PAYMENT_PROCESSING','CHANGE_PENDING')"
+    ).fetchone()['cnt']
+    cancelled = db.execute(
+        "SELECT COUNT(*) as cnt FROM bookings WHERE status IN ('CANCELLED','PAYMENT_FAILED')"
     ).fetchone()['cnt']
     revenue = db.execute(
         "SELECT COALESCE(SUM(amount),0) as total FROM payments WHERE status='SUCCESS'"
     ).fetchone()['total']
-    customers = db.execute(
-        "SELECT COUNT(*) as cnt FROM users WHERE role='CUSTOMER'"
-    ).fetchone()['cnt']
     response.success(handler, {
         'total_bookings': total_bookings,
         'confirmed_bookings': confirmed,
+        'pending_bookings': pending,
+        'cancelled_bookings': cancelled,
         'total_revenue': revenue,
-        'total_customers': customers,
         'currency': 'VND',
     })
 
@@ -929,6 +933,48 @@ def admin_dashboard_flights(handler):
     db = get_db()
     auth.require_staff(handler, db)
     rows = db.execute("SELECT status, COUNT(*) as count FROM flights GROUP BY status").fetchall()
+    response.success(handler, [dict(r) for r in rows])
+
+
+@route('GET', '/admin/dashboard/booking-status')
+def admin_dashboard_booking_status(handler):
+    db = get_db()
+    auth.require_staff(handler, db)
+    rows = db.execute("SELECT status, COUNT(*) as count FROM bookings GROUP BY status").fetchall()
+    response.success(handler, [dict(r) for r in rows])
+
+
+@route('GET', '/admin/dashboard/top-routes')
+def admin_dashboard_top_routes(handler):
+    db = get_db()
+    auth.require_staff(handler, db)
+    rows = db.execute(
+        "SELECT dep.iata_code as departure, arr.iata_code as arrival, COUNT(*) as count "
+        "FROM booking_segments bs "
+        "JOIN flights f ON f.id = bs.flight_id "
+        "JOIN airports dep ON dep.id = f.departure_airport_id "
+        "JOIN airports arr ON arr.id = f.arrival_airport_id "
+        "WHERE bs.segment_order = 0 "
+        "GROUP BY dep.iata_code, arr.iata_code "
+        "ORDER BY count DESC LIMIT 5"
+    ).fetchall()
+    response.success(handler, [dict(r) for r in rows])
+
+
+@route('GET', '/admin/dashboard/recent-bookings')
+def admin_dashboard_recent_bookings(handler):
+    db = get_db()
+    auth.require_staff(handler, db)
+    rows = db.execute(
+        "SELECT b.id, b.pnr, b.contact_name, b.status, b.total_amount, b.created_at, "
+        "f.flight_number, f.departure_time, dep.iata_code as dep_iata, arr.iata_code as arr_iata "
+        "FROM bookings b "
+        "LEFT JOIN booking_segments bs ON bs.booking_id = b.id AND bs.segment_order = 0 "
+        "LEFT JOIN flights f ON f.id = bs.flight_id "
+        "LEFT JOIN airports dep ON dep.id = f.departure_airport_id "
+        "LEFT JOIN airports arr ON arr.id = f.arrival_airport_id "
+        "ORDER BY b.created_at DESC LIMIT 10"
+    ).fetchall()
     response.success(handler, [dict(r) for r in rows])
 
 

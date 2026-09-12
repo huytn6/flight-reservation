@@ -81,7 +81,7 @@ export const ChartRadialGrid: React.FC<ChartRadialGridProps> = ({
   className = "",
 }) => {
   return (
-    <Card className={`flex flex-col bg-white border-0 shadow-none ${className}`}>
+    <Card className={`flex flex-col bg-white border-0 shadow-none ring-0 ${className}`}>
       <CardHeader className="items-center pb-0 pt-4">
         <CardTitle className="text-xs font-semibold text-slate-900">{title}</CardTitle>
         <CardDescription className="text-[11px] text-slate-500">{description}</CardDescription>
@@ -101,7 +101,7 @@ export const ChartRadialGrid: React.FC<ChartRadialGridProps> = ({
           </RadialBarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-1 text-xs pt-2 pb-4 text-center">
+      <CardFooter className="flex-col gap-1 text-xs pt-2 pb-4 text-center border-t-0 bg-transparent">
         {footerTrendText && (
           <div className="flex items-center justify-center gap-1.5 font-medium text-[#0065eb]">
             {footerTrendText} <TrendingUp className="h-3.5 w-3.5" />

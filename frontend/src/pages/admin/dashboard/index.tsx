@@ -1,42 +1,55 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { adminService } from '@/services/admin';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { StatusBadge } from '@/components/common/StatusBadge';
+import { CodeBadge } from '@/components/common/CodeBadge';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { getBookingStatusConfig } from '@/constants/status-mappings';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { ChartRadialGrid, ChartRadialShape, ChartPieDonutText } from '@/components/charts';
-import { 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  ResponsiveContainer 
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer
 } from 'recharts';
-import { 
-  DollarSign, 
-  Ticket, 
-  Users, 
-  Plane, 
-  TrendingUp, 
-  Activity, 
-  RefreshCw, 
-  Download, 
-  BarChart3
+import {
+  Ticket,
+  TrendingUp,
+  RefreshCw,
+  BarChart3,
+  Eye
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Fixed color per booking status so charts and badges read consistently.
+const STATUS_COLORS: Record<string, string> = {
+  CONFIRMED: '#0065eb',
+  COMPLETED: '#22c55e',
+  PENDING_PAYMENT: '#f59e0b',
+  PAYMENT_PROCESSING: '#f59e0b',
+  CHANGE_PENDING: '#f59e0b',
+  PAYMENT_FAILED: '#ef4444',
+  CANCELLED: '#ef4444',
+};
+
 export const AdminDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState<any>(null);
   const [bookingMetrics, setBookingMetrics] = useState<any[]>([]);
   const [revenueMetrics, setRevenueMetrics] = useState<any[]>([]);
-  const [flightMetrics, setFlightMetrics] = useState<any[]>([]);
+  const [bookingStatus, setBookingStatus] = useState<any[]>([]);
+  const [topRoutes, setTopRoutes] = useState<any[]>([]);
+  const [recentBookings, setRecentBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('30d');
 
   useEffect(() => {
     loadDashboard();
@@ -45,19 +58,23 @@ export const AdminDashboard: React.FC = () => {
   const loadDashboard = async () => {
     setLoading(true);
     try {
-      const [sumRes, bookRes, revRes, fltRes] = await Promise.all([
+      const [sumRes, bookRes, revRes, statusRes, routeRes, recentRes] = await Promise.all([
         adminService.getDashboardSummary(),
         adminService.getDashboardBookings(),
         adminService.getDashboardRevenue(),
-        adminService.getDashboardFlights(),
+        adminService.getDashboardBookingStatus(),
+        adminService.getDashboardTopRoutes(),
+        adminService.getDashboardRecentBookings(),
       ]);
 
       setSummary(sumRes);
       setBookingMetrics(bookRes || []);
       setRevenueMetrics(revRes || []);
-      setFlightMetrics(fltRes || []);
+      setBookingStatus(statusRes || []);
+      setTopRoutes(routeRes || []);
+      setRecentBookings(recentRes || []);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to load dashboard metrics');
+      toast.error(err.message || 'Không thể tải dữ liệu tổng quan');
     } finally {
       setLoading(false);
     }
@@ -67,7 +84,7 @@ export const AdminDashboard: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
         <RefreshCw className="w-6 h-6 text-[#0065eb] animate-spin" />
-        <p className="text-xs text-slate-500 font-medium">Fetching real-time enterprise metrics & operational status...</p>
+        <p className="text-xs text-slate-500 font-medium">Đang tải dữ liệu tổng quan...</p>
       </div>
     );
   }
@@ -77,197 +94,117 @@ export const AdminDashboard: React.FC = () => {
   // sums only successfully collected payments per day — merge them by date rather than
   // reusing the booking total as "revenue" (which counted CANCELLED/unpaid bookings too).
   const revenueByDate = new Map(revenueMetrics.map((r: any) => [r.date, r.revenue]));
-  const mergedMetrics = bookingMetrics.map((b: any) => ({
+  const chartData = bookingMetrics.map((b: any) => ({
     ...b,
     revenue: revenueByDate.get(b.date) || 0,
+  })).reverse();
+
+  const pieDonutData = bookingStatus.map((item) => {
+    const cfg = getBookingStatusConfig(item.status);
+    return {
+      name: cfg.label,
+      value: item.count || 0,
+      fill: STATUS_COLORS[item.status] || '#94a3b8',
+    };
+  });
+
+  const radialGridData = topRoutes.map((r, idx) => ({
+    name: `${r.departure} → ${r.arrival}`,
+    value: r.count || 0,
+    fill: ['#0065eb', '#3b82f6', '#60a5fa', '#93c5fd', '#cbd5e1'][idx] || '#cbd5e1',
   }));
 
-  // Fallback Data if metrics array is empty
-  const chartData = mergedMetrics.length > 0 ? mergedMetrics : [
-    { date: 'Jul 26', count: 12, revenue: 14200000 },
-    { date: 'Jul 27', count: 18, revenue: 21500000 },
-    { date: 'Jul 28', count: 15, revenue: 18400000 },
-    { date: 'Jul 29', count: 24, revenue: 29800000 },
-    { date: 'Jul 30', count: 28, revenue: 34100000 },
-    { date: 'Jul 31', count: 32, revenue: 41200000 },
-    { date: 'Aug 01', count: 26, revenue: 31000000 },
-    { date: 'Aug 02', count: 35, revenue: 45800000 },
-  ];
-
-  const pieDonutData = flightMetrics.length > 0 ? flightMetrics.map(item => ({
-    name: item.status || 'SCHEDULED',
-    value: item.count || 10,
-    fill: item.status === 'SCHEDULED' ? '#0065eb' : item.status === 'BOARDING' ? '#3b82f6' : item.status === 'DELAYED' ? '#f59e0b' : '#ef4444'
-  })) : [
-    { name: 'SCHEDULED', value: 28, fill: '#0065eb' },
-    { name: 'BOARDING', value: 8, fill: '#3b82f6' },
-    { name: 'DELAYED', value: 4, fill: '#f59e0b' },
-    { name: 'CANCELLED', value: 2, fill: '#ef4444' },
-  ];
-
-  const radialGridData = [
-    { name: "Direct Booking", value: 420, fill: "#0065eb" },
-    { name: "Partner API", value: 310, fill: "#3b82f6" },
-    { name: "Corporate Portal", value: 240, fill: "#60a5fa" },
-    { name: "Mobile App", value: 190, fill: "#93c5fd" },
-    { name: "Kiosk", value: 85, fill: "#cbd5e1" },
-  ];
+  const totalBookings = summary?.total_bookings || 0;
+  const confirmationRate = totalBookings > 0
+    ? Math.round(((summary?.confirmed_bookings || 0) / totalBookings) * 1000) / 10
+    : 0;
 
   const areaChartConfig = {
     revenue: {
-      label: "Revenue (VND)",
+      label: "Doanh thu (VND)",
       color: "#0065eb",
     },
     count: {
-      label: "Bookings",
+      label: "Số vé",
       color: "#64748b",
     },
   } satisfies ChartConfig;
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      
+
       {/* Standardized Enterprise Page Header */}
       <AdminPageHeader
         title="Tổng quan Dashboard"
-        description="Phân tích doanh thu, số lượng vé đặt và tình trạng vận hành các chuyến bay thời gian thực."
+        description="Số lượng vé đã đặt, doanh thu và các chuyến bay được đặt nhiều nhất."
         secondaryActions={
-          <div className="flex items-center gap-2">
-            <Select value={timeRange} onValueChange={setTimeRange}>
-              <SelectTrigger className="h-9 text-xs w-32 bg-white border-slate-200/80 rounded-lg">
-                <SelectValue placeholder="Khoảng thời gian" />
-              </SelectTrigger>
-              <SelectContent className="rounded-lg font-sans">
-                <SelectItem value="24h">24 Giờ Qua</SelectItem>
-                <SelectItem value="7d">7 Ngày Qua</SelectItem>
-                <SelectItem value="30d">30 Ngày Qua</SelectItem>
-                <SelectItem value="qtd">Quý Này</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={loadDashboard}
-              className="h-9 text-xs font-normal border-slate-200/80 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer rounded-lg px-3"
-            >
-              <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
-              Làm mới
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadDashboard}
+            className="h-9 text-xs font-normal border-slate-200/80 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer rounded-lg px-3"
+          >
+            <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+            Làm mới
+          </Button>
         }
-        primaryAction={{
-          label: 'Xuất Dữ Liệu',
-          onClick: () => toast.success('Đã xuất báo cáo dữ liệu thành công'),
-          icon: Download,
-        }}
       />
 
-      {/* Row 1: KPI Hero Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        {/* Card 1: Total Revenue */}
-        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3 relative">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng Doanh Thu Net</span>
-              <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                {summary?.total_revenue?.toLocaleString()} <span className="text-xs font-normal text-slate-500">{summary?.currency || 'VND'}</span>
-              </span>
-            </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-              <DollarSign className="w-4 h-4" />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-            <span className="flex items-center text-[#0065eb] font-semibold gap-1">
-              <TrendingUp className="w-3.5 h-3.5" /> +14.2%
+      {/* Row 1: KPI stat strip — one card, plain dividers, no per-stat color chips */}
+      <Card className="bg-white border-0 rounded-lg shadow-none ring-0 p-0 overflow-hidden">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-x divide-y sm:divide-y-0 divide-slate-100">
+          <div className="p-4 flex flex-col gap-1">
+            <span className="text-xs font-medium text-slate-500">Tổng doanh thu</span>
+            <span className="text-lg sm:text-xl font-semibold text-slate-900">
+              {(summary?.total_revenue || 0).toLocaleString('vi-VN')} <span className="text-xs font-normal text-slate-400">{summary?.currency || 'VND'}</span>
             </span>
-            <span className="text-slate-400 font-normal">so với kỳ trước</span>
-          </div>
-        </Card>
-
-        {/* Card 2: Total Bookings */}
-        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng Số Vé Đã Đặt</span>
-              <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                {summary?.total_bookings} <span className="text-xs font-normal text-slate-500">vé</span>
-              </span>
-            </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-              <Ticket className="w-4 h-4" />
-            </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-            <span className="text-slate-600 font-normal">
-              <strong className="text-[#0065eb] font-semibold">{summary?.confirmed_bookings}</strong> Đã xác nhận
+          <div className="p-4 flex flex-col gap-1">
+            <span className="text-xs font-medium text-slate-500">Tổng số vé</span>
+            <span className="text-lg sm:text-xl font-semibold text-slate-900">
+              {totalBookings} <span className="text-xs font-normal text-slate-400">vé</span>
             </span>
-            <span className="text-slate-400 font-normal">88% Chuyển đổi</span>
-          </div>
-        </Card>
-
-        {/* Card 3: Active Customers */}
-        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Khách Hàng Đăng Ký</span>
-              <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                {summary?.total_customers} <span className="text-xs font-normal text-slate-500">tài khoản</span>
-              </span>
-            </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-              <Users className="w-4 h-4" />
-            </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-            <span className="flex items-center text-[#0065eb] font-semibold gap-1">
-              <Activity className="w-3.5 h-3.5" /> 34 Đang truy cập
+          <div className="p-4 flex flex-col gap-1">
+            <span className="text-xs font-medium text-slate-500">Đã xác nhận</span>
+            <span className="text-lg sm:text-xl font-semibold text-slate-900">
+              {summary?.confirmed_bookings || 0} <span className="text-xs font-normal text-slate-400">vé</span>
             </span>
-            <span className="text-slate-400 font-normal">+128 tuần này</span>
-          </div>
-        </Card>
-
-        {/* Card 4: Flight Operations Status */}
-        <Card className="p-4 bg-white border-0 rounded-lg shadow-none flex flex-col justify-between gap-3">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng Chuyến Bay Vận Hành</span>
-              <span className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                {flightMetrics.reduce((acc, curr) => acc + (curr.count || 0), 0) || 48} <span className="text-xs font-normal text-slate-500">chuyến</span>
-              </span>
-            </div>
-            <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-              <Plane className="w-4 h-4" />
-            </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-            <span className="text-[#0065eb] font-semibold">92% Đúng giờ</span>
-            <span className="text-slate-400 font-normal">{flightMetrics.length} Trạng thái</span>
+          <div className="p-4 flex flex-col gap-1">
+            <span className="text-xs font-medium text-slate-500">Đang chờ xử lý</span>
+            <span className="text-lg sm:text-xl font-semibold text-slate-900">
+              {summary?.pending_bookings || 0} <span className="text-xs font-normal text-slate-400">vé</span>
+            </span>
           </div>
-        </Card>
-      </div>
+
+          <div className="p-4 flex flex-col gap-1">
+            <span className="text-xs font-medium text-slate-500">Đã hủy</span>
+            <span className="text-lg sm:text-xl font-semibold text-slate-900">
+              {summary?.cancelled_bookings || 0} <span className="text-xs font-normal text-slate-400">vé</span>
+            </span>
+          </div>
+        </div>
+      </Card>
 
       {/* Row 2: Interactive Main Area & Bar Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
+
         {/* Left: Interactive Area Chart for Revenue Trend (7/12 cols) */}
-        <Card className="lg:col-span-7 bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-4">
+        <Card className="lg:col-span-7 bg-white border-0 rounded-lg shadow-none ring-0 p-4 sm:p-5 flex flex-col gap-4">
           <CardHeader className="p-0 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
                 <TrendingUp className="w-4 h-4 text-[#0065eb]" /> Xu Hướng Doanh Thu
               </CardTitle>
               <CardDescription className="text-[11px] text-slate-500 mt-0.5">
-                Biểu đồ thể hiện tổng doanh thu và sản lượng vé bán theo từng ngày.
+                Tổng doanh thu và số vé bán theo từng ngày (30 ngày gần nhất).
               </CardDescription>
             </div>
-            <Badge variant="outline" className="bg-blue-50 text-[#0065eb] border-blue-200 text-[10px] font-medium">
+            <Badge className="bg-blue-50 text-[#0065eb] border-transparent text-[10px] font-medium">
               Biểu đồ miền
             </Badge>
           </CardHeader>
@@ -283,18 +220,18 @@ export const AdminDashboard: React.FC = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tickMargin={8} 
-                    tick={{ fontSize: 11, fill: '#64748b' }} 
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tick={{ fontSize: 11, fill: '#64748b' }}
                   />
-                  <YAxis 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`} 
-                    tick={{ fontSize: 11, fill: '#64748b' }} 
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`}
+                    tick={{ fontSize: 11, fill: '#64748b' }}
                   />
                   <ChartTooltip content={<ChartTooltipContent indicator="dot" />} />
                   <Area
@@ -312,17 +249,17 @@ export const AdminDashboard: React.FC = () => {
         </Card>
 
         {/* Right: Daily Ticket Volume Bar Chart (5/12 cols) */}
-        <Card className="lg:col-span-5 bg-white border-0 rounded-lg shadow-none p-4 sm:p-5 flex flex-col gap-4">
+        <Card className="lg:col-span-5 bg-white border-0 rounded-lg shadow-none ring-0 p-4 sm:p-5 flex flex-col gap-4">
           <CardHeader className="p-0 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                <BarChart3 className="w-4 h-4 text-slate-700" /> Lượng Vé Bán Theo Ngày
+                <BarChart3 className="w-4 h-4 text-slate-700" /> Lượng Vé Đặt Theo Ngày
               </CardTitle>
               <CardDescription className="text-[11px] text-slate-500 mt-0.5">
-                Phân bổ số lượng vé bán theo ngày.
+                Số lượng vé đặt mỗi ngày.
               </CardDescription>
             </div>
-            <Badge variant="outline" className="bg-slate-100 text-slate-700 border-slate-200 text-[10px] font-medium">
+            <Badge className="bg-slate-100 text-slate-700 border-transparent text-[10px] font-medium">
               Biểu đồ cột
             </Badge>
           </CardHeader>
@@ -332,17 +269,17 @@ export const AdminDashboard: React.FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis 
-                    dataKey="date" 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tickMargin={8} 
-                    tick={{ fontSize: 11, fill: '#64748b' }} 
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tick={{ fontSize: 11, fill: '#64748b' }}
                   />
-                  <YAxis 
-                    tickLine={false} 
-                    axisLine={false} 
-                    tick={{ fontSize: 11, fill: '#64748b' }} 
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fontSize: 11, fill: '#64748b' }}
                   />
                   <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
                   <Bar dataKey="count" fill="#0065eb" radius={[4, 4, 0, 0]} />
@@ -354,41 +291,115 @@ export const AdminDashboard: React.FC = () => {
 
       </div>
 
-      {/* Row 3: Reusable Custom Charts Grid (3 Columns for the 3 requested charts) */}
+      {/* Row 3: Booking status / confirmation rate / top routes */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Reusable Chart 1: Radial Grid */}
-        <ChartRadialGrid 
-          title="Kênh Đặt Vé Bán Hàng"
-          description="Tỷ lệ phân bổ theo từng kênh bán"
-          data={radialGridData}
-          footerTrendText="Kênh trực tiếp tăng trưởng +12.4%"
-          footerSubText="Phân bổ qua API, Web, App và Kiosk"
-        />
 
-        {/* Reusable Chart 2: Radial Shape Gauge */}
-        <ChartRadialShape 
-          title="Tỷ Lệ Lấp Đầy Chỗ Tàu Bay"
-          description="Tỷ lệ lấp đầy ghế thực tế các chuyến bay"
-          value={88}
-          label="Tỷ lệ %"
-          color="#0065eb"
-          endAngle={280}
-          footerTrendText="Mục tiêu đặt ra: 85.0%"
-          footerSubText="Đã vượt chỉ tiêu sản lượng bay theo tháng"
-        />
-
-        {/* Reusable Chart 3: Donut with Center Text */}
-        <ChartPieDonutText 
-          title="Trạng Thái Vận Hành Đội Bay"
-          description="Phân loại chuyến bay theo mã trạng thái"
+        <ChartPieDonutText
+          title="Vé Theo Trạng Thái"
+          description="Phân loại toàn bộ vé theo trạng thái hiện tại"
           data={pieDonutData}
-          centerLabel="Tổng Chuyến"
-          footerTrendText="92% Tỷ lệ cất cánh đúng giờ"
-          footerSubText="Thống kê tình trạng hoạt động hiện tại"
+          centerLabel="Tổng Vé"
+          footerTrendText={`${confirmationRate}% đã xác nhận thành công`}
+          footerSubText="Tính trên toàn bộ vé trong hệ thống"
+        />
+
+        <ChartRadialShape
+          title="Tỷ Lệ Đặt Vé Thành Công"
+          description="Vé đã xác nhận / tổng số vé"
+          value={confirmationRate}
+          label="%"
+          color="#0065eb"
+          endAngle={(confirmationRate / 100) * 360}
+          footerTrendText={`${summary?.confirmed_bookings || 0} / ${totalBookings} vé đã xác nhận`}
+          footerSubText="Không tính vé đang chờ thanh toán"
+        />
+
+        <ChartRadialGrid
+          title="Tuyến Bay Đặt Nhiều Nhất"
+          description="Top 5 tuyến bay theo số vé đã đặt"
+          data={radialGridData}
+          footerTrendText={radialGridData[0] ? `${radialGridData[0].name} dẫn đầu` : 'Chưa có dữ liệu'}
+          footerSubText="Tính theo chặng bay đầu tiên của mỗi vé"
         />
 
       </div>
+
+      {/* Row 4: Recent bookings table */}
+      <Card className="bg-white border-0 rounded-lg shadow-none ring-0 p-4 sm:p-5 flex flex-col gap-4">
+        <CardHeader className="p-0 flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+              <Ticket className="w-4 h-4 text-[#0065eb]" /> Vé Đặt Gần Đây
+            </CardTitle>
+            <CardDescription className="text-[11px] text-slate-500 mt-0.5">
+              10 vé được đặt mới nhất — chuyến bay và ngày bay tương ứng.
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/admin/bookings')}
+            className="h-8 text-xs font-normal border-slate-200/80 text-slate-700 bg-white hover:bg-slate-50 cursor-pointer rounded-lg px-3"
+          >
+            Xem tất cả
+          </Button>
+        </CardHeader>
+
+        <CardContent className="p-0 pt-2">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-[11px]">Mã PNR</TableHead>
+                <TableHead className="text-[11px]">Khách hàng</TableHead>
+                <TableHead className="text-[11px]">Chuyến bay</TableHead>
+                <TableHead className="text-[11px]">Ngày bay</TableHead>
+                <TableHead className="text-[11px]">Ngày đặt</TableHead>
+                <TableHead className="text-[11px]">Trạng thái</TableHead>
+                <TableHead className="text-[11px] text-right">Số tiền</TableHead>
+                <TableHead className="text-[11px] text-right">Xem</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {recentBookings.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center text-xs text-slate-400 py-6">
+                    Chưa có vé nào được đặt.
+                  </TableCell>
+                </TableRow>
+              )}
+              {recentBookings.map((b) => (
+                <TableRow key={b.id}>
+                  <TableCell><CodeBadge>{b.pnr}</CodeBadge></TableCell>
+                  <TableCell className="text-xs text-slate-700">{b.contact_name}</TableCell>
+                  <TableCell className="text-xs text-slate-700 font-mono">
+                    {b.flight_number ? `${b.flight_number} · ${b.dep_iata || '?'} → ${b.arr_iata || '?'}` : '—'}
+                  </TableCell>
+                  <TableCell className="text-[11px] text-slate-500 font-mono">
+                    {b.departure_time ? new Date(b.departure_time).toLocaleString('vi-VN') : '—'}
+                  </TableCell>
+                  <TableCell className="text-[11px] text-slate-500 font-mono">
+                    {b.created_at ? new Date(b.created_at).toLocaleString('vi-VN') : '—'}
+                  </TableCell>
+                  <TableCell><StatusBadge type="booking" value={b.status} /></TableCell>
+                  <TableCell className="text-xs text-right font-mono font-bold text-slate-900">
+                    {Number(b.total_amount || 0).toLocaleString('vi-VN')} VND
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => navigate(`/admin/bookings/${b.id}`)}
+                      className="w-7 h-7 text-slate-500 hover:text-[#0065eb] hover:bg-blue-50 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };

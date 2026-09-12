@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Plane, 
+import {
+  LayoutDashboard,
+  Plane,
   Building2,
   PlaneTakeoff,
-  CreditCard, 
-  Tag, 
-  FileText, 
+  CreditCard,
   ArrowLeft,
   LogOut,
   User as UserIcon,
@@ -16,7 +13,6 @@ import {
   Plus,
   ExternalLink,
   UserCheck,
-  LifeBuoy,
   ChevronRight
 } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
@@ -79,17 +75,6 @@ export const AdminLayout: React.FC = () => {
       group: 'KINH DOANH & DOANH THU',
       items: [
         { path: '/admin/bookings', label: 'Quản lý Đặt vé', icon: CreditCard, badge: null, roles: ['ADMIN', 'STAFF'] },
-        { path: '/admin/tickets', label: 'Hỗ trợ khách hàng', icon: LifeBuoy, badge: null, roles: ['ADMIN', 'STAFF'] },
-        { path: '/admin/coupons', label: 'Mã giảm giá', icon: Tag, badge: null, roles: ['ADMIN'] },
-        { path: '/admin/cms', label: 'Quản lý Nội dung CMS', icon: FileText, badge: null, roles: ['ADMIN'] },
-      ],
-    },
-    {
-      group: 'TÀI KHOẢN & BẢO MẬT',
-      items: [
-        { path: '/admin/customers', label: 'Tài khoản Khách hàng', icon: Users, badge: null, roles: ['ADMIN'] },
-        { path: '/admin/staff', label: 'Tài khoản Nhân viên', icon: UserCheck, badge: null, roles: ['ADMIN'] },
-        { path: '/admin/audit', label: 'Nhật ký Hệ thống', icon: FileText, badge: null, roles: ['ADMIN'] },
       ],
     },
   ];

@@ -221,7 +221,7 @@ export const adminService = {
   },
 
   // Dashboard & Audit Logs
-  getDashboardSummary: async (): Promise<{ total_bookings: number; confirmed_bookings: number; total_revenue: number; total_customers: number; currency: string }> => {
+  getDashboardSummary: async (): Promise<{ total_bookings: number; confirmed_bookings: number; pending_bookings: number; cancelled_bookings: number; total_revenue: number; currency: string }> => {
     return $api.get('/admin/dashboard/summary');
   },
 
@@ -235,6 +235,18 @@ export const adminService = {
 
   getDashboardFlights: async (): Promise<any[]> => {
     return $api.get('/admin/dashboard/flights');
+  },
+
+  getDashboardBookingStatus: async (): Promise<any[]> => {
+    return $api.get('/admin/dashboard/booking-status');
+  },
+
+  getDashboardTopRoutes: async (): Promise<any[]> => {
+    return $api.get('/admin/dashboard/top-routes');
+  },
+
+  getDashboardRecentBookings: async (): Promise<any[]> => {
+    return $api.get('/admin/dashboard/recent-bookings');
   },
 
   getAuditLogs: async (resource = '', page = 1, size = 20): Promise<PaginatedResult<any>> => {
