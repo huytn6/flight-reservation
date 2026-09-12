@@ -59,7 +59,7 @@ export const AdminLayout: React.FC = () => {
     {
       group: 'THỐNG KÊ & TỔNG QUAN',
       items: [
-        { path: '/admin', label: 'Tổng quan Dashboard', icon: LayoutDashboard, badge: null, roles: ['ADMIN', 'STAFF'] },
+        { path: '/admin', label: 'Tổng quan', icon: LayoutDashboard, badge: null, roles: ['ADMIN', 'STAFF'] },
       ],
     },
     {
