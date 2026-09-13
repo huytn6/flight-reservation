@@ -38,7 +38,6 @@ import {
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
 
-import { DataTableBulkActions } from "./DataTableBulkActions"
 import { DataTableFacetedFilter } from "./DataTableFacetedFilter"
 import { DataTablePagination } from "./DataTablePagination"
 import { DataTableSkeleton } from "./DataTableSkeleton"
@@ -314,15 +313,6 @@ export function DataTable<TData, TValue>({
           {enableColumnVisibility && <DataTableViewOptions table={table} />}
         </div>
       </div>
-
-      {/* Selected Row Bulk Actions Toolbar */}
-      {enableRowSelection && (
-        <DataTableBulkActions
-          selectedRows={table.getSelectedRowModel().rows}
-          bulkActions={bulkActions}
-          onClearSelection={() => table.resetRowSelection()}
-        />
-      )}
 
       {/* Standalone Table Card Container */}
       <div className="rounded-xl border border-slate-200/80 bg-white overflow-hidden shadow-xs">
