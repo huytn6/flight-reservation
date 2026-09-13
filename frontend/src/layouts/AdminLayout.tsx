@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -9,25 +9,21 @@ import {
   ArrowLeft,
   LogOut,
   User as UserIcon,
-  Search,
-  Plus,
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
 import { useAuthStore } from '@/store/use-auth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { 
-  DropdownMenu, 
-  DropdownMenuTrigger, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator 
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import {
   SidebarProvider,
   Sidebar,
@@ -49,7 +45,6 @@ export const AdminLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
-  const [searchQuery, setSearchQuery] = useState('');
 
   const userRole = user?.role || 'STAFF';
 
@@ -234,60 +229,8 @@ export const AdminLayout: React.FC = () => {
               </div>
             </div>
 
-            {/* Center Global Search */}
-            <div className="hidden md:flex items-center relative max-w-xs w-full">
-              <Search className="w-3.5 h-3.5 absolute left-2.5 text-slate-400" />
-              <Input
-                type="text"
-                placeholder="Tìm chuyến bay, mã đặt chỗ..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-12 h-8 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-lg focus:border-[#0065eb] transition-all"
-              />
-              <span className="absolute right-2 text-[10px] font-mono text-slate-400 bg-slate-200/60 px-1 rounded">
-                ⌘K
-              </span>
-            </div>
-
             {/* Right Controls */}
             <div className="flex items-center gap-2.5">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="sm" className="bg-[#0065eb] hover:bg-blue-700 text-white h-8 text-xs font-medium px-3 rounded-lg flex items-center gap-1.5 cursor-pointer shadow-xs">
-                    <Plus className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">Tạo Nhanh</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-white rounded-xl border border-slate-200 shadow-md p-1 text-xs">
-                  <DropdownMenuItem onClick={() => navigate('/admin/flights/new')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
-                    <Plane className="w-3.5 h-3.5 mr-2 text-[#0065eb]" />
-                    <span>Tạo chuyến bay mới</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/admin/bookings')} className="px-2.5 py-1.5 rounded-lg text-xs cursor-pointer">
-                    <CreditCard className="w-3.5 h-3.5 mr-2 text-purple-600" />
-                    <span>Xem danh sách đặt vé</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => navigate('/')}
-                      className="w-8 h-8 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-100 cursor-pointer"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="text-xs bg-slate-900 text-white">
-                    Xem giao diện khách hàng
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center gap-2 p-1 px-2 rounded-lg hover:bg-slate-100 cursor-pointer">

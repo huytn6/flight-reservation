@@ -27,7 +27,7 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  brandName = 'Expedia',
+  brandName = 'uitair',
 }) => {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuthStore();
