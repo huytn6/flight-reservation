@@ -11,7 +11,7 @@ interface SignInFormProps {
 }
 
 export const SignInForm: React.FC<SignInFormProps> = () => {
-  const [mode, setMode] = useState<'LOGIN' | 'REGISTER' | 'FORGOT'>('LOGIN');
+  const [mode, setMode] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -55,10 +55,6 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
         const res = await authService.login({ email, password });
         setAuth(res.user, res.token);
         navigate(returnUrl ? decodeURIComponent(returnUrl) : '/');
-      } else if (mode === 'FORGOT') {
-        await authService.forgotPassword(email);
-        toast.info('Hướng dẫn khôi phục mật khẩu đã được gửi đến email của bạn!');
-        setMode('LOGIN');
       }
     } catch (err: any) {
       setError(err.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.');
@@ -89,15 +85,6 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
           }`}
         >
           Đăng ký
-        </button>
-        <button
-          type="button"
-          onClick={() => { setMode('FORGOT'); setError(null); }}
-          className={`flex-1 py-1.5 rounded-lg transition-colors cursor-pointer ${
-            mode === 'FORGOT' ? 'bg-white shadow-[0_2px_8px_rgb(0,0,0,0.04)] text-[#0065eb] font-semibold' : 'text-slate-600 hover:text-slate-900 font-normal'
-          }`}
-        >
-          Quên mật khẩu
         </button>
       </div>
 
@@ -134,26 +121,24 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
           />
         </div>
 
-        {mode !== 'FORGOT' && (
-          <div>
-            <label className="text-[11px] font-normal text-slate-600 block mb-1">Mật khẩu</label>
-            <Input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full text-xs border-slate-300 focus:border-[#0065eb] rounded-xl h-10"
-              required
-            />
-          </div>
-        )}
+        <div>
+          <label className="text-[11px] font-normal text-slate-600 block mb-1">Mật khẩu</label>
+          <Input
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full text-xs border-slate-300 focus:border-[#0065eb] rounded-xl h-10"
+            required
+          />
+        </div>
 
         <Button
           type="submit"
           disabled={loading}
           className="w-full bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs py-2.5 rounded-full shadow-none transition-colors mt-2 cursor-pointer h-10"
         >
-          {loading ? 'Đang xử lý...' : mode === 'LOGIN' ? 'Đăng nhập' : mode === 'REGISTER' ? 'Tạo tài khoản' : 'Gửi liên kết khôi phục'}
+          {loading ? 'Đang xử lý...' : mode === 'LOGIN' ? 'Đăng nhập' : 'Tạo tài khoản'}
         </Button>
       </form>
 
@@ -163,20 +148,6 @@ export const SignInForm: React.FC<SignInFormProps> = () => {
           Tài khoản thử nghiệm nhanh:
         </p>
         <div className="flex flex-wrap gap-1.5 justify-center">
-          <button
-            type="button"
-            onClick={() => handleFillDemo('customer@example.com', 'Customer@123')}
-            className="px-3 py-1 text-[11px] font-normal bg-slate-50 hover:bg-blue-50 text-slate-600 hover:text-[#0065eb] rounded-full border border-slate-200/80 transition-colors cursor-pointer"
-          >
-            Khách hàng
-          </button>
-          <button
-            type="button"
-            onClick={() => handleFillDemo('staff@example.com', 'Staff@123')}
-            className="px-3 py-1 text-[11px] font-normal bg-slate-50 hover:bg-purple-50 text-slate-600 hover:text-purple-600 rounded-full border border-slate-200/80 transition-colors cursor-pointer"
-          >
-            Nhân viên
-          </button>
           <button
             type="button"
             onClick={() => handleFillDemo('admin@example.com', 'Admin@123')}

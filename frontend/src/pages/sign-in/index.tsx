@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plane } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SignInForm } from '@/components/auth/SignInForm';
 
@@ -22,15 +22,12 @@ export const SignIn: React.FC = () => {
           <ArrowLeft className="w-4 h-4" />
         </Button>
 
-        {/* Expedia Brand Logo */}
+        {/* uitair Brand Logo */}
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-6 h-6 bg-[#ffdb00] flex items-center justify-center rounded-md font-bold text-slate-900">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M7 17L17 7" />
-              <path d="M7 7h10v10" />
-            </svg>
+          <div className="w-6 h-6 bg-gradient-to-tr from-[#0052cc] to-[#0065eb] flex items-center justify-center rounded-md text-white">
+            <Plane className="w-3.5 h-3.5 text-white -rotate-45 fill-white/20" />
           </div>
-          <span className="text-lg font-black tracking-tight text-slate-900 font-sans">Expedia</span>
+          <span className="text-lg font-black tracking-tight text-slate-900 font-sans">uitair</span>
         </div>
 
         <div className="w-9" />
@@ -56,7 +53,7 @@ export const SignIn: React.FC = () => {
 
       {/* Footer */}
       <div className="py-2 text-center text-[11px] text-slate-400">
-        © 2026 Expedia, Inc. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
+        © 2026 uitair. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
       </div>
     </div>
   );
