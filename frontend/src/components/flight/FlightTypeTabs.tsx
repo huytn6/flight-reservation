@@ -26,12 +26,6 @@ export const FlightTypeTabs: React.FC<FlightTypeTabsProps> = ({
         >
           Khứ Hồi
         </TabsTrigger>
-        <TabsTrigger 
-          value="multi-city" 
-          className="rounded-xl px-4 sm:px-6 py-2 text-sm sm:text-base font-normal text-slate-700 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:font-semibold data-[state=active]:shadow-xs transition-all cursor-pointer"
-        >
-          Nhiều Thành Phố
-        </TabsTrigger>
       </TabsList>
     </Tabs>
   );

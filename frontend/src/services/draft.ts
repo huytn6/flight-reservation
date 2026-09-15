@@ -66,13 +66,6 @@ export interface AncillaryItem {
   segment_id?: string;
 }
 
-export interface InsuranceOption {
-  code: string;
-  name: string;
-  price: number;
-  covers: string[];
-}
-
 export interface PriceBreakdown {
   fare_items: Array<{
     fare_id: string;
@@ -166,27 +159,7 @@ export const draftService = {
     return $api.delete(`/booking-drafts/${draftId}/ancillaries/${itemId}`);
   },
 
-  getInsuranceOptions: async (draftId: string): Promise<InsuranceOption[]> => {
-    return $api.get(`/booking-drafts/${draftId}/insurance-options`);
-  },
-
-  addInsurance: async (draftId: string, planCode: string): Promise<{ id: string; plan_name: string; price: number }> => {
-    return $api.post(`/booking-drafts/${draftId}/insurance`, { plan_code: planCode });
-  },
-
-  removeInsurance: async (draftId: string): Promise<void> => {
-    return $api.delete(`/booking-drafts/${draftId}/insurance`);
-  },
-
   getPriceBreakdown: async (draftId: string): Promise<PriceBreakdown> => {
     return $api.get(`/booking-drafts/${draftId}/price-breakdown`);
-  },
-
-  applyCoupon: async (draftId: string, code: string): Promise<{ code: string; discount: number }> => {
-    return $api.post(`/booking-drafts/${draftId}/coupons`, { code });
-  },
-
-  removeCoupon: async (draftId: string, code: string): Promise<void> => {
-    return $api.delete(`/booking-drafts/${draftId}/coupons/${code}`);
   },
 };

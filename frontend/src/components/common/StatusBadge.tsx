@@ -33,18 +33,21 @@ interface StatusBadgeProps {
   value?: string | null;
   className?: string;
   showIcon?: boolean;
+  /** Customer-facing pages show a cancelled booking as "Chờ hoàn tiền" instead of "Đã hủy". */
+  customerView?: boolean;
 }
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
   type,
   value,
   className = '',
+  customerView = false,
 }) => {
   let config: StatusConfig;
 
   switch (type) {
     case 'booking':
-      config = getBookingStatusConfig(value);
+      config = getBookingStatusConfig(value, { customerView });
       break;
     case 'payment':
       config = getPaymentStatusConfig(value);

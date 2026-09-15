@@ -59,8 +59,19 @@ export const BOOKING_STATUS_CONFIG: Record<string, StatusConfig> = {
   },
 };
 
-export const getBookingStatusConfig = (status?: string | null): StatusConfig => {
+// Customer-facing pages show a cancelled booking as "chờ hoàn tiền" (pending refund
+// confirmation) instead of a flat "đã hủy" — admin/staff views keep the plain status
+// by not passing `customerView`, since admin has no refund-confirmation workflow.
+const CANCELLED_PENDING_REFUND_CONFIG: StatusConfig = {
+  label: 'Chờ hoàn tiền',
+  className: 'bg-amber-100 text-amber-800 border-amber-200',
+};
+
+export const getBookingStatusConfig = (status?: string | null, opts?: { customerView?: boolean }): StatusConfig => {
   if (!status) return { label: 'Không rõ', className: 'bg-slate-100 text-slate-600 border-slate-200' };
+  if (opts?.customerView && status === BookingStatusEnum.CANCELLED) {
+    return CANCELLED_PENDING_REFUND_CONFIG;
+  }
   return BOOKING_STATUS_CONFIG[status] || { label: status, className: 'bg-slate-100 text-slate-700 border-slate-200' };
 };
 

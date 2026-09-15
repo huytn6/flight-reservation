@@ -6,17 +6,12 @@ import {
   type DraftPassenger,
   type PriceBreakdown,
 } from '@/services/draft';
-import { userService } from '@/services/user';
 import { bookingService } from '@/services/booking';
 import { useAuthStore } from '@/store/use-auth';
 import { SeatMapSelector } from '@/components/checkout/SeatMapSelector';
 import { PaymentModal } from '@/components/checkout/PaymentModal';
-import type { SavedPassenger } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import {
   Select,
   SelectTrigger,
@@ -25,7 +20,6 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { UserCheck, ShieldCheck, CalendarIcon } from 'lucide-react';
 
 import { PassengerTypeEnum } from '@/types/enums';
 import { DateOfBirthPicker } from '@/components/common/DateOfBirthPicker';
@@ -78,7 +72,6 @@ export const Checkout: React.FC = () => {
   }>({});
   const [passengerErrors, setPassengerErrors] = useState<Array<{ full_name?: string }>>([]);
 
-  const [savedPassengers, setSavedPassengers] = useState<SavedPassenger[]>([]);
   const [breakdown, setBreakdown] = useState<PriceBreakdown | null>(null);
   const [flightId, setFlightId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -122,38 +115,11 @@ export const Checkout: React.FC = () => {
         }
       }
 
-      if (isAuthenticated) {
-        const saved = await userService.getSavedPassengers();
-        setSavedPassengers(saved || []);
-      }
     } catch (err: any) {
       toast.error(err.message || 'Tải thông tin thanh toán thất bại');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAutofillPassenger = (saved: SavedPassenger, index: number) => {
-    setPassengers((prev) => {
-      const next = [...prev];
-      next[index] = {
-        ...next[index],
-        full_name: saved.full_name,
-        date_of_birth: saved.date_of_birth,
-        nationality: saved.nationality || 'VN',
-        passport_number: saved.passport_number,
-        passport_expiry: saved.passport_expiry,
-      };
-      return next;
-    });
-
-    setPassengerErrors((prev) => {
-      const next = [...prev];
-      if (next[index]) next[index] = {};
-      return next;
-    });
-
-    toast.info(`Đã tự động điền hành khách ${index + 1}: ${saved.full_name}`);
   };
 
   const handleAddPassengerInput = () => {
@@ -413,23 +379,6 @@ export const Checkout: React.FC = () => {
                     <span className="font-bold text-slate-900">
                       Hành Khách {idx + 1} ({pax.passenger_type || 'ADULT'})
                     </span>
-
-                    {/* Saved passenger autofill options */}
-                    {savedPassengers.length > 0 && (
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-slate-500">Điền nhanh:</span>
-                        {savedPassengers.map((saved) => (
-                          <button
-                            key={saved.id}
-                            type="button"
-                            onClick={() => handleAutofillPassenger(saved, idx)}
-                            className="px-2 py-0.5 bg-blue-100 text-[#0065eb] hover:bg-blue-200 rounded text-[11px] font-medium cursor-pointer"
-                          >
-                            {saved.full_name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

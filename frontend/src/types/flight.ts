@@ -1,6 +1,6 @@
 import type { Airport } from './airport';
 
-export type FlightType = 'roundtrip' | 'one-way' | 'multi-city';
+export type FlightType = 'roundtrip' | 'one-way';
 
 export interface PassengerState {
   adults: number;

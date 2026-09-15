@@ -107,18 +107,6 @@ export interface FareBaggage {
   extra_baggage_available: boolean;
 }
 
-export interface SavedFlight {
-  id: string;
-  user_id: string;
-  flight_id: string;
-  fare_id?: string;
-  created_at: string;
-  flight_number?: string;
-  origin?: string;
-  destination?: string;
-  departure_time?: string;
-}
-
 export const flightService = {
   searchFlights: async (payload: SearchFlightPayload): Promise<SearchFlightResponse> => {
     return $api.post('/flights/search', payload);
@@ -173,15 +161,4 @@ export const flightService = {
     return $api.get(`/fares/${fareId}/baggage`);
   },
 
-  getSavedFlights: async (): Promise<SavedFlight[]> => {
-    return $api.get('/users/me/saved-flights');
-  },
-
-  saveFlight: async (flightId: string, fareId?: string): Promise<{ id: string }> => {
-    return $api.post('/users/me/saved-flights', { flight_id: flightId, fare_id: fareId });
-  },
-
-  unsaveFlight: async (savedId: string): Promise<void> => {
-    return $api.delete(`/users/me/saved-flights/${savedId}`);
-  },
 };

@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { 
-  Plane, 
-  QrCode, 
-  PlaneTakeoff, 
-  Luggage, 
-  HelpCircle, 
-  User, 
-  LogOut, 
-  Ticket, 
-  Bookmark, 
-  TrendingDown, 
-  ShieldCheck, 
+import {
+  Plane,
+  PlaneTakeoff,
+  Luggage,
+  User,
+  LogOut,
+  ShieldCheck,
   ChevronRight,
   LogIn,
   UserPlus
@@ -60,11 +55,6 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Header Navigation Links */}
         <div className="hidden md:flex items-center gap-6 text-xs font-medium text-slate-700">
-          <Link to="/check-in" className="hover:text-[#0065eb] transition-colors flex items-center gap-1.5 py-1">
-            <QrCode className="w-4 h-4 text-slate-400 hover:text-[#0065eb] transition-colors" />
-            <span>Check-in Trực Tuyến</span>
-          </Link>
-
           <Link to="/flight-status" className="hover:text-[#0065eb] transition-colors flex items-center gap-1.5 py-1">
             <PlaneTakeoff className="w-4 h-4 text-slate-400 hover:text-[#0065eb] transition-colors" />
             <span>Trạng Thái Chuyến Bay</span>
@@ -73,11 +63,6 @@ export const Header: React.FC<HeaderProps> = ({
           <Link to="/my-bookings" className="hover:text-[#0065eb] transition-colors flex items-center gap-1.5 py-1">
             <Luggage className="w-4 h-4 text-slate-400 hover:text-[#0065eb] transition-colors" />
             <span>Chuyến Đi Của Tôi</span>
-          </Link>
-
-          <Link to="/support" className="hover:text-[#0065eb] transition-colors flex items-center gap-1.5 py-1">
-            <HelpCircle className="w-4 h-4 text-slate-400 hover:text-[#0065eb] transition-colors" />
-            <span>Trợ Giúp</span>
           </Link>
         </div>
 
@@ -132,42 +117,6 @@ export const Header: React.FC<HeaderProps> = ({
                       <div className="flex items-center gap-2">
                         <Luggage className="w-3.5 h-3.5 text-blue-600" />
                         <span>Chuyến đi đã đặt</span>
-                      </div>
-                      <ChevronRight className="w-3 h-3 text-slate-400" />
-                    </Link>
-
-                    <Link
-                      to="/saved-flights"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="px-2.5 py-1.5 rounded-lg hover:bg-slate-50 flex items-center justify-between text-slate-700 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Bookmark className="w-3.5 h-3.5 text-rose-500" />
-                        <span>Chuyến bay đã lưu</span>
-                      </div>
-                      <ChevronRight className="w-3 h-3 text-slate-400" />
-                    </Link>
-
-                    <Link
-                      to="/price-alerts"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="px-2.5 py-1.5 rounded-lg hover:bg-slate-50 flex items-center justify-between text-slate-700 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <TrendingDown className="w-3.5 h-3.5 text-amber-500" />
-                        <span>Cảnh báo giá rẻ</span>
-                      </div>
-                      <ChevronRight className="w-3 h-3 text-slate-400" />
-                    </Link>
-
-                    <Link
-                      to="/support"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="px-2.5 py-1.5 rounded-lg hover:bg-slate-50 flex items-center justify-between text-slate-700 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Trợ giúp & Hỗ trợ</span>
                       </div>
                       <ChevronRight className="w-3 h-3 text-slate-400" />
                     </Link>

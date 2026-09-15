@@ -6,7 +6,10 @@ from repositories import user_repo
 from utils.pagination import paginate
 from utils.date_utils import utcnow_iso
 
-ALLOWED_PROFILE_FIELDS = {'full_name', 'phone', 'date_of_birth', 'nationality', 'passport_number', 'passport_expiry'}
+ALLOWED_PROFILE_FIELDS = {
+    'full_name', 'phone', 'date_of_birth', 'nationality', 'passport_number', 'passport_expiry',
+    'gender', 'bio', 'special_assistance',
+}
 ALLOWED_PASSENGER_FIELDS = {'full_name', 'date_of_birth', 'nationality', 'passport_number', 'passport_expiry', 'passenger_type'}
 
 
@@ -14,7 +17,7 @@ def get_profile(user_id: str) -> dict:
     db = get_db()
     row = db.execute(
         "SELECT id,email,full_name,phone,date_of_birth,nationality,passport_number,"
-        "passport_expiry,role,status,created_at FROM users WHERE id=?",
+        "passport_expiry,gender,bio,special_assistance,role,status,created_at FROM users WHERE id=?",
         (user_id,)
     ).fetchone()
     return dict(row)
@@ -30,6 +33,12 @@ def update_profile(user_id: str, data: dict) -> None:
         val.validate_date(updates['date_of_birth'], 'date_of_birth')
         if updates['date_of_birth'] > utcnow_iso()[:10]:
             raise ValidationError('date_of_birth cannot be in the future')
+    if updates.get('gender'):
+        updates['gender'] = val.sanitize_str(updates['gender'], max_len=30, field='gender')
+    if updates.get('bio'):
+        updates['bio'] = val.sanitize_str(updates['bio'], max_len=1000, field='bio')
+    if updates.get('special_assistance'):
+        updates['special_assistance'] = val.sanitize_str(updates['special_assistance'], max_len=255, field='special_assistance')
     db = get_db()
     user_repo.update(db, user_id, updates)
     db.commit()

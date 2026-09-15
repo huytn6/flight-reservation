@@ -7,13 +7,12 @@ import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { ETicketPrintable } from '@/components/booking/ETicketPrintable';
-import { 
-  Printer, 
-  Mail, 
-  ExternalLink, 
-  AlertCircle, 
-  RefreshCw, 
-  XCircle, 
+import {
+  Printer,
+  Mail,
+  AlertCircle,
+  RefreshCw,
+  XCircle,
   FileText,
   ArrowLeft,
   QrCode
@@ -25,8 +24,6 @@ export const BookingDetail: React.FC = () => {
 
   const [detail, setDetail] = useState<BookingDetailType | null>(null);
   const [etickets, setEtickets] = useState<ETicket[]>([]);
-  const [flightStatus, setFlightStatus] = useState<any>(null);
-  const [checkInInfo, setCheckInInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [retryingPayment, setRetryingPayment] = useState(false);
 
@@ -38,19 +35,13 @@ export const BookingDetail: React.FC = () => {
     if (!id) return;
     setLoading(true);
     try {
-      const [bDetail, tickets, statusRes] = await Promise.all([
+      const [bDetail, tickets] = await Promise.all([
         bookingService.getMyBookingDetail(id),
         bookingService.getETickets(id).catch(() => []),
-        bookingService.getFlightStatus(id).catch(() => null),
       ]);
 
       setDetail(bDetail);
       setEtickets(tickets || []);
-      setFlightStatus(statusRes);
-
-      if (bDetail.booking.status === 'CONFIRMED') {
-        bookingService.getCheckInLink(id).then(setCheckInInfo).catch(() => null);
-      }
     } catch (err: any) {
       toast.error(err.message || 'Tải thông tin chi tiết đơn hàng thất bại');
     } finally {
@@ -99,7 +90,7 @@ export const BookingDetail: React.FC = () => {
     if (!id) return;
     try {
       await bookingService.cancelBooking(id, 'Yêu cầu hủy từ người dùng');
-      toast.success('Hủy vé thành công!');
+      toast.success('Yêu cầu hủy vé đã được ghi nhận. Đang chờ xác nhận hoàn tiền.');
       loadBookingAll();
     } catch (err: any) {
       toast.error(err.message || 'Chuyến bay không hỗ trợ hủy');
@@ -126,7 +117,7 @@ export const BookingDetail: React.FC = () => {
   const basePrice = totalAmount - taxFee;
 
   const getStatusBadge = (status: string) => {
-    return <StatusBadge type="booking" value={status} />;
+    return <StatusBadge type="booking" value={status} customerView />;
   };
 
   return (
@@ -205,22 +196,11 @@ export const BookingDetail: React.FC = () => {
           </div>
         </Card>
 
-        {/* Flight Status Banner */}
-        {flightStatus && (
-          <div className="bg-blue-50/80 border border-blue-100 p-4 rounded-xl flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2 text-blue-900">
-              <AlertCircle className="w-4 h-4 text-[#0065eb]" />
-              <span className="font-semibold">Trạng thái bay thực tế:</span>
-              <span>{flightStatus.status_label || 'Đang chuẩn bị khởi hành theo kế hoạch'}</span>
-            </div>
-            {checkInInfo?.check_in_url && (
-              <a
-                href="/check-in"
-                className="text-[#0065eb] font-semibold flex items-center gap-1 hover:underline"
-              >
-                Làm thủ tục Check-in ngay <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
+        {/* Pending Refund Confirmation Banner (customer-facing only) */}
+        {booking.status === 'CANCELLED' && (
+          <div className="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-center gap-2 text-xs text-amber-900">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Yêu cầu hủy vé đã được ghi nhận. Đơn hàng đang <strong>chờ xác nhận hoàn tiền</strong> từ bộ phận hỗ trợ.</span>
           </div>
         )}
 
