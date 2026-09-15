@@ -88,7 +88,7 @@ export const RegisterPage: React.FC = () => {
               <path d="M7 7h10v10" />
             </svg>
           </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">Expedia</span>
+          <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">UITAir</span>
         </Link>
 
         <div className="w-9" />
@@ -195,7 +195,7 @@ export const RegisterPage: React.FC = () => {
               className="mt-0.5 rounded border-slate-300 text-[#0065eb] focus:ring-[#0065eb] cursor-pointer"
             />
             <label htmlFor="terms" className="text-[11px] text-slate-500 leading-tight cursor-pointer">
-              Tôi đồng ý với <Link to="/pages/terms" className="text-[#0065eb] hover:underline">Điều khoản dịch vụ</Link> và <Link to="/pages/privacy" className="text-[#0065eb] hover:underline">Chính sách bảo mật</Link> của Expedia.
+              Tôi đồng ý với <Link to="/pages/terms" className="text-[#0065eb] hover:underline">Điều khoản dịch vụ</Link> và <Link to="/pages/privacy" className="text-[#0065eb] hover:underline">Chính sách bảo mật</Link> của UITAir.
             </label>
           </div>
 
@@ -219,7 +219,7 @@ export const RegisterPage: React.FC = () => {
 
       {/* Footer */}
       <div className="py-2 text-center text-[11px] text-slate-400 font-sans">
-        © 2026 Expedia, Inc. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
+        © 2026 UITAir. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
       </div>
     </div>
   );

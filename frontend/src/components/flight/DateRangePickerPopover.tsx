@@ -13,7 +13,7 @@ interface DateRangePickerPopoverProps {
   singleDate?: boolean;
 }
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEKDAYS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
 const pad2 = (n: number) => String(n).padStart(2, '0');
 
@@ -27,7 +27,7 @@ const parseIso = (iso: string): Date => {
 
 const formatShort = (iso: string): string => {
   if (!iso) return '';
-  return parseIso(iso).toLocaleDateString('en-US', {
+  return parseIso(iso).toLocaleDateString('vi-VN', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -36,11 +36,19 @@ const formatShort = (iso: string): string => {
 
 const formatTriggerLabel = (iso: string): string => {
   if (!iso) return '';
-  return parseIso(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return parseIso(iso).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
 };
 
 const monthLabel = (year: number, monthIndex: number): string =>
-  new Date(year, monthIndex, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  new Date(year, monthIndex, 1).toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
+
+const formatAccessibleDate = (iso: string): string =>
+  parseIso(iso).toLocaleDateString('vi-VN', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
 /** Builds a 7-column grid (with leading blanks) for the given month. */
 const buildMonthCells = (year: number, monthIndex: number): (number | null)[] => {
@@ -150,6 +158,7 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
               size="icon"
               onClick={goPrevMonth}
               disabled={isCurrentMonthOrEarlier}
+              aria-label="Tháng trước"
               className="w-7 h-7 p-1 rounded-full disabled:opacity-30"
             >
               <ChevronLeft className="w-4 h-4 text-blue-600" />
@@ -164,6 +173,7 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
               variant="ghost"
               size="icon"
               onClick={goNextMonth}
+              aria-label="Tháng sau"
               className="w-7 h-7 p-1 rounded-full"
             >
               <ChevronRight className="w-4 h-4 text-blue-600" />
@@ -191,6 +201,7 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
                 type="button"
                 disabled={isPast}
                 onClick={() => handleDayClick(dayIso)}
+                aria-label={formatAccessibleDate(dayIso)}
                 className={`h-8 w-8 rounded-full flex items-center justify-center font-medium transition-colors ${
                   isPast
                     ? 'text-gray-300 cursor-not-allowed'
@@ -216,7 +227,7 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
         <div className="w-full border border-gray-400 rounded-xl px-3 py-2 flex items-center gap-2.5 bg-white hover:border-gray-600 cursor-pointer h-[56px]">
           <CalendarIcon className="w-5 h-5 text-gray-600 shrink-0" />
           <div className="flex flex-col text-left overflow-hidden">
-            <span className="text-[11px] font-medium text-gray-500 leading-tight">Dates</span>
+            <span className="text-[11px] font-medium text-gray-500 leading-tight">Ngày bay</span>
             <span className="text-xs sm:text-sm font-semibold text-gray-900 truncate whitespace-nowrap">
               {singleDate
                 ? formatTriggerLabel(dateRange.startDate)
@@ -272,7 +283,7 @@ export const DateRangePickerPopover: React.FC<DateRangePickerPopoverProps> = ({
             onClick={() => onOpenChange(false)}
             className="bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-full cursor-pointer"
           >
-            Done
+            Hoàn tất
           </Button>
         </div>
       </PopoverContent>

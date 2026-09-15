@@ -13,6 +13,19 @@ ALLOWED_PROFILE_FIELDS = {
 ALLOWED_PASSENGER_FIELDS = {'full_name', 'date_of_birth', 'nationality', 'passport_number', 'passport_expiry', 'passenger_type'}
 
 
+def _validate_required_identity(data: dict) -> None:
+    if not data.get('date_of_birth'):
+        raise ValidationError('Vui lòng nhập ngày sinh')
+    if not str(data.get('passport_number') or '').strip():
+        raise ValidationError('Vui lòng nhập Số Hộ chiếu / CCCD')
+    val.validate_date(data['date_of_birth'], 'ngày sinh')
+    if data['date_of_birth'] > utcnow_iso()[:10]:
+        raise ValidationError('Ngày sinh không được lớn hơn ngày hiện tại')
+    data['passport_number'] = val.sanitize_str(
+        data['passport_number'], max_len=20, field='Số Hộ chiếu / CCCD'
+    )
+
+
 def get_profile(user_id: str) -> dict:
     db = get_db()
     row = db.execute(
@@ -26,13 +39,10 @@ def get_profile(user_id: str) -> dict:
 def update_profile(user_id: str, data: dict) -> None:
     updates = {k: v for k, v in data.items() if k in ALLOWED_PROFILE_FIELDS}
     if not updates:
-        raise ValidationError('No updatable fields provided')
+        raise ValidationError('Không có thông tin nào để cập nhật')
+    _validate_required_identity(updates)
     if updates.get('phone'):
         updates['phone'] = val.validate_phone(updates['phone'])
-    if updates.get('date_of_birth'):
-        val.validate_date(updates['date_of_birth'], 'date_of_birth')
-        if updates['date_of_birth'] > utcnow_iso()[:10]:
-            raise ValidationError('date_of_birth cannot be in the future')
     if updates.get('gender'):
         updates['gender'] = val.sanitize_str(updates['gender'], max_len=30, field='gender')
     if updates.get('bio'):
@@ -68,7 +78,8 @@ def get_saved_passengers(user_id: str) -> list:
 
 def add_saved_passenger(user_id: str, data: dict) -> dict:
     if not data.get('full_name'):
-        raise ValidationError('full_name is required')
+        raise ValidationError('Vui lòng nhập họ tên hành khách')
+    _validate_required_identity(data)
     db = get_db()
     pid = str(uuid.uuid4())
     user_repo.create_saved_passenger(db, pid, user_id, data)
@@ -82,6 +93,10 @@ def update_saved_passenger(user_id: str, passenger_id: str, data: dict) -> None:
     if not row:
         raise NotFoundError('Saved passenger')
     updates = {k: v for k, v in data.items() if k in ALLOWED_PASSENGER_FIELDS}
+    merged = {**dict(row), **updates}
+    _validate_required_identity(merged)
+    updates['date_of_birth'] = merged['date_of_birth']
+    updates['passport_number'] = merged['passport_number']
     user_repo.update_saved_passenger(db, passenger_id, updates)
     db.commit()
 

@@ -23,7 +23,7 @@ export const ETicketPrintable: React.FC<ETicketPrintableProps> = ({ detail, etic
             <Plane className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-slate-900 uppercase">Expedia Flight Reservation</h1>
+            <h1 className="text-lg font-black tracking-tight text-slate-900 uppercase">UITAir Flight Reservation</h1>
             <p className="text-[11px] text-slate-500 font-medium">Vé Máy Bay Điện Tử & Xác Nhận Đặt Chỗ (E-Ticket Receipt)</p>
           </div>
         </div>

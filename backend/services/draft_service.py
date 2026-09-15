@@ -38,19 +38,19 @@ def _get_draft_or_403(db, draft_id: str, user_id: str | None, role: str | None):
 
 def create_draft(user_id: str, flights: list) -> dict:
     if not isinstance(flights, list) or not flights:
-        raise ValidationError('flights must be a non-empty list')
+        raise ValidationError('Danh sách chuyến bay không được để trống')
     db = get_db()
     offer_snapshot = []
     for item in flights:
         fare_id = item.get('fare_id')
         flight_id = item.get('flight_id')
         if not fare_id or not flight_id:
-            raise ValidationError('Each flight item needs flight_id and fare_id')
+            raise ValidationError('Mỗi chuyến bay phải có mã chuyến bay và mã hạng vé')
         fare = flight_repo.find_fare_with_flight(db, fare_id, flight_id)
         if not fare:
             raise NotFoundError('Fare')
         if fare['available_seats'] <= 0:
-            raise ConflictError('No seats available for selected fare', 'SEATS_UNAVAILABLE')
+            raise ConflictError('Hạng vé đã chọn không còn chỗ trống', 'SEATS_UNAVAILABLE')
         offer_snapshot.append(dict(fare))
 
     did = str(uuid.uuid4())
@@ -101,7 +101,7 @@ def reprice_draft(draft_id: str, user_id: str, role: str) -> dict:
             (item['id'],)
         ).fetchone()
         if not fare:
-            raise ConflictError('Fare no longer available', 'FARE_UNAVAILABLE')
+            raise ConflictError('Hạng vé đã chọn không còn khả dụng', 'FARE_UNAVAILABLE')
         current = dict(fare)
         if current['base_price'] != item['base_price']:
             price_changed = True
@@ -127,7 +127,7 @@ def get_passengers(draft_id: str, user_id: str, role: str) -> list:
 
 def save_passengers(draft_id: str, user_id: str, role: str, passengers: list) -> None:
     if not passengers:
-        raise ValidationError('passengers list is required')
+        raise ValidationError('Vui lòng nhập ít nhất một hành khách')
     db = get_db()
     draft = _get_draft_or_403(db, draft_id, user_id, role)
 
@@ -137,14 +137,20 @@ def save_passengers(draft_id: str, user_id: str, role: str, passengers: list) ->
     ).fetchone()
     dep_date = first_flight['departure_time'][:10] if first_flight else datetime.date.today().isoformat()
 
-    booking_repo.clear_draft_passengers(db, draft_id)
     adult_count = 0
     infant_count = 0
     for i, pax in enumerate(passengers):
         val.require_fields(pax, 'full_name', 'passenger_type')
+        if not pax.get('date_of_birth'):
+            raise ValidationError(f'Vui lòng nhập ngày sinh cho hành khách {i + 1}')
+        if not str(pax.get('passport_number') or '').strip():
+            raise ValidationError(f'Vui lòng nhập Số Hộ chiếu / CCCD cho hành khách {i + 1}')
+        pax['passport_number'] = val.sanitize_str(
+            pax['passport_number'], max_len=20, field='Số Hộ chiếu / CCCD'
+        )
         ptype = pax['passenger_type'].upper()
         if ptype not in ('ADULT', 'CHILD', 'INFANT'):
-            raise ValidationError(f'Invalid passenger_type: {ptype}')
+            raise ValidationError(f'Loại hành khách không hợp lệ: {ptype}')
         if ptype == 'ADULT':
             adult_count += 1
         if ptype == 'INFANT':
@@ -153,17 +159,21 @@ def save_passengers(draft_id: str, user_id: str, role: str, passengers: list) ->
         if dob:
             val.validate_date(dob, 'date_of_birth')
             if dob > utcnow_iso()[:10]:
-                raise ValidationError('date_of_birth cannot be in the future')
+                raise ValidationError('Ngày sinh không được lớn hơn ngày hiện tại')
         expiry = pax.get('passport_expiry')
         if expiry and len(expiry) > 10:
-            raise ValidationError('passport_expiry must be in YYYY-MM-DD format')
-        booking_repo.add_draft_passenger(
-            db, draft_id, i, ptype, pax['full_name'], pax.get('date_of_birth'),
-            pax.get('nationality'), pax.get('passport_number'), pax.get('passport_expiry')
-        )
+            raise ValidationError('Ngày hết hạn hộ chiếu phải có định dạng YYYY-MM-DD')
 
     if infant_count > adult_count:
-        raise BusinessError('INFANT_EXCEEDS_ADULT', 'Number of infants cannot exceed number of adults')
+        raise BusinessError('INFANT_EXCEEDS_ADULT', 'Số trẻ sơ sinh không được vượt quá số người lớn')
+
+    booking_repo.clear_draft_passengers(db, draft_id)
+    for i, pax in enumerate(passengers):
+        ptype = pax['passenger_type'].upper()
+        booking_repo.add_draft_passenger(
+            db, draft_id, i, ptype, pax['full_name'], pax.get('date_of_birth'),
+            pax.get('nationality'), pax['passport_number'], pax.get('passport_expiry')
+        )
 
     booking_repo.update_draft(db, draft_id)
     db.commit()
@@ -209,7 +219,7 @@ def hold_seat(draft_id: str, user_id: str, role: str, seat_id: str, pax_idx: int
             if seat['status'] not in ('AVAILABLE',):
                 held = booking_repo.find_active_hold_for_seat(db, draft_id, seat_id)
                 if not held:
-                    raise ConflictError(f'Seat {seat["seat_number"]} is not available', 'SEAT_NOT_AVAILABLE')
+                    raise ConflictError(f'Ghế {seat["seat_number"]} không còn khả dụng', 'SEAT_NOT_AVAILABLE')
 
             old_hold = booking_repo.find_active_hold_for_passenger(db, draft_id, pax_idx)
             if old_hold:
@@ -221,7 +231,7 @@ def hold_seat(draft_id: str, user_id: str, role: str, seat_id: str, pax_idx: int
             flight_repo.update_seat_status(db, seat_id, 'HELD')
     except mysql.connector.Error as exc:
         if exc.errno in (1213, 1205):  # deadlock / lock wait timeout
-            raise ConflictError('Seat is being held by another request, please try again', 'SEAT_NOT_AVAILABLE')
+            raise ConflictError('Ghế đang được một hành khách khác giữ, vui lòng thử lại', 'SEAT_NOT_AVAILABLE')
         raise
 
     return {'id': hold_id, 'expires_at': expires.isoformat()}
@@ -240,7 +250,7 @@ def change_seat_hold(draft_id: str, user_id: str, role: str, hold_id: str, new_s
     with transaction(db):
         seat = flight_repo.find_seat(db, new_seat_id)
         if not seat or seat['status'] != 'AVAILABLE':
-            raise ConflictError('New seat is not available', 'SEAT_NOT_AVAILABLE')
+            raise ConflictError('Ghế mới đã được chọn hoặc không còn khả dụng', 'SEAT_NOT_AVAILABLE')
         booking_repo.release_seat_hold(db, hold_id)
         flight_repo.update_seat_status(db, old_hold['seat_id'], 'AVAILABLE')
         new_hold_id = str(uuid.uuid4())
@@ -301,7 +311,7 @@ def delete_ancillary(draft_id: str, user_id: str, role: str, item_id: str) -> No
 
 def add_insurance(draft_id: str, user_id: str, role: str, plan_code: str) -> dict:
     if plan_code not in INSURANCE_PLANS:
-        raise ValidationError('Invalid plan code')
+        raise ValidationError('Gói bảo hiểm không hợp lệ')
     db = get_db()
     _get_draft_or_403(db, draft_id, user_id, role)
     name, price = INSURANCE_PLANS[plan_code]
@@ -377,9 +387,9 @@ def apply_coupon(draft_id: str, user_id: str, role: str, code: str) -> dict:
         (code.upper(), now, now)
     ).fetchone()
     if not coupon:
-        raise ValidationError('Invalid or expired coupon code')
+        raise ValidationError('Mã giảm giá không hợp lệ hoặc đã hết hạn')
     if coupon['max_uses'] and coupon['used_count'] >= coupon['max_uses']:
-        raise ValidationError('Coupon usage limit reached')
+        raise ValidationError('Mã giảm giá đã đạt giới hạn sử dụng')
 
     offer = json.loads(draft['flight_offer_json'])
     passengers = booking_repo.get_draft_passengers(db, draft_id)
@@ -387,7 +397,7 @@ def apply_coupon(draft_id: str, user_id: str, role: str, code: str) -> dict:
     subtotal = sum((f['base_price'] + f['tax'] + f['fees']) for f in offer) * pax_count
 
     if coupon['min_amount'] and subtotal < coupon['min_amount']:
-        raise ValidationError(f'Minimum amount {coupon["min_amount"]:,} VND required')
+        raise ValidationError(f'Đơn hàng phải có giá trị tối thiểu {coupon["min_amount"]:,} VND')
 
     discount = calc_discount(subtotal, dict(coupon))
     booking_repo.delete_draft_ancillaries_by_type(db, draft_id, 'COUPON')

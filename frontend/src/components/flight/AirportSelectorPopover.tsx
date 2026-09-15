@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { MapPin, Building2, Search } from 'lucide-react';
 import type { Airport } from '../../types/airport';
 import { catalogService } from '@/services/catalog';
+
+const normalizeSearchText = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
 
 interface AirportSelectorPopoverProps {
   label: string;
@@ -26,32 +34,30 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [airports, setAirports] = useState<Airport[]>(initialAirports || []);
+  const requestIdRef = useRef(0);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadAirports();
-    }
-  }, [isOpen, searchQuery]);
-
-  const loadAirports = async () => {
+  const loadAirports = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
     try {
       if (searchQuery.trim()) {
         const autocompletes = await catalogService.autocompleteAirports(searchQuery);
         if (autocompletes && autocompletes.length > 0) {
-          setAirports(
-            autocompletes.map((ap: any) => ({
-              code: ap.code || ap.iata_code,
-              city: ap.city,
-              name: ap.name,
-              sublabel: `${ap.name}, ${ap.country || ''}`,
-            }))
-          );
+          if (requestId === requestIdRef.current) {
+            setAirports(
+              autocompletes.map((ap: any) => ({
+                code: ap.code || ap.iata_code,
+                city: ap.city,
+                name: ap.name,
+                sublabel: `${ap.name}, ${ap.country || ''}`,
+              }))
+            );
+          }
           return;
         }
       }
       const res = await catalogService.getAirports(searchQuery);
       const items = res.items || (Array.isArray(res) ? res : []);
-      if (items.length > 0) {
+      if (requestId === requestIdRef.current) {
         setAirports(
           items.map((ap: any) => ({
             code: ap.code || ap.iata_code,
@@ -64,14 +70,21 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
     } catch {
       // Keep initial fallback
     }
-  };
+  }, [searchQuery]);
 
-  const filteredAirports = airports.filter(
-    (a) =>
-      a.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    if (isOpen) {
+      void loadAirports();
+    }
+  }, [isOpen, loadAirports]);
+
+  const normalizedQuery = normalizeSearchText(searchQuery);
+  const filteredAirports = airports.filter((airport) => {
+    if (!normalizedQuery) return true;
+    return [airport.city, airport.code, airport.name, airport.sublabel].some((value) =>
+      normalizeSearchText(value).includes(normalizedQuery)
+    );
+  });
 
   return (
     <Popover open={isOpen} onOpenChange={onOpenChange}>
@@ -93,7 +106,7 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
       <PopoverContent className="w-full sm:w-[380px] bg-white rounded-xl shadow-2xl border border-gray-200 p-0 overflow-hidden" align="start">
         <div className="p-2.5 border-b border-gray-100 bg-gray-50/50">
           <Input
-            placeholder="Search airport or city..."
+            placeholder="Tìm sân bay hoặc thành phố..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full text-xs sm:text-sm"
@@ -119,10 +132,12 @@ export const AirportSelectorPopover: React.FC<AirportSelectorPopoverProps> = ({
               </div>
             </button>
           ))}
-          <div className="p-3 flex items-center gap-3 text-gray-700 text-xs sm:text-sm font-medium hover:bg-gray-50 cursor-pointer">
-            <Search className="w-4 h-4 text-gray-500 shrink-0" />
-            <span>Search for destination...</span>
-          </div>
+          {filteredAirports.length === 0 && (
+            <div className="p-4 flex items-center justify-center gap-2 text-gray-500 text-xs sm:text-sm">
+              <Search className="w-4 h-4 shrink-0" />
+              <span>Không tìm thấy sân bay phù hợp</span>
+            </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>

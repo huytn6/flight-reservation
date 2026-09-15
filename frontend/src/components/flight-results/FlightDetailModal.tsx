@@ -38,7 +38,7 @@ export const FlightDetailModal: React.FC<FlightDetailModalProps> = ({
   flight,
   segment,
 }) => {
-  // Extract variables with intelligent fallbacks matching Expedia screenshot
+  // Extract variables with intelligent fallbacks matching the UITAir design
   const airline = flight?.airline || segment?.airline || 'Vietjet Air';
   const flightNumber = flight?.flightNumber || 'VJ146';
   

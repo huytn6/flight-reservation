@@ -187,7 +187,7 @@ def check_in_link(handler, booking_id):
     booking = result['booking']
     if booking['status'] != 'CONFIRMED':
         from core.exceptions import BusinessError
-        raise BusinessError('NOT_CONFIRMED', 'Booking must be confirmed for check-in')
+        raise BusinessError('NOT_CONFIRMED', 'Đơn đặt vé phải được xác nhận trước khi check-in')
     response.success(handler, {
         'check_in_url': f'https://demo-airline.example.com/check-in/{booking["pnr"]}',
         'opens_at': '24 hours before departure',
@@ -229,7 +229,7 @@ def change_search(handler, booking_id):
     booking_result = booking_service.get_booking(booking_id, user)
     if booking_result['booking']['status'] != 'CONFIRMED':
         from core.exceptions import BusinessError
-        raise BusinessError('CANNOT_CHANGE', 'Booking must be confirmed to change')
+        raise BusinessError('CANNOT_CHANGE', 'Đơn đặt vé phải được xác nhận trước khi thay đổi chuyến bay')
     data = req.parse_json_body(handler)
     result = flight_service.search_flights(data)
     response.success(handler, result)

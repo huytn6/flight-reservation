@@ -111,7 +111,7 @@ def change_seat_hold(handler, draft_id, hold_id):
     data = req.parse_json_body(handler)
     if not data.get('seat_id'):
         from core.exceptions import ValidationError
-        raise ValidationError('seat_id required')
+        raise ValidationError('Vui lòng chọn ghế')
     result = draft_service.change_seat_hold(draft_id, user['user_id'], user['role'],
                                             hold_id, data['seat_id'])
     response.success(handler, result)

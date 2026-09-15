@@ -71,10 +71,10 @@ def create_payment(booking_id: str, user_ctx: dict, payment_method: str,
 
     booking = _assert_booking_access(db, booking_id, user_ctx)
     if booking['status'] != 'PENDING_PAYMENT':
-        raise BusinessError('PAYMENT_NOT_ALLOWED', f'Booking status is {booking["status"]}')
+        raise BusinessError('PAYMENT_NOT_ALLOWED', 'Đơn đặt vé hiện chưa sẵn sàng để thanh toán')
     if payment_method not in ('CARD', 'MOMO', 'BANK_TRANSFER'):
         from core.exceptions import ValidationError
-        raise ValidationError('Invalid payment method')
+        raise ValidationError('Phương thức thanh toán không hợp lệ')
 
     pid = str(uuid.uuid4())
 
@@ -109,7 +109,7 @@ def simulate_success(payment_id: str, user_ctx: dict, ip: str) -> dict:
         raise NotFoundError('Payment')
     _assert_booking_access(db, payment['booking_id'], user_ctx)
     if payment['status'] != 'PENDING':
-        raise BusinessError('PAYMENT_ALREADY_PROCESSED', f'Payment status is {payment["status"]}')
+        raise BusinessError('PAYMENT_ALREADY_PROCESSED', 'Giao dịch thanh toán đã được xử lý')
 
     with transaction(db):
         payment_repo.update_payment_status(db, payment_id, 'SUCCESS')
@@ -117,7 +117,7 @@ def simulate_success(payment_id: str, user_ctx: dict, ip: str) -> dict:
         pnr = _confirm_booking(db, payment['booking_id'], user_ctx['user_id'])
         audit_repo.log(db, user_ctx['user_id'], 'PAYMENT_SUCCESS', 'payments', payment_id, ip=ip)
 
-    return {'status': 'SUCCESS', 'pnr': pnr, 'message': 'Payment simulated successfully'}
+    return {'status': 'SUCCESS', 'pnr': pnr, 'message': 'Thanh toán thành công'}
 
 
 def simulate_failure(payment_id: str, user_ctx: dict, ip: str) -> dict:
@@ -127,7 +127,7 @@ def simulate_failure(payment_id: str, user_ctx: dict, ip: str) -> dict:
         raise NotFoundError('Payment')
     booking = _assert_booking_access(db, payment['booking_id'], user_ctx)
     if payment['status'] != 'PENDING':
-        raise BusinessError('PAYMENT_ALREADY_PROCESSED', 'Payment already processed')
+        raise BusinessError('PAYMENT_ALREADY_PROCESSED', 'Giao dịch thanh toán đã được xử lý')
 
     with transaction(db):
         payment_repo.update_payment_status(db, payment_id, 'FAILED')
@@ -145,7 +145,7 @@ def retry_payment(payment_id: str, user_ctx: dict) -> dict:
     if not payment:
         raise NotFoundError('Payment')
     if payment['status'] not in ('FAILED',):
-        raise BusinessError('CANNOT_RETRY', f'Payment in status {payment["status"]} cannot be retried')
+        raise BusinessError('CANNOT_RETRY', 'Chỉ có thể thử lại giao dịch thanh toán đã thất bại')
 
     booking = booking_repo.find_booking(db, payment['booking_id'])
 
@@ -155,7 +155,7 @@ def retry_payment(payment_id: str, user_ctx: dict) -> dict:
         payment_repo.add_transaction(db, payment_id, 'RETRY', payment['amount'])
         booking_repo.add_status_history(db, payment['booking_id'], booking['status'], 'PAYMENT_PROCESSING')
 
-    return {'id': payment_id, 'status': 'PENDING', 'message': 'Payment retried'}
+    return {'id': payment_id, 'status': 'PENDING', 'message': 'Đã khởi tạo lại giao dịch thanh toán'}
 
 
 def get_transactions(payment_id: str, user_ctx: dict) -> list:

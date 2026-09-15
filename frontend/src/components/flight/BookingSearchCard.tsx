@@ -69,7 +69,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
       leavingFrom: leavingFrom.code,
       leavingFromCity: leavingFrom.city,
       goingTo: goingTo?.code || 'HAN',
-      goingToCity: goingTo?.city || 'Hanoi',
+      goingToCity: goingTo?.city || 'Hà Nội',
       startDate: dateRange.startDate.toString(),
       adults: passengers.adults.toString(),
       children: passengers.children.toString(),
@@ -99,8 +99,8 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
             {/* Leaving from Field */}
             <div className="w-full flex-1">
               <AirportSelectorPopover
-                label="Leaving from"
-                placeholder="Leaving from"
+                label="Điểm khởi hành"
+                placeholder="Chọn điểm khởi hành"
                 selectedAirport={leavingFrom}
                 airports={airports}
                 onSelect={setLeavingFrom}
@@ -115,7 +115,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
               size="icon"
               onClick={handleSwap}
               className="w-8 h-8 rounded-full border border-gray-300 bg-white shadow-sm flex items-center justify-center shrink-0 hover:bg-gray-50 transition-colors sm:-mx-3 z-10 cursor-pointer min-w-0 p-0"
-              aria-label="Swap departure and destination"
+              aria-label="Hoán đổi điểm khởi hành và điểm đến"
             >
               <ArrowLeftRight className="w-4 h-4 text-gray-700" />
             </Button>
@@ -123,8 +123,8 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
             {/* Going to Field */}
             <div className="w-full flex-1">
               <AirportSelectorPopover
-                label="Going to"
-                placeholder="Going to"
+                label="Điểm đến"
+                placeholder="Chọn điểm đến"
                 selectedAirport={goingTo}
                 airports={airports}
                 onSelect={setGoingTo}
@@ -165,7 +165,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
               onClick={handleSearchSubmit}
               className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-semibold rounded-full px-8 py-3 h-[56px] text-sm shadow-md transition-colors cursor-pointer"
             >
-              Search
+              Tìm chuyến bay
             </Button>
           </div>
         </div>
@@ -178,7 +178,7 @@ export const BookingSearchCard: React.FC<BookingSearchCardProps> = ({
             id="bundleSave" 
           />
           <label htmlFor="bundleSave" className="text-xs sm:text-sm text-gray-700 font-medium select-none cursor-pointer">
-            Add a stay to Bundle & Save*
+            Thêm chỗ lưu trú để đặt trọn gói và tiết kiệm
           </label>
         </div>
       </Card>

@@ -104,6 +104,18 @@ def staff_update_passenger(handler, booking_id, passenger_id):
     data = req.parse_json_body(handler)
     allowed = {'full_name', 'date_of_birth', 'nationality', 'passport_number', 'passport_expiry'}
     updates = {k: v for k, v in data.items() if k in allowed}
+    merged = {**dict(pax), **updates}
+    if not merged.get('date_of_birth'):
+        from core.exceptions import ValidationError
+        raise ValidationError('Vui lòng nhập ngày sinh của hành khách')
+    if not str(merged.get('passport_number') or '').strip():
+        from core.exceptions import ValidationError
+        raise ValidationError('Vui lòng nhập Số Hộ chiếu / CCCD của hành khách')
+    val.validate_date(merged['date_of_birth'], 'ngày sinh')
+    if merged['date_of_birth'] > utcnow_iso()[:10]:
+        from core.exceptions import ValidationError
+        raise ValidationError('Ngày sinh không được lớn hơn ngày hiện tại')
+    updates['passport_number'] = str(merged['passport_number']).strip()
     booking_repo.update_booking_passenger(db, passenger_id, updates)
     db.commit()
     response.success(handler, None, 'Passenger updated')

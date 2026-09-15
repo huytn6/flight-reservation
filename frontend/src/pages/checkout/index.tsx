@@ -70,7 +70,11 @@ export const Checkout: React.FC = () => {
     email?: string;
     phone?: string;
   }>({});
-  const [passengerErrors, setPassengerErrors] = useState<Array<{ full_name?: string }>>([]);
+  const [passengerErrors, setPassengerErrors] = useState<Array<{
+    full_name?: string;
+    date_of_birth?: string;
+    passport_number?: string;
+  }>>([]);
 
   const [breakdown, setBreakdown] = useState<PriceBreakdown | null>(null);
   const [flightId, setFlightId] = useState<string | null>(null);
@@ -160,11 +164,27 @@ export const Checkout: React.FC = () => {
       hasError = true;
     }
 
-    const pErrors: Array<{ full_name?: string }> = [];
+    const pErrors: Array<{
+      full_name?: string;
+      date_of_birth?: string;
+      passport_number?: string;
+    }> = [];
     passengers.forEach((p, idx) => {
-      const pErr: { full_name?: string } = {};
+      const pErr: {
+        full_name?: string;
+        date_of_birth?: string;
+        passport_number?: string;
+      } = {};
       if (!p.full_name?.trim()) {
         pErr.full_name = `Vui lòng nhập họ tên cho hành khách ${idx + 1}`;
+        hasError = true;
+      }
+      if (!p.date_of_birth) {
+        pErr.date_of_birth = `Vui lòng chọn ngày sinh cho hành khách ${idx + 1}`;
+        hasError = true;
+      }
+      if (!p.passport_number?.trim()) {
+        pErr.passport_number = `Vui lòng nhập Số Hộ chiếu / CCCD cho hành khách ${idx + 1}`;
         hasError = true;
       }
       pErrors.push(pErr);
@@ -179,6 +199,8 @@ export const Checkout: React.FC = () => {
         cErrors.email ||
         cErrors.phone ||
         pErrors.find((p) => p.full_name)?.full_name ||
+        pErrors.find((p) => p.date_of_birth)?.date_of_birth ||
+        pErrors.find((p) => p.passport_number)?.passport_number ||
         'Vui lòng điền đầy đủ các thông tin bắt buộc (*)';
       toast.error(firstError);
     }
@@ -421,12 +443,21 @@ export const Checkout: React.FC = () => {
                     <DateOfBirthPicker
                       label="Ngày sinh"
                       value={pax.date_of_birth}
+                      required
+                      error={passengerErrors[idx]?.date_of_birth}
                       onChange={(iso) => {
                         setPassengers((prev) => {
                           const next = [...prev];
                           next[idx] = { ...next[idx], date_of_birth: iso };
                           return next;
                         });
+                        if (passengerErrors[idx]?.date_of_birth) {
+                          setPassengerErrors((prev) => {
+                            const next = [...prev];
+                            if (next[idx]) next[idx] = { ...next[idx], date_of_birth: undefined };
+                            return next;
+                          });
+                        }
                       }}
                     />
 
@@ -464,10 +495,12 @@ export const Checkout: React.FC = () => {
 
                     <div>
                       <label className="text-[11px] font-medium text-slate-600 block mb-1">
-                        Số Hộ chiếu / CCCD
+                        Số Hộ chiếu / CCCD <span className="text-rose-500">*</span>
                       </label>
                       <Input
                         value={pax.passport_number || ''}
+                        required
+                        aria-invalid={Boolean(passengerErrors[idx]?.passport_number)}
                         onChange={(e) => {
                           const val = e.target.value;
                           setPassengers((prev) => {
@@ -475,10 +508,27 @@ export const Checkout: React.FC = () => {
                             next[idx] = { ...next[idx], passport_number: val };
                             return next;
                           });
+                          if (passengerErrors[idx]?.passport_number) {
+                            setPassengerErrors((prev) => {
+                              const next = [...prev];
+                              if (next[idx]) next[idx] = { ...next[idx], passport_number: undefined };
+                              return next;
+                            });
+                          }
                         }}
                         placeholder="001200012345"
-                        className="text-xs h-9 bg-white border-slate-200"
+                        maxLength={20}
+                        className={`text-xs h-9 bg-white ${
+                          passengerErrors[idx]?.passport_number
+                            ? 'border-rose-400 focus-visible:ring-rose-300'
+                            : 'border-slate-200'
+                        }`}
                       />
+                      {passengerErrors[idx]?.passport_number && (
+                        <p className="text-[11px] text-rose-500 font-medium mt-1">
+                          {passengerErrors[idx]?.passport_number}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -50,7 +50,7 @@ export const ForgotPasswordPage: React.FC = () => {
               <path d="M7 7h10v10" />
             </svg>
           </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">Expedia</span>
+          <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">UITAir</span>
         </Link>
 
         <div className="w-9" />
@@ -126,7 +126,7 @@ export const ForgotPasswordPage: React.FC = () => {
       </div>
 
       <div className="py-2 text-center text-[11px] text-slate-400 font-sans">
-        © 2026 Expedia, Inc. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
+        © 2026 UITAir. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
       </div>
     </div>
   );

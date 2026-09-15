@@ -6,7 +6,7 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#f4f7fa] border-t border-slate-200/80 pt-10 pb-8 mt-16 font-sans">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8">
         
-        {/* Expedia Logo */}
+        {/* UITAir Logo */}
         <div className="mb-6">
           <Link to="/" className="inline-flex items-center gap-1.5 focus:outline-none cursor-pointer">
             <div className="w-5 h-5 bg-[#0065eb] flex items-center justify-center rounded-md font-bold text-white">
@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
               </svg>
             </div>
             <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">
-              expedia group
+              UITAir
             </span>
           </Link>
         </div>

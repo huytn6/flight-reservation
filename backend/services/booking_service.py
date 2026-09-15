@@ -28,17 +28,28 @@ def create_booking(user_ctx: dict, draft_id: str, idempotency_key: str | None, i
     if not draft:
         raise NotFoundError('Booking draft')
     if draft['status'] != 'ACTIVE':
-        raise BusinessError('DRAFT_NOT_ACTIVE', 'Draft is no longer active')
+        raise BusinessError('DRAFT_NOT_ACTIVE', 'Đơn đặt vé nháp không còn hiệu lực')
     if datetime.datetime.utcnow().isoformat() > draft['expires_at']:
-        raise BusinessError('DRAFT_EXPIRED', 'Draft has expired')
+        raise BusinessError('DRAFT_EXPIRED', 'Đơn đặt vé nháp đã hết hạn')
 
     contact = booking_repo.get_draft_contact(db, draft_id)
     if not contact:
-        raise BusinessError('CONTACT_MISSING', 'Contact information is required')
+        raise BusinessError('CONTACT_MISSING', 'Vui lòng nhập đầy đủ thông tin liên hệ')
 
     passengers = booking_repo.get_draft_passengers(db, draft_id)
     if not passengers:
-        raise BusinessError('PASSENGERS_MISSING', 'Passenger information is required')
+        raise BusinessError('PASSENGERS_MISSING', 'Vui lòng nhập thông tin hành khách')
+    for index, passenger in enumerate(passengers, start=1):
+        if not passenger.get('date_of_birth'):
+            raise BusinessError(
+                'PASSENGER_DATE_OF_BIRTH_MISSING',
+                f'Vui lòng nhập ngày sinh cho hành khách {index}'
+            )
+        if not str(passenger.get('passport_number') or '').strip():
+            raise BusinessError(
+                'PASSENGER_DOCUMENT_MISSING',
+                f'Vui lòng nhập Số Hộ chiếu / CCCD cho hành khách {index}'
+            )
 
     offer = json.loads(draft['flight_offer_json'])
     total_amount = 0
@@ -48,7 +59,7 @@ def create_booking(user_ctx: dict, draft_id: str, idempotency_key: str | None, i
             (f['id'],)
         ).fetchone()
         if not fare or fare['available_seats'] < len(passengers):
-            raise ConflictError('Insufficient seat inventory', 'INVENTORY_INSUFFICIENT')
+            raise ConflictError('Hạng vé đã chọn không còn đủ chỗ trống', 'INVENTORY_INSUFFICIENT')
         total_amount += (fare['base_price'] + fare['tax'] + fare['fees']) * len(passengers)
 
     ancillaries = booking_repo.get_draft_ancillaries(db, draft_id)
@@ -59,7 +70,8 @@ def create_booking(user_ctx: dict, draft_id: str, idempotency_key: str | None, i
     if len(holds) != len(passengers):
         raise BusinessError(
             'SEAT_PASSENGER_MISMATCH',
-            f'{len(passengers)} passenger(s) but only {len(holds)} seat(s) held'
+            f'Có {len(passengers)} hành khách nhưng mới chỉ giữ {len(holds)} ghế. '
+            'Vui lòng chọn đủ ghế cho tất cả hành khách trước khi tiếp tục'
         )
     for hold in holds:
         total_amount += hold.get('extra_fee') or 0
@@ -258,11 +270,11 @@ def confirm_check_in(booking_id: str) -> dict:
     if not booking:
         raise NotFoundError('Booking')
     if booking['status'] != 'CONFIRMED':
-        raise BusinessError('NOT_CONFIRMED', 'Booking must be confirmed for check-in')
+        raise BusinessError('NOT_CONFIRMED', 'Đơn đặt vé phải được xác nhận trước khi check-in')
 
     tickets = booking_repo.get_e_tickets(db, booking_id)
     if not tickets:
-        raise BusinessError('NO_TICKETS', 'No e-tickets found for this booking')
+        raise BusinessError('NO_TICKETS', 'Không tìm thấy vé điện tử cho đơn đặt vé này')
     already_checked_in = all(t['status'] == 'CHECKED_IN' for t in tickets)
 
     with transaction(db):
@@ -289,7 +301,7 @@ def cancellation_preview(booking_id: str, user_ctx: dict) -> dict:
     db = get_db()
     booking = _require_owner(db, booking_id, user_ctx)
     if booking['status'] not in ('CONFIRMED', 'PENDING_PAYMENT', 'PAYMENT_FAILED'):
-        raise BusinessError('CANNOT_CANCEL', f'Booking in status {booking["status"]} cannot be cancelled')
+        raise BusinessError('CANNOT_CANCEL', 'Đơn đặt vé hiện không thể hủy')
     total = booking['total_amount']
     refund = int(total * 0.8)
     return {
@@ -303,7 +315,7 @@ def cancel_booking(booking_id: str, user_ctx: dict, reason: str, ip: str) -> dic
     db = get_db()
     booking = _require_owner(db, booking_id, user_ctx)
     if booking['status'] not in ('CONFIRMED', 'PENDING_PAYMENT', 'PAYMENT_FAILED'):
-        raise BusinessError('CANNOT_CANCEL', f'Booking in status {booking["status"]} cannot be cancelled')
+        raise BusinessError('CANNOT_CANCEL', 'Đơn đặt vé hiện không thể hủy')
 
     with transaction(db):
         old_status = booking['status']
@@ -394,7 +406,7 @@ def seat_change_confirm(booking_id: str, user_ctx: dict, segment_id: str, passen
 
         new_seat = flight_repo.find_seat(db, new_seat_id)
         if not new_seat or new_seat['status'] not in ('AVAILABLE',):
-            raise ConflictError('New seat not available', 'SEAT_NOT_AVAILABLE')
+            raise ConflictError('Ghế mới đã được chọn hoặc không còn khả dụng', 'SEAT_NOT_AVAILABLE')
 
         if old_assign:
             booking_repo.update_seat_assignment(db, old_assign['id'], new_seat_id)
@@ -426,7 +438,7 @@ def change_confirm(booking_id: str, user_ctx: dict, new_fare_id: str, new_flight
     db = get_db()
     booking = _require_owner(db, booking_id, user_ctx)
     if booking['status'] != 'CONFIRMED':
-        raise BusinessError('CANNOT_CHANGE', 'Booking must be confirmed to change')
+        raise BusinessError('CANNOT_CHANGE', 'Đơn đặt vé phải được xác nhận trước khi thay đổi chuyến bay')
 
     with transaction(db):
         booking_repo.update_booking_status(db, booking_id, 'CHANGE_PENDING')

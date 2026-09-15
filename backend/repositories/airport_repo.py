@@ -1,24 +1,56 @@
 import uuid
 from utils.date_utils import utcnow_iso
+from utils.text_utils import normalize_search_text
 
 
 # ── Airports ──────────────────────────────────────────────────────────────────
 
+def _airport_search_score(airport, query):
+    normalized_query = normalize_search_text(query)
+    compact_query = normalized_query.replace(' ', '')
+    if not compact_query:
+        return 0
+
+    iata = normalize_search_text(airport.get('iata_code'))
+    city = normalize_search_text(airport.get('city'))
+    name = normalize_search_text(airport.get('name'))
+    country = normalize_search_text(airport.get('country'))
+    icao = normalize_search_text(airport.get('icao_code'))
+    compact_city = city.replace(' ', '')
+    compact_name = name.replace(' ', '')
+
+    if compact_query == iata or compact_query == icao:
+        return 0
+    if compact_query == compact_city:
+        return 1
+    if city.startswith(normalized_query) or compact_city.startswith(compact_query):
+        return 2
+    if any(word.startswith(normalized_query) for word in city.split()):
+        return 3
+    if normalized_query in city or compact_query in compact_city:
+        return 4
+    if normalized_query in name or compact_query in compact_name:
+        return 5
+    if normalized_query in country.replace(' ', '') or normalized_query in country:
+        return 6
+    return None
+
+
 def list_airports(db, q=''):
-    if q:
-        return db.execute(
-            "SELECT * FROM airports WHERE iata_code LIKE ? OR name LIKE ? OR city LIKE ? ORDER BY city",
-            (f'%{q}%', f'%{q}%', f'%{q}%')
-        ).fetchall()
-    return db.execute("SELECT * FROM airports ORDER BY city").fetchall()
+    rows = db.execute("SELECT * FROM airports ORDER BY city").fetchall()
+    if not q or not normalize_search_text(q):
+        return rows
+
+    matches = []
+    for row in rows:
+        score = _airport_search_score(row, q)
+        if score is not None:
+            matches.append((score, normalize_search_text(row.get('city')), row))
+    return [row for _, _, row in sorted(matches, key=lambda match: (match[0], match[1]))]
 
 
 def autocomplete_airports(db, q, limit=10):
-    return db.execute(
-        "SELECT iata_code, name, city, country, country_code, timezone FROM airports "
-        "WHERE iata_code LIKE ? OR name LIKE ? OR city LIKE ? ORDER BY city LIMIT ?",
-        (f'{q}%', f'%{q}%', f'%{q}%', limit)
-    ).fetchall()
+    return list_airports(db, q)[:limit]
 
 
 def find_airport(db, id_or_iata):

@@ -18,6 +18,7 @@ export const userService = {
     full_name?: string;
     phone?: string;
     date_of_birth?: string;
+    passport_number?: string;
     nationality?: string;
     gender?: string;
     bio?: string;

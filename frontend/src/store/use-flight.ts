@@ -4,9 +4,9 @@ import type { FlightType, PassengerState, DateRangeState } from '@/types/flight'
 
 const DEFAULT_ORIGIN_AIRPORT: Airport = {
   code: 'SGN',
-  city: 'Ho Chi Minh City',
-  name: 'Tan Son Nhat International Airport',
-  sublabel: 'Tan Son Nhat Intl., Vietnam',
+  city: 'Thành phố Hồ Chí Minh',
+  name: 'Sân bay quốc tế Tân Sơn Nhất',
+  sublabel: 'Sân bay quốc tế Tân Sơn Nhất, Việt Nam',
 };
 
 const toIsoDate = (d: Date): string => d.toISOString().split('T')[0];

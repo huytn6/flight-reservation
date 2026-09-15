@@ -47,14 +47,14 @@ def main():
 
     # ---- Airports ----
     airports = [
-        ('SGN', 'VVTS', 'Tan Son Nhat International Airport', 'Ho Chi Minh City', 'Vietnam', 'VN', 'Asia/Ho_Chi_Minh', 10.8188, 106.6519),
-        ('HAN', 'VVNB', 'Noi Bai International Airport',      'Hanoi',            'Vietnam', 'VN', 'Asia/Ho_Chi_Minh', 21.2212, 105.8074),
-        ('DAD', 'VVDN', 'Da Nang International Airport',       'Da Nang',          'Vietnam', 'VN', 'Asia/Ho_Chi_Minh', 16.0439, 108.1993),
-        ('PQC', 'VVPQ', 'Phu Quoc International Airport',      'Phu Quoc',         'Vietnam', 'VN', 'Asia/Ho_Chi_Minh',  9.7328, 104.1699),
-        ('HPH', 'VVCI', 'Cat Bi International Airport',         'Hai Phong',        'Vietnam', 'VN', 'Asia/Ho_Chi_Minh', 20.8194, 106.7249),
-        ('BKK', 'VTBS', 'Suvarnabhumi Airport',                 'Bangkok',          'Thailand', 'TH', 'Asia/Bangkok',     13.6811, 100.7475),
-        ('SIN', 'WSSS', 'Singapore Changi Airport',             'Singapore',        'Singapore', 'SG', 'Asia/Singapore', 1.3644,  103.9915),
-        ('NRT', 'RJAA', 'Narita International Airport',          'Tokyo',            'Japan',    'JP', 'Asia/Tokyo',       35.7720, 140.3929),
+        ('SGN', 'VVTS', 'Sân bay quốc tế Tân Sơn Nhất',          'Thành phố Hồ Chí Minh', 'Việt Nam',  'VN', 'Asia/Ho_Chi_Minh', 10.8188, 106.6519),
+        ('HAN', 'VVNB', 'Sân bay quốc tế Nội Bài',               'Hà Nội',               'Việt Nam',  'VN', 'Asia/Ho_Chi_Minh', 21.2212, 105.8074),
+        ('DAD', 'VVDN', 'Sân bay quốc tế Đà Nẵng',               'Đà Nẵng',              'Việt Nam',  'VN', 'Asia/Ho_Chi_Minh', 16.0439, 108.1993),
+        ('PQC', 'VVPQ', 'Sân bay quốc tế Phú Quốc',              'Phú Quốc',             'Việt Nam',  'VN', 'Asia/Ho_Chi_Minh',  9.7328, 104.1699),
+        ('HPH', 'VVCI', 'Sân bay quốc tế Cát Bi',                'Hải Phòng',            'Việt Nam',  'VN', 'Asia/Ho_Chi_Minh', 20.8194, 106.7249),
+        ('BKK', 'VTBS', 'Sân bay quốc tế Suvarnabhumi',          'Bangkok',              'Thái Lan',  'TH', 'Asia/Bangkok',     13.6811, 100.7475),
+        ('SIN', 'WSSS', 'Sân bay quốc tế Changi Singapore',      'Singapore',            'Singapore', 'SG', 'Asia/Singapore',    1.3644, 103.9915),
+        ('NRT', 'RJAA', 'Sân bay quốc tế Narita',                'Tokyo',                'Nhật Bản',  'JP', 'Asia/Tokyo',       35.7720, 140.3929),
     ]
     airport_ids = {}
     for row in airports:

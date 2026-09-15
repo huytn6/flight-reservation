@@ -11,7 +11,7 @@ def parse_json_body(handler):
     try:
         return json.loads(raw.decode('utf-8'))
     except (json.JSONDecodeError, UnicodeDecodeError):
-        raise ValidationError('Invalid JSON body')
+        raise ValidationError('Dữ liệu JSON không hợp lệ')
 
 
 def parse_query(handler):
@@ -32,11 +32,11 @@ def get_int_param(handler, key, default=None, min_val=None, max_val=None):
     try:
         val = int(raw)
     except ValueError:
-        raise ValidationError(f'Parameter "{key}" must be an integer')
+        raise ValidationError(f'Tham số "{key}" phải là số nguyên')
     if min_val is not None and val < min_val:
-        raise ValidationError(f'Parameter "{key}" must be >= {min_val}')
+        raise ValidationError(f'Tham số "{key}" phải lớn hơn hoặc bằng {min_val}')
     if max_val is not None and val > max_val:
-        raise ValidationError(f'Parameter "{key}" must be <= {max_val}')
+        raise ValidationError(f'Tham số "{key}" phải nhỏ hơn hoặc bằng {max_val}')
     return val
 
 

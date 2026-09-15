@@ -27,14 +27,14 @@ export const PublicCmsPage: React.FC = () => {
         setArticle({
           title: 'Điều Khoản Dịch Vụ Khách Hàng',
           slug: 'terms',
-          body: `Chào mừng bạn đến với hệ thống đặt vé chuyến bay Expedia. Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý với các điều khoản đặt vé, thanh toán, hủy vé và hoàn tiền theo quy định của hãng hàng không vận chuyển. Tất cả giá vé hiển thị đã bao gồm thuế và phí cố định.`,
+          body: `Chào mừng bạn đến với hệ thống đặt vé chuyến bay UITAir. Khi sử dụng dịch vụ của chúng tôi, bạn đồng ý với các điều khoản đặt vé, thanh toán, hủy vé và hoàn tiền theo quy định của hãng hàng không vận chuyển. Tất cả giá vé hiển thị đã bao gồm thuế và phí cố định.`,
           updated_at: new Date().toISOString(),
         });
       } else if (slug === 'privacy') {
         setArticle({
           title: 'Chính Sách Bảo Mật Quyền Riêng Tư',
           slug: 'privacy',
-          body: `Expedia cam kết bảo vệ thông tin cá nhân của khách hàng. Mọi thông tin như Họ tên, Email, Số điện thoại và Mã thông tin thanh toán đều được mã hóa bằng chuẩn SSL 256-bit cao nhất. Chúng tôi không chia sẻ dữ liệu cho bên thứ ba ngoại trừ các hãng bay trực tiếp xử lý chuyến bay của bạn.`,
+          body: `UITAir cam kết bảo vệ thông tin cá nhân của khách hàng. Mọi thông tin như Họ tên, Email, Số điện thoại và Mã thông tin thanh toán đều được mã hóa bằng chuẩn SSL 256-bit cao nhất. Chúng tôi không chia sẻ dữ liệu cho bên thứ ba ngoại trừ các hãng bay trực tiếp xử lý chuyến bay của bạn.`,
           updated_at: new Date().toISOString(),
         });
       } else {

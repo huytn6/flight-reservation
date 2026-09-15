@@ -34,7 +34,7 @@ export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
         
         {/* Real Interactive Google Map */}
         <iframe
-          title="Flight Deals Real Map"
+          title="Bản đồ ưu đãi chuyến bay"
           src="https://maps.google.com/maps?q=Vietnam&t=m&z=3&ie=UTF-8&iwloc=&output=embed"
           className="absolute inset-0 w-full h-full border-0 saturate-[1.1] brightness-[1.02] opacity-90 pointer-events-auto"
           loading="lazy"

@@ -45,7 +45,7 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 font-sans shadow-xs">
       <div className="max-w-[1240px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
         
-        {/* Expedia Brand Logo */}
+        {/* UITAir Brand Logo */}
         <Link to="/" className="flex items-center gap-2.5 group focus:outline-none cursor-pointer">
           <div className="w-8 h-8 bg-gradient-to-tr from-[#0052cc] to-[#0065eb] flex items-center justify-center rounded-xl font-bold text-white shadow-sm group-hover:scale-105 transition-transform">
             <Plane className="w-4.5 h-4.5 text-white -rotate-45 fill-white/20" />

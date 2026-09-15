@@ -39,6 +39,7 @@ export const ProfileEdit: React.FC = () => {
   const [dobMonth, setDobMonth] = useState('');
   const [dobDay, setDobDay] = useState('');
   const [dobYear, setDobYear] = useState('');
+  const [passportNumber, setPassportNumber] = useState('');
   const [nationality, setNationality] = useState('VN');
   const [gender, setGender] = useState<string>('');
   const [accessibility, setAccessibility] = useState('Not provided');
@@ -86,6 +87,7 @@ export const ProfileEdit: React.FC = () => {
       if (profile.gender) setGender(profile.gender);
       if (profile.bio) setBio(profile.bio);
       if (profile.special_assistance) setAccessibility(profile.special_assistance);
+      if (profile.passport_number) setPassportNumber(profile.passport_number);
       if (profile.date_of_birth) {
         const [y, m, d] = profile.date_of_birth.split('-');
         setDobYear(y || '');
@@ -97,6 +99,14 @@ export const ProfileEdit: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!dobYear || !dobMonth || !dobDay) {
+      toast.error('Vui lòng nhập đầy đủ ngày sinh');
+      return;
+    }
+    if (!passportNumber.trim()) {
+      toast.error('Vui lòng nhập Số Hộ chiếu / CCCD');
+      return;
+    }
     setSaving(true);
     const constructedFullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
     const updates: {
@@ -106,7 +116,8 @@ export const ProfileEdit: React.FC = () => {
       gender: string;
       bio: string;
       special_assistance: string;
-      date_of_birth?: string;
+      date_of_birth: string;
+      passport_number: string;
     } = {
       full_name: constructedFullName,
       phone,
@@ -114,10 +125,9 @@ export const ProfileEdit: React.FC = () => {
       gender,
       bio,
       special_assistance: accessibility,
+      date_of_birth: `${dobYear.padStart(4, '0')}-${dobMonth.padStart(2, '0')}-${dobDay.padStart(2, '0')}`,
+      passport_number: passportNumber.trim(),
     };
-    if (dobYear && dobMonth && dobDay) {
-      updates.date_of_birth = `${dobYear.padStart(4, '0')}-${dobMonth.padStart(2, '0')}-${dobDay.padStart(2, '0')}`;
-    }
 
     try {
       await userService.updateProfile(updates);
@@ -126,10 +136,10 @@ export const ProfileEdit: React.FC = () => {
         setUser({ ...user, full_name: constructedFullName, phone });
       }
 
-      toast.success('Basic information updated successfully');
+      toast.success('Cập nhật thông tin cá nhân thành công');
       navigate('/profile');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update basic information');
+      toast.error(err.message || 'Cập nhật thông tin cá nhân thất bại');
     } finally {
       setSaving(false);
     }
@@ -138,7 +148,7 @@ export const ProfileEdit: React.FC = () => {
   return (
     <div className="bg-white font-sans text-slate-900 px-4 py-4 sm:py-6">
 
-      {/* Centered Compact Expedia Edit Layout */}
+      {/* Centered Compact UITAir Edit Layout */}
       <div className="max-w-md sm:max-w-lg mx-auto pt-2 pb-10 flex flex-col gap-4">
         
         {/* Header Action Row with X Close Button Below Sticky Header */}
@@ -226,7 +236,7 @@ export const ProfileEdit: React.FC = () => {
 
           {/* Date of Birth */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-slate-800">Date of birth</span>
+            <span className="text-xs font-semibold text-slate-800">Ngày sinh *</span>
             <div className="grid grid-cols-3 gap-2.5">
               <Select value={dobDay} onValueChange={setDobDay}>
                 <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
@@ -259,6 +269,22 @@ export const ProfileEdit: React.FC = () => {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          {/* Passport / Citizen ID */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="passport-number" className="text-xs font-semibold text-slate-800">
+              Số Hộ chiếu / CCCD *
+            </label>
+            <Input
+              id="passport-number"
+              value={passportNumber}
+              onChange={(e) => setPassportNumber(e.target.value)}
+              placeholder="001200012345"
+              required
+              maxLength={20}
+              className="text-xs rounded-lg border-slate-300 focus:border-[#0065eb] h-9"
+            />
           </div>
 
           {/* Nationality */}

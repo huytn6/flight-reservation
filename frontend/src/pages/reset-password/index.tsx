@@ -71,7 +71,7 @@ export const ResetPasswordPage: React.FC = () => {
               <path d="M7 7h10v10" />
             </svg>
           </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">Expedia</span>
+          <span className="text-lg font-bold tracking-tight text-slate-900 font-sans">UITAir</span>
         </Link>
 
         <div className="w-9" />
@@ -87,7 +87,7 @@ export const ResetPasswordPage: React.FC = () => {
             </div>
             <h2 className="text-lg font-bold text-slate-900">Mật Khẩu Đã Đổi Thành Công</h2>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Bạn có thể sử dụng mật khẩu mới để đăng nhập vào tài khoản Expedia của mình ngay bây giờ.
+              Bạn có thể sử dụng mật khẩu mới để đăng nhập vào tài khoản UITAir của mình ngay bây giờ.
             </p>
             <Button
               onClick={() => navigate('/signin')}
@@ -164,7 +164,7 @@ export const ResetPasswordPage: React.FC = () => {
       </div>
 
       <div className="py-2 text-center text-[11px] text-slate-400 font-sans">
-        © 2026 Expedia, Inc. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
+        © 2026 UITAir. Bản quyền thuộc về hệ thống đặt vé chuyến bay.
       </div>
     </div>
   );

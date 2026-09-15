@@ -16,6 +16,8 @@ interface DateOfBirthPickerProps {
   onChange: (val: string) => void;
   label?: string;
   className?: string;
+  required?: boolean;
+  error?: string;
 }
 
 export const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
@@ -23,6 +25,8 @@ export const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
   onChange,
   label = "Ngày sinh",
   className = "",
+  required = false,
+  error,
 }) => {
   const [open, setOpen] = React.useState(false);
 
@@ -56,15 +60,22 @@ export const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
 
   return (
     <div className={className}>
-      {label && <label className="text-[11px] font-medium text-slate-600 block mb-1">{label}</label>}
+      {label && (
+        <label className="text-[11px] font-medium text-slate-600 block mb-1">
+          {label} {required && <span className="text-rose-500">*</span>}
+        </label>
+      )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             type="button"
+            aria-required={required}
+            aria-invalid={Boolean(error)}
             className={cn(
               "w-full justify-start text-left font-normal text-xs h-9 bg-white border-slate-200 shadow-none cursor-pointer",
-              !selectedDate && "text-slate-400"
+              !selectedDate && "text-slate-400",
+              error && "border-rose-400 focus-visible:ring-rose-300"
             )}
           >
             <CalendarIcon className="mr-2 h-3.5 w-3.5 text-slate-400 shrink-0" />
@@ -83,6 +94,7 @@ export const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
           />
         </PopoverContent>
       </Popover>
+      {error && <p className="text-[11px] text-rose-500 font-medium mt-1">{error}</p>}
     </div>
   );
 };

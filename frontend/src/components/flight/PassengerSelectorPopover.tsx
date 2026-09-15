@@ -43,7 +43,7 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
         <div className="w-full border border-gray-400 rounded-xl px-3 py-2 flex items-center gap-2.5 bg-white hover:border-gray-600 cursor-pointer h-[56px]">
           <User className="w-5 h-5 text-gray-600 shrink-0" />
           <div className="flex flex-col text-left overflow-hidden">
-            <span className="text-[11px] font-medium text-gray-500 leading-tight truncate whitespace-nowrap">Hành khách, Hạng ghế</span>
+            <span className="text-[11px] font-medium text-gray-500 leading-tight truncate whitespace-nowrap">Hành khách, hạng ghế</span>
             <span className="text-xs sm:text-sm font-semibold text-gray-900 truncate whitespace-nowrap">
               {totalTravelers} hành khách, {getCabinClassLabel(passengers.cabinClass)}
             </span>
@@ -52,7 +52,7 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
       </PopoverTrigger>
       <PopoverContent className="w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 flex flex-col gap-4" align="start">
         <div className="text-xs font-bold text-gray-700">
-          Số lượng hành khách & Hạng ghế
+          Số lượng hành khách và hạng ghế
         </div>
 
         {/* Adults */}
@@ -173,10 +173,10 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
               onChange={(e) => onSetCabinClass(e.target.value)}
               className="w-full text-xs font-semibold text-gray-900 bg-transparent outline-none cursor-pointer appearance-none pr-6"
             >
-              <option value="Economy">Phổ thông (Economy)</option>
-              <option value="Premium Economy">Phổ thông đặc biệt (Premium Economy)</option>
-              <option value="Business">Thương gia (Business)</option>
-              <option value="First Class">Hạng nhất (First Class)</option>
+              <option value="Economy">Phổ thông</option>
+              <option value="Premium Economy">Phổ thông đặc biệt</option>
+              <option value="Business">Thương gia</option>
+              <option value="First Class">Hạng nhất</option>
             </select>
             <ChevronDown className="w-4 h-4 text-gray-600 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
@@ -188,7 +188,7 @@ export const PassengerSelectorPopover: React.FC<PassengerSelectorPopoverProps> =
             onClick={() => onOpenChange(false)}
             className="bg-[#0065eb] hover:bg-blue-700 text-white font-semibold text-xs px-6 py-2 rounded-full cursor-pointer shadow-none"
           >
-            Hoàn Tất
+            Hoàn tất
           </Button>
         </div>
       </PopoverContent>

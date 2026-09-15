@@ -11,16 +11,35 @@ class ValidationError(AppError):
         super().__init__('VALIDATION_ERROR', message, 400, details)
 
 class AuthenticationError(AppError):
-    def __init__(self, message='Authentication required'):
+    def __init__(self, message='Vui lòng đăng nhập để tiếp tục'):
         super().__init__('AUTHENTICATION_ERROR', message, 401)
 
 class AuthorizationError(AppError):
-    def __init__(self, message='Access denied'):
+    def __init__(self, message='Bạn không có quyền thực hiện thao tác này'):
         super().__init__('AUTHORIZATION_ERROR', message, 403)
 
 class NotFoundError(AppError):
     def __init__(self, resource='Resource'):
-        super().__init__('NOT_FOUND', f'{resource} not found', 404)
+        resource_names = {
+            'Resource': 'tài nguyên',
+            'Booking': 'đơn đặt vé',
+            'Booking draft': 'đơn đặt vé nháp',
+            'E-Ticket': 'vé điện tử',
+            'Cancellation': 'yêu cầu hủy vé',
+            'Refund': 'yêu cầu hoàn tiền',
+            'Fare': 'hạng vé',
+            'Segment': 'chặng bay',
+            'Seat map': 'sơ đồ ghế',
+            'Seat': 'ghế',
+            'Seat hold': 'thông tin giữ ghế',
+            'Ancillary item': 'dịch vụ bổ sung',
+            'Payment': 'giao dịch thanh toán',
+            'Session': 'phiên đăng nhập',
+            'Saved passenger': 'hành khách đã lưu',
+            'Passenger': 'hành khách',
+        }
+        resource_name = resource_names.get(resource, resource)
+        super().__init__('NOT_FOUND', f'Không tìm thấy {resource_name}', 404)
 
 class ConflictError(AppError):
     def __init__(self, message, code='CONFLICT'):
@@ -32,4 +51,4 @@ class BusinessError(AppError):
 
 class RateLimitError(AppError):
     def __init__(self):
-        super().__init__('RATE_LIMIT_EXCEEDED', 'Too many requests', 429)
+        super().__init__('RATE_LIMIT_EXCEEDED', 'Bạn thao tác quá nhanh, vui lòng thử lại sau', 429)

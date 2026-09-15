@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plane, Luggage } from 'lucide-react';
 import { bookingService } from '@/services/booking';
 import { useAuthStore } from '@/store/use-auth';
+import { getBookingStatusConfig } from '@/constants/status-mappings';
 
 export interface RecentActivityItem {
   id: string;
@@ -64,7 +65,7 @@ export const RecentActivitySection: React.FC<RecentActivitySectionProps> = ({
               id: b.id,
               type: 'flight',
               title: `Mã đơn PNR: ${b.pnr || b.id.substring(0, 8)}`,
-              subtitle: `Trạng thái: ${b.status || 'CONFIRMED'} • ${Number(b.total_amount || 0).toLocaleString('vi-VN')} VNĐ`,
+              subtitle: `Trạng thái: ${getBookingStatusConfig(b.status || 'CONFIRMED', { customerView: true }).label} • ${Number(b.total_amount || 0).toLocaleString('vi-VN')} VNĐ`,
               dateRange: new Date(b.created_at || Date.now()).toLocaleDateString('vi-VN'),
             }))
           );

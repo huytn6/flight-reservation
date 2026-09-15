@@ -11,7 +11,7 @@ export const CancellationPolicyCard: React.FC<CancellationPolicyCardProps> = ({
 }) => {
   return (
     <div className="bg-transparent rounded-2xl border border-slate-200 p-5 font-sans flex items-center gap-3.5">
-      {/* Expedia light__calendar_shield.svg asset */}
+      {/* UITAir calendar shield visual */}
       <img 
         src="https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__calendar_shield.svg" 
         alt="Free cancellation" 
