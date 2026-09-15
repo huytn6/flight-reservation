@@ -35,21 +35,3 @@ export interface ChangePasswordPayload {
   new_password: string;
 }
 
-export interface ActiveSession {
-  id: string;
-  ip_address?: string;
-  user_agent?: string;
-  created_at: string;
-  expires_at: string;
-}
-
-export interface SavedPassenger {
-  id: string;
-  user_id?: string;
-  full_name: string;
-  date_of_birth?: string;
-  nationality?: string;
-  passport_number?: string;
-  passport_expiry?: string;
-  created_at?: string;
-}

@@ -27,25 +27,6 @@ export interface BookingDetail {
   history?: any[];
 }
 
-/** Flat shape returned by POST /bookings/lookup (public PNR + last-name lookup). */
-export interface BookingLookupResult {
-  id: string;
-  pnr: string;
-  status: BookingStatusEnum;
-  contact_name: string;
-  contact_full_name: string;
-  total_amount: number;
-  currency: string;
-  flight_number?: string;
-  departure_city?: string;
-  arrival_city?: string;
-  departure_time?: string;
-  arrival_time?: string;
-  airline_name?: string;
-  segments: any[];
-  passengers: any[];
-}
-
 export interface ETicket {
   id: string;
   booking_id: string;
@@ -76,18 +57,6 @@ export const bookingService = {
     return $api.get(`/bookings/${bookingId}/e-tickets`);
   },
 
-  getFlightStatus: async (bookingId: string): Promise<any> => {
-    return $api.get(`/bookings/${bookingId}/flight-status`);
-  },
-
-  getCheckInLink: async (bookingId: string): Promise<any> => {
-    return $api.get(`/bookings/${bookingId}/check-in`);
-  },
-
-  confirmCheckIn: async (bookingId: string): Promise<{ status: string; already_checked_in: boolean; seat_number: string | null; gate: string; boarding_group: string }> => {
-    return $api.post(`/bookings/${bookingId}/check-in`);
-  },
-
   resendConfirmation: async (bookingId: string): Promise<void> => {
     return $api.post(`/users/me/bookings/${bookingId}/resend-confirmation`);
   },
@@ -98,10 +67,6 @@ export const bookingService = {
 
   cancelBooking: async (bookingId: string, reason?: string): Promise<void> => {
     return $api.post(`/users/me/bookings/${bookingId}/cancel`, { reason });
-  },
-
-  lookupBooking: async (pnr: string, lastName?: string): Promise<BookingLookupResult> => {
-    return $api.post('/bookings/lookup', { pnr, last_name: lastName });
   },
 
   getStatusHistory: async (bookingId: string): Promise<any[]> => {

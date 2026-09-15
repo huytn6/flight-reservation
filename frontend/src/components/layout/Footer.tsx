@@ -36,10 +36,8 @@ export const Footer: React.FC = () => {
           {/* Column 2: Khám phá & Tiện ích */}
           <div className="flex flex-col gap-1.5">
             <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Dịch Vụ Bay</h4>
-            <Link to="/check-in" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Check-in trực tuyến 24h</Link>
             <Link to="/flight-status" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Tra cứu tình trạng chuyến bay</Link>
             <Link to="/my-bookings" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quản lý vé & Chuyến đi</Link>
-            <Link to="/price-alerts" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cảnh báo giá rẻ tự động</Link>
           </div>
 
           {/* Column 3: Điều khoản & Chính sách */}
@@ -54,8 +52,6 @@ export const Footer: React.FC = () => {
           {/* Column 4: Trợ giúp */}
           <div className="flex flex-col gap-1.5">
             <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Trung Tâm Trợ Giúp</h4>
-            <Link to="/support" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Gửi yêu cầu hỗ trợ (Support Desk)</Link>
-            <Link to="/booking-lookup" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Tra cứu mã đặt chỗ PNR</Link>
             <Link to="/pages/refund-faq" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Hướng dẫn hoàn tiền</Link>
           </div>
 

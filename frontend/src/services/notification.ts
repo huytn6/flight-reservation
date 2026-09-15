@@ -11,14 +11,6 @@ export interface AppNotification {
   created_at: string;
 }
 
-export interface TravelAlertPreferences {
-  user_id?: string;
-  delay_alerts: boolean;
-  gate_changes: boolean;
-  cancellation_alerts: boolean;
-  price_drop_alerts: boolean;
-}
-
 export const notificationService = {
   getNotifications: async (page = 1, size = 20): Promise<PaginatedResult<AppNotification>> => {
     return $api.get('/users/me/notifications', { params: { page, size } });
@@ -34,13 +26,5 @@ export const notificationService = {
 
   markAllRead: async (): Promise<void> => {
     return $api.post('/users/me/notifications/read-all');
-  },
-
-  getPreferences: async (): Promise<TravelAlertPreferences> => {
-    return $api.get('/users/me/travel-alert-preferences');
-  },
-
-  updatePreferences: async (data: Partial<TravelAlertPreferences>): Promise<void> => {
-    return $api.patch('/users/me/travel-alert-preferences', data);
   },
 };

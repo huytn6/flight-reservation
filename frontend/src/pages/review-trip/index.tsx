@@ -4,14 +4,12 @@ import {
   draftService,
   type PriceBreakdown,
   type AncillaryItem,
-  type InsuranceOption,
 } from '@/services/draft';
 import { flightService, type FlightOffer, type FareOption } from '@/services/flight';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { ShieldCheck, Tag, ShoppingBag, Plus, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const ReviewTrip: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -30,8 +28,6 @@ export const ReviewTrip: React.FC = () => {
     selected: AncillaryItem[];
     available: AncillaryItem[];
   } | null>(null);
-  const [insuranceOptions, setInsuranceOptions] = useState<InsuranceOption[]>([]);
-  const [couponCode, setCouponCode] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -78,15 +74,13 @@ export const ReviewTrip: React.FC = () => {
         setDraftId(currentId);
       }
 
-      const [breakdownRes, ancRes, insRes] = await Promise.all([
+      const [breakdownRes, ancRes] = await Promise.all([
         draftService.getPriceBreakdown(currentId!),
         draftService.getAncillaries(currentId!).catch(() => ({ selected: [], available: [] })),
-        draftService.getInsuranceOptions(currentId!).catch(() => []),
       ]);
 
       setBreakdown(breakdownRes);
       setAncillaries(ancRes);
-      setInsuranceOptions(insRes || []);
     } catch (err: any) {
       toast.error(err.message || 'Tải thông tin hành trình thất bại');
     } finally {
@@ -105,32 +99,6 @@ export const ReviewTrip: React.FC = () => {
       setAncillaries(ancRes);
     } catch {
       // ignore
-    }
-  };
-
-  const handleApplyCoupon = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!draftId || !couponCode.trim()) return;
-    try {
-      const res = await draftService.applyCoupon(draftId, couponCode);
-      toast.success(
-        `Đã áp dụng mã giảm giá ${res.code}! Tiết kiệm ${res.discount.toLocaleString('vi-VN')} VNĐ`
-      );
-      setCouponCode('');
-      refreshBreakdown();
-    } catch (err: any) {
-      toast.error(err.message || 'Mã giảm giá không hợp lệ');
-    }
-  };
-
-  const handleAddInsurance = async (code: string) => {
-    if (!draftId) return;
-    try {
-      await draftService.addInsurance(draftId, code);
-      toast.success('Đã thêm bảo hiểm chuyến bay');
-      refreshBreakdown();
-    } catch (err: any) {
-      toast.error(err.message || 'Thêm bảo hiểm thất bại');
     }
   };
 
@@ -168,8 +136,7 @@ export const ReviewTrip: React.FC = () => {
               Xem Lại Chuyến Đi & Dịch Vụ Mua Thêm
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Kiểm tra chi tiết hành trình, chọn gói bảo hiểm & mã giảm giá trước khi nhập thông tin
-              hành khách.
+              Kiểm tra chi tiết hành trình và các dịch vụ bổ sung trước khi nhập thông tin hành khách.
             </p>
           </div>
           <Button
@@ -239,41 +206,6 @@ export const ReviewTrip: React.FC = () => {
               )}
             </Card>
 
-            {/* Insurance Options */}
-            {insuranceOptions.length > 0 && (
-              <Card className="bg-white p-5 rounded-2xl border-0 shadow-none space-y-4">
-                <h2 className="text-sm font-semibold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-2">
-                  <ShieldCheck className="w-4 h-4 text-[#0065eb]" /> Bảo Hiểm Du Lịch & Chuyến Bay
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {insuranceOptions.map((opt) => (
-                    <div
-                      key={opt.code}
-                      className="p-3.5 rounded-xl border border-slate-100 bg-slate-50 flex flex-col justify-between gap-2 text-xs"
-                    >
-                      <div>
-                        <span className="font-bold text-slate-900">{opt.name}</span>
-                        <p className="text-slate-500 text-[11px] mt-1">
-                          Phủ sóng: {opt.covers?.join(', ') || 'Chuyến bay & y tế'}
-                        </p>
-                        <p className="font-mono text-[#0065eb] font-bold mt-2">
-                          {opt.price.toLocaleString('vi-VN')} VNĐ
-                        </p>
-                      </div>
-                      <Button
-                        onClick={() => handleAddInsurance(opt.code)}
-                        size="sm"
-                        variant="outline"
-                        className="w-full text-xs border-blue-200 text-[#0065eb] hover:bg-blue-50 cursor-pointer shadow-none h-8 mt-1 font-normal"
-                      >
-                        <Plus className="w-3.5 h-3.5 mr-1" /> Thêm Bảo Hiểm
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            )}
-
             {/* Ancillaries */}
             {ancillaries?.available && ancillaries.available.length > 0 && (
               <Card className="bg-white p-5 rounded-2xl border-0 shadow-none space-y-4">
@@ -312,28 +244,6 @@ export const ReviewTrip: React.FC = () => {
 
           {/* Right Summary Sidebar (4 cols) */}
           <div className="lg:col-span-4 space-y-5">
-            {/* Coupon Code Input */}
-            <Card className="bg-white p-5 rounded-2xl border-0 shadow-none space-y-3">
-              <h2 className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5 text-[#0065eb]" /> Mã Giảm Giá (Coupon)
-              </h2>
-              <form onSubmit={handleApplyCoupon} className="flex gap-2">
-                <Input
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value)}
-                  placeholder="Nhập DEMO10 hoặc SAVE200"
-                  className="text-xs h-9"
-                />
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="bg-[#0065eb] text-white font-normal text-xs h-9 px-3 cursor-pointer shadow-none"
-                >
-                  Áp dụng
-                </Button>
-              </form>
-            </Card>
-
             {/* Breakdown Summary */}
             {breakdown && (
               <Card className="bg-white p-5 rounded-2xl border-0 shadow-none space-y-3.5 text-xs">

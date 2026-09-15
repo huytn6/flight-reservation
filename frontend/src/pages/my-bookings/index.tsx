@@ -105,7 +105,7 @@ export const MyBookings: React.FC = () => {
               { key: '', label: 'Tất Cả' },
               { key: BookingStatusEnum.CONFIRMED, label: 'Đã Xác Nhận' },
               { key: BookingStatusEnum.PENDING_PAYMENT, label: 'Chờ Thanh Toán' },
-              { key: BookingStatusEnum.CANCELLED, label: 'Đã Hủy' },
+              { key: BookingStatusEnum.CANCELLED, label: 'Chờ Hoàn Tiền' },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -176,7 +176,7 @@ export const MyBookings: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <StatusBadge type="booking" value={booking.status} />
+                      <StatusBadge type="booking" value={booking.status} customerView />
                     </div>
                   </div>
 

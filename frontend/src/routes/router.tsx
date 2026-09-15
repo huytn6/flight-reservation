@@ -10,7 +10,6 @@ import { SignIn } from '@/pages/sign-in';
 import { RegisterPage } from '@/pages/register';
 import { ForgotPasswordPage } from '@/pages/forgot-password';
 import { ResetPasswordPage } from '@/pages/reset-password';
-import { CheckInPage } from '@/pages/check-in';
 import { FlightStatusPage } from '@/pages/flight-status';
 import { PublicCmsPage } from '@/pages/public-cms';
 
@@ -19,12 +18,8 @@ import { ReviewTrip } from '@/pages/review-trip';
 import { Checkout } from '@/pages/checkout';
 import { Profile } from '@/pages/profile';
 import { ProfileEdit } from '@/pages/profile/edit';
-import { SavedFlights } from '@/pages/saved-flights';
 import { MyBookings } from '@/pages/my-bookings';
 import { BookingDetail } from '@/pages/booking-detail';
-import { BookingLookup } from '@/pages/booking-lookup';
-import { PriceAlerts } from '@/pages/price-alerts';
-import { Support } from '@/pages/support';
 
 // Admin Modules
 import { AdminDashboard } from '@/pages/admin/dashboard';
@@ -77,14 +72,6 @@ export const router = createBrowserRouter([
         element: <ReviewTrip />,
       },
       {
-        path: 'booking-lookup',
-        element: <BookingLookup />,
-      },
-      {
-        path: 'check-in',
-        element: <CheckInPage />,
-      },
-      {
         path: 'flight-status',
         element: <FlightStatusPage />,
       },
@@ -117,14 +104,6 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'saved-flights',
-        element: (
-          <ProtectedRoute>
-            <SavedFlights />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: 'my-bookings',
         element: (
           <ProtectedRoute>
@@ -137,22 +116,6 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <BookingDetail />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'price-alerts',
-        element: (
-          <ProtectedRoute>
-            <PriceAlerts />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'support',
-        element: (
-          <ProtectedRoute>
-            <Support />
           </ProtectedRoute>
         ),
       },

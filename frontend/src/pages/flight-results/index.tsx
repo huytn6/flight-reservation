@@ -100,27 +100,9 @@ export const FlightResults: React.FC = () => {
   const [fareComparisonModal, setFareComparisonModal] = useState<FareOption[] | null>(null);
   const [fareRulesModal, setFareRulesModal] = useState<{ rules: FareRule[]; baggage: FareBaggage | null } | null>(null);
 
-  // Saved flights
-  const [savedFlightIds, setSavedFlightIds] = useState<string[]>([]);
-
   useEffect(() => {
     fetchFlights();
   }, [searchParams, sortOption]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadSavedFlights();
-    }
-  }, [isAuthenticated]);
-
-  const loadSavedFlights = async () => {
-    try {
-      const saved = await flightService.getSavedFlights();
-      setSavedFlightIds(saved.map((s) => s.flight_id));
-    } catch {
-      // ignore
-    }
-  };
 
   const fetchFlights = async () => {
     setLoading(true);
@@ -154,33 +136,6 @@ export const FlightResults: React.FC = () => {
       setInboundOffers([]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleToggleSaveFlight = async (flightId: string, e?: React.MouseEvent) => {
-    e?.stopPropagation?.();
-    if (!isAuthenticated) {
-      toast.error('Vui lòng đăng nhập để lưu chuyến bay');
-      navigate('/signin');
-      return;
-    }
-    const isSaved = savedFlightIds.includes(flightId);
-    try {
-      if (isSaved) {
-        const list = await flightService.getSavedFlights();
-        const found = list.find((s) => s.flight_id === flightId);
-        if (found) {
-          await flightService.unsaveFlight(found.id);
-          setSavedFlightIds((prev) => prev.filter((id) => id !== flightId));
-          toast.success('Đã bỏ lưu chuyến bay');
-        }
-      } else {
-        await flightService.saveFlight(flightId);
-        setSavedFlightIds((prev) => [...prev, flightId]);
-        toast.success('Đã lưu chuyến bay vào danh sách yêu thích!');
-      }
-    } catch (err: any) {
-      toast.error(err.message || 'Lỗi thao tác lưu chuyến bay');
     }
   };
 
@@ -469,8 +424,6 @@ export const FlightResults: React.FC = () => {
         onSelectFare={handleConfirmFare}
         onOpenFareComparison={() => selectedRawOffer && handleOpenFareComparison(selectedRawOffer.id)}
         onOpenFareRules={() => selectedRawOffer?.fares?.[0] && handleOpenFareRules(selectedRawOffer.fares[0].id)}
-        onToggleSave={() => selectedRawOffer && handleToggleSaveFlight(selectedRawOffer.id)}
-        isSaved={Boolean(selectedRawOffer && savedFlightIds.includes(selectedRawOffer.id))}
         confirmLabel={tripType === 'ROUND_TRIP' ? (legStage === 'outbound' ? 'Chọn chuyến đi' : 'Chọn chuyến về') : 'Chọn chuyến bay này'}
       />
     </div>

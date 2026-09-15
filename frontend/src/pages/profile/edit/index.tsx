@@ -9,6 +9,24 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
 
+const NATIONALITY_OPTIONS = [
+  { code: 'VN', label: 'Việt Nam' },
+  { code: 'US', label: 'Hoa Kỳ' },
+  { code: 'JP', label: 'Nhật Bản' },
+  { code: 'KR', label: 'Hàn Quốc' },
+  { code: 'TH', label: 'Thái Lan' },
+  { code: 'SG', label: 'Singapore' },
+  { code: 'AU', label: 'Úc' },
+  { code: 'GB', label: 'Vương Quốc Anh' },
+  { code: 'FR', label: 'Pháp' },
+  { code: 'DE', label: 'Đức' },
+  { code: 'CA', label: 'Canada' },
+  { code: 'CN', label: 'Trung Quốc' },
+  { code: 'TW', label: 'Đài Loan' },
+  { code: 'MY', label: 'Malaysia' },
+  { code: 'ID', label: 'Indonesia' },
+];
+
 export const ProfileEdit: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser } = useAuthStore();
@@ -21,7 +39,8 @@ export const ProfileEdit: React.FC = () => {
   const [dobMonth, setDobMonth] = useState('');
   const [dobDay, setDobDay] = useState('');
   const [dobYear, setDobYear] = useState('');
-  const [gender, setGender] = useState<string>('Undisclosed');
+  const [nationality, setNationality] = useState('VN');
+  const [gender, setGender] = useState<string>('');
   const [accessibility, setAccessibility] = useState('Not provided');
   const [saving, setSaving] = useState(false);
 
@@ -63,6 +82,10 @@ export const ProfileEdit: React.FC = () => {
     }
     userService.getProfile().then((profile: any) => {
       if (profile.phone) setPhone(profile.phone);
+      if (profile.nationality) setNationality(profile.nationality);
+      if (profile.gender) setGender(profile.gender);
+      if (profile.bio) setBio(profile.bio);
+      if (profile.special_assistance) setAccessibility(profile.special_assistance);
       if (profile.date_of_birth) {
         const [y, m, d] = profile.date_of_birth.split('-');
         setDobYear(y || '');
@@ -76,9 +99,21 @@ export const ProfileEdit: React.FC = () => {
     e.preventDefault();
     setSaving(true);
     const constructedFullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
-    const updates: { full_name: string; phone: string; date_of_birth?: string } = {
+    const updates: {
+      full_name: string;
+      phone: string;
+      nationality: string;
+      gender: string;
+      bio: string;
+      special_assistance: string;
+      date_of_birth?: string;
+    } = {
       full_name: constructedFullName,
       phone,
+      nationality,
+      gender,
+      bio,
+      special_assistance: accessibility,
     };
     if (dobYear && dobMonth && dobDay) {
       updates.date_of_birth = `${dobYear.padStart(4, '0')}-${dobMonth.padStart(2, '0')}-${dobDay.padStart(2, '0')}`;
@@ -88,7 +123,7 @@ export const ProfileEdit: React.FC = () => {
       await userService.updateProfile(updates);
 
       if (user) {
-        setUser({ ...user, full_name: constructedFullName });
+        setUser({ ...user, full_name: constructedFullName, phone });
       }
 
       toast.success('Basic information updated successfully');
@@ -170,7 +205,6 @@ export const ProfileEdit: React.FC = () => {
           {/* About You / Bio */}
           <div className="flex flex-col gap-1">
             <span className="text-xs font-semibold text-slate-800">About you</span>
-            <p className="text-[10px] text-slate-400">Coming soon — not saved to your account yet.</p>
             <Textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
@@ -227,10 +261,24 @@ export const ProfileEdit: React.FC = () => {
             </div>
           </div>
 
+          {/* Nationality */}
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-semibold text-slate-800">Nationality</span>
+            <Select value={nationality} onValueChange={setNationality}>
+              <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
+                <SelectValue placeholder="Choose your nationality" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {NATIONALITY_OPTIONS.map((n) => (
+                  <SelectItem key={n.code} value={n.code}>{n.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Gender */}
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-semibold text-slate-800">Gender</span>
-            <p className="text-[10px] text-slate-400">Coming soon — not saved to your account yet.</p>
             <div className="flex flex-col gap-2 text-xs text-slate-700">
               {['Female', 'Male', 'Unspecified (X)', 'Undisclosed (U)'].map((opt) => (
                 <label key={opt} className="flex items-center gap-2 cursor-pointer">
@@ -253,7 +301,6 @@ export const ProfileEdit: React.FC = () => {
             <span className="text-xs font-semibold text-slate-800">Accessibility needs</span>
             <p className="text-[10px] text-slate-500 leading-normal mb-0.5">
               Help us build features that make travel accessible for all by sharing this information.
-              Coming soon — not saved to your account yet.
             </p>
             <Select value={accessibility} onValueChange={setAccessibility}>
               <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
