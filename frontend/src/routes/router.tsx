@@ -13,6 +13,7 @@ import { ResetPasswordPage } from '@/pages/reset-password';
 import { CheckInPage } from '@/pages/check-in';
 import { FlightStatusPage } from '@/pages/flight-status';
 import { PublicCmsPage } from '@/pages/public-cms';
+import { MaintenancePage } from '@/pages/maintenance';
 
 import { FlightResults } from '@/pages/flight-results';
 import { ReviewTrip } from '@/pages/review-trip';
@@ -91,6 +92,10 @@ export const router = createBrowserRouter([
       {
         path: 'pages/:slug',
         element: <PublicCmsPage />,
+      },
+      {
+        path: 'maintenance',
+        element: <MaintenancePage />,
       },
       {
         path: 'checkout',

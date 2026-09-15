@@ -27,10 +27,10 @@ export const Footer: React.FC = () => {
           {/* Column 1: Công ty */}
           <div className="flex flex-col gap-1.5">
             <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Về Chúng Tôi</h4>
-            <Link to="/pages/about" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Giới thiệu UITAir</Link>
-            <Link to="/pages/careers" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cơ hội nghề nghiệp</Link>
-            <Link to="/pages/news" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Truyền thông & Tin tức</Link>
-            <Link to="/pages/partners" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Đối tác đối soát hãng bay</Link>
+            <Link to="/maintenance" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Giới thiệu UITAir</Link>
+            <Link to="/maintenance" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cơ hội nghề nghiệp</Link>
+            <Link to="/maintenance" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Truyền thông & Tin tức</Link>
+            <Link to="/maintenance" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Đối tác đối soát hãng bay</Link>
           </div>
 
           {/* Column 2: Khám phá & Tiện ích */}
@@ -47,8 +47,8 @@ export const Footer: React.FC = () => {
             <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Chính Sách</h4>
             <Link to="/pages/privacy" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Chính sách bảo mật</Link>
             <Link to="/pages/terms" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Điều khoản sử dụng dịch vụ</Link>
-            <Link to="/pages/cookies" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quy định về Cookie</Link>
-            <Link to="/pages/baggage-rules" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quy định hành lý & Hoàn vé</Link>
+            <Link to="/maintenance" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quy định về Cookie</Link>
+            <Link to="/maintenance" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Quy định hành lý & Hoàn vé</Link>
           </div>
 
           {/* Column 4: Trợ giúp */}
@@ -56,7 +56,7 @@ export const Footer: React.FC = () => {
             <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Trung Tâm Trợ Giúp</h4>
             <Link to="/support" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Gửi yêu cầu hỗ trợ (Support Desk)</Link>
             <Link to="/booking-lookup" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Tra cứu mã đặt chỗ PNR</Link>
-            <Link to="/pages/refund-faq" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Hướng dẫn hoàn tiền</Link>
+            <Link to="/maintenance" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Hướng dẫn hoàn tiền</Link>
           </div>
 
         </div>
