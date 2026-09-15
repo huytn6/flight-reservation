@@ -9,6 +9,7 @@ import { CreditCard, Smartphone, Landmark, Check, XCircle, RefreshCw } from 'luc
 interface PaymentModalProps {
   bookingId: string;
   amount: number;
+  initialPayment?: Payment | null;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -16,13 +17,23 @@ interface PaymentModalProps {
 export const PaymentModal: React.FC<PaymentModalProps> = ({
   bookingId,
   amount,
+  initialPayment,
   onClose,
   onSuccess,
 }) => {
-  const [method, setMethod] = useState<PaymentMethodEnum>(PaymentMethodEnum.CARD);
-  const [payment, setPayment] = useState<Payment | null>(null);
+  const [method, setMethod] = useState<PaymentMethodEnum>(
+    (initialPayment?.payment_method as PaymentMethodEnum) || PaymentMethodEnum.CARD
+  );
+  const [payment, setPayment] = useState<Payment | null>(initialPayment ?? null);
   const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
   const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    if (initialPayment?.id) {
+      loadTransactions(initialPayment.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleInitPayment = async () => {
     setLoading(true);

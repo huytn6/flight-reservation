@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { bookingService, type BookingDetail as BookingDetailType, type ETicket } from '@/services/booking';
-import { paymentService } from '@/services/payment';
+import type { Payment } from '@/services/payment';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { ETicketPrintable } from '@/components/booking/ETicketPrintable';
+import { PaymentModal } from '@/components/checkout/PaymentModal';
 import {
   Printer,
   Mail,
@@ -25,7 +26,7 @@ export const BookingDetail: React.FC = () => {
   const [detail, setDetail] = useState<BookingDetailType | null>(null);
   const [etickets, setEtickets] = useState<ETicket[]>([]);
   const [loading, setLoading] = useState(true);
-  const [retryingPayment, setRetryingPayment] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   useEffect(() => {
     if (id) loadBookingAll();
@@ -46,23 +47,6 @@ export const BookingDetail: React.FC = () => {
       toast.error(err.message || 'Tải thông tin chi tiết đơn hàng thất bại');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleRetryPayment = async () => {
-    if (!id) return;
-    setRetryingPayment(true);
-    try {
-      const payRes = await paymentService.createPayment(id, 'CREDIT_CARD');
-      if (payRes && payRes.id) {
-        await paymentService.simulateSuccess(payRes.id);
-      }
-      toast.success('Thanh toán lại thành công! Vé đã được xác nhận.');
-      loadBookingAll();
-    } catch (err: any) {
-      toast.error(err.message || 'Thanh toán lại thất bại');
-    } finally {
-      setRetryingPayment(false);
     }
   };
 
@@ -116,6 +100,16 @@ export const BookingDetail: React.FC = () => {
   const taxFee = Math.round(totalAmount * 0.1);
   const basePrice = totalAmount - taxFee;
 
+  // Most recent payment attempt for this booking, if the customer already picked a
+  // method before (e.g. a failed attempt) — reuse it so retry doesn't ask them again.
+  const payments: Payment[] = detail.payments || [];
+  const latestPayment = payments.length > 0
+    ? [...payments].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )[0]
+    : null;
+  const retryablePayment = latestPayment && latestPayment.status !== 'SUCCESS' ? latestPayment : null;
+
   const getStatusBadge = (status: string) => {
     return <StatusBadge type="booking" value={status} customerView />;
   };
@@ -168,15 +162,14 @@ export const BookingDetail: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {(booking.status === 'PENDING' || booking.status === 'PENDING_PAYMENT') && (
+            {(booking.status === 'PENDING' || booking.status === 'PENDING_PAYMENT' || booking.status === 'PAYMENT_FAILED') && (
               <Button
-                onClick={handleRetryPayment}
-                disabled={retryingPayment}
+                onClick={() => setIsPaymentModalOpen(true)}
                 size="sm"
                 className="bg-[#0065eb] hover:bg-blue-700 text-white font-normal text-xs h-8.5 px-4 rounded-md cursor-pointer shadow-none flex items-center gap-1.5"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                {retryingPayment ? 'Đang xử lý...' : 'Thanh Toán Lại Ngay'}
+                Thanh Toán Lại Ngay
               </Button>
             )}
 
@@ -299,6 +292,19 @@ export const BookingDetail: React.FC = () => {
 
       </div>
     </div>
+
+    {isPaymentModalOpen && id && (
+      <PaymentModal
+        bookingId={id}
+        amount={totalAmount}
+        initialPayment={retryablePayment}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onSuccess={() => {
+          setIsPaymentModalOpen(false);
+          loadBookingAll();
+        }}
+      />
+    )}
     </>
   );
 };
