@@ -8,7 +8,7 @@ export interface CheckoutButtonProps {
 }
 
 export const CheckoutButton: React.FC<CheckoutButtonProps> = ({
-  label = 'Next: Checkout',
+  label = 'Tiếp theo: Thanh toán',
   onClick,
   fullWidth = true,
 }) => {

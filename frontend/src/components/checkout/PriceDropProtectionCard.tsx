@@ -8,8 +8,8 @@ export interface PriceDropProtectionCardProps {
 }
 
 export const PriceDropProtectionCard: React.FC<PriceDropProtectionCardProps> = ({
-  priceText = '+$4',
-  subtext = 'Roundtrip per traveler',
+  priceText = '+96.000₫',
+  subtext = 'Khứ hồi cho mỗi hành khách',
   onAddClick,
   onHowItWorksClick,
 }) => {
@@ -30,16 +30,16 @@ export const PriceDropProtectionCard: React.FC<PriceDropProtectionCardProps> = (
         {/* Text Content */}
         <div className="flex flex-col text-left">
           <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
-            Price Drop Protection
+            Bảo vệ giá vé
           </h3>
           <p className="text-xs sm:text-sm text-slate-600 font-normal mt-1 leading-relaxed max-w-md">
-            We'll refund the difference if the price drops before you fly.
+            Chúng tôi sẽ hoàn lại phần chênh lệch nếu giá vé giảm trước khi bạn bay.
           </p>
           <button
             onClick={onHowItWorksClick}
             className="text-xs font-semibold text-[#0065eb] hover:underline mt-1.5 self-start cursor-pointer"
           >
-            How it works
+            Cách thức hoạt động
           </button>
         </div>
       </div>
@@ -50,7 +50,7 @@ export const PriceDropProtectionCard: React.FC<PriceDropProtectionCardProps> = (
           onClick={onAddClick}
           className="border border-[#0065eb] text-[#0065eb] hover:bg-blue-50 font-semibold text-xs sm:text-sm px-5 py-2 rounded-full transition-colors cursor-pointer"
         >
-          Add to flight
+          Thêm vào chuyến bay
         </button>
 
         <div className="flex flex-col items-end text-right">

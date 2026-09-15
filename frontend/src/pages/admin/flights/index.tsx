@@ -84,7 +84,7 @@ export const FlightsListPage: React.FC = () => {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Giờ Khởi Hành" />,
       cell: ({ row }) => (
         <span className="font-mono text-[11px] text-slate-500">
-          {row.original.departure_time ? new Date(row.original.departure_time).toLocaleString('vi-VN') : 'N/A'}
+          {row.original.departure_time ? new Date(row.original.departure_time).toLocaleString('vi-VN') : '—'}
         </span>
       ),
     },

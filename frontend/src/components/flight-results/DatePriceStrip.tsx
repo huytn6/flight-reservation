@@ -2,13 +2,13 @@ import React from 'react';
 import type { DatePriceOption } from '@/types/flightResult';
 
 const DEFAULT_DATE_PRICES: DatePriceOption[] = [
-  { dayName: 'Mon', date: 'Aug 10', price: 145 },
-  { dayName: 'Tue', date: 'Aug 11', price: 132 },
-  { dayName: 'Wed', date: 'Aug 12', price: 128, isSelected: true },
-  { dayName: 'Thu', date: 'Aug 13', price: 135 },
-  { dayName: 'Fri', date: 'Aug 14', price: 160 },
-  { dayName: 'Sat', date: 'Aug 15', price: 175 },
-  { dayName: 'Sun', date: 'Aug 16', price: 150 },
+  { dayName: 'Th 2', date: '10 Th8', price: 145 },
+  { dayName: 'Th 3', date: '11 Th8', price: 132 },
+  { dayName: 'Th 4', date: '12 Th8', price: 128, isSelected: true },
+  { dayName: 'Th 5', date: '13 Th8', price: 135 },
+  { dayName: 'Th 6', date: '14 Th8', price: 160 },
+  { dayName: 'Th 7', date: '15 Th8', price: 175 },
+  { dayName: 'CN', date: '16 Th8', price: 150 },
 ];
 
 interface DatePriceStripProps {

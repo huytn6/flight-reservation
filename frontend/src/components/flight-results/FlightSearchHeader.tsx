@@ -13,12 +13,12 @@ interface FlightSearchHeaderProps {
 }
 
 export const FlightSearchHeader: React.FC<FlightSearchHeaderProps> = ({
-  originCity = 'Ho Chi Minh City',
+  originCity = 'Thành phố Hồ Chí Minh',
   originCode = 'SGN',
-  destCity = 'Da Nang',
+  destCity = 'Đà Nẵng',
   destCode = 'DAD',
-  dateText = 'Aug 12 - Aug 19',
-  travelerText = '1 traveler, Economy',
+  dateText = '12 Th8 - 19 Th8',
+  travelerText = '1 hành khách, Phổ thông',
   onEditSearch,
 }) => {
   return (
@@ -51,7 +51,7 @@ export const FlightSearchHeader: React.FC<FlightSearchHeaderProps> = ({
           className="bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm rounded-full px-5 py-2 border border-white/30 transition-all flex items-center gap-2 self-stretch md:self-auto justify-center"
         >
           <Edit3 className="w-4 h-4" />
-          <span>Edit search</span>
+          <span>Sửa tìm kiếm</span>
         </Button>
 
       </div>

@@ -9,7 +9,7 @@ export interface FlightSummaryCardProps {
 }
 
 export const FlightSummaryCard: React.FC<FlightSummaryCardProps> = ({
-  noticeText = 'All flights have been updated to Economy.',
+  noticeText = 'Tất cả chuyến bay đã được cập nhật sang hạng Phổ thông.',
   segments,
   onFlightDetailsClick,
   onChangeFlightClick,

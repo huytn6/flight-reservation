@@ -12,8 +12,8 @@ interface EmptyStateProps {
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
-  title = 'No records found',
-  description = 'There are no items matching your request.',
+  title = 'Không tìm thấy dữ liệu',
+  description = 'Không có mục nào phù hợp với yêu cầu của bạn.',
   icon,
   actionLabel,
   onAction,

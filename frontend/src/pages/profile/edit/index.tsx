@@ -157,55 +157,55 @@ export const ProfileEdit: React.FC = () => {
             type="button"
             onClick={() => navigate('/profile')}
             className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-            aria-label="Back to profile"
+            aria-label="Về trang cá nhân"
           >
             <X className="w-4 h-4" />
           </button>
-          <span className="text-xs font-semibold text-slate-500">Edit Profile</span>
+          <span className="text-xs font-semibold text-slate-500">Chỉnh sửa hồ sơ</span>
         </div>
 
         {/* Header Title & Description */}
         <div>
-          <h1 className="text-lg font-semibold text-slate-900 mb-0.5">Basic information</h1>
+          <h1 className="text-lg font-semibold text-slate-900 mb-0.5">Thông tin cơ bản</h1>
           <p className="text-[11px] text-slate-500 leading-normal">
-            Make sure this information matches your travel ID, like your passport or license.
+            Đảm bảo thông tin này khớp với giấy tờ tùy thân của bạn, như hộ chiếu hoặc CCCD.
           </p>
-          <p className="text-[11px] text-red-500 font-medium mt-0.5">* Required</p>
+          <p className="text-[11px] text-red-500 font-medium mt-0.5">* Bắt buộc</p>
         </div>
 
         <form onSubmit={handleSave} className="flex flex-col gap-4">
-          
+
           {/* Full Name Fields */}
           <div className="flex flex-col gap-2.5">
-            <span className="text-xs font-semibold text-slate-800">Full name</span>
+            <span className="text-xs font-semibold text-slate-800">Họ và tên</span>
 
             <div>
-              <label className="text-[10px] text-slate-500 block mb-0.5">First name *</label>
+              <label className="text-[10px] text-slate-500 block mb-0.5">Tên *</label>
               <Input
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="First name"
+                placeholder="Tên"
                 required
                 className="text-xs rounded-lg border-slate-300 focus:border-[#0065eb] h-9"
               />
             </div>
 
             <div>
-              <label className="text-[10px] text-slate-500 block mb-0.5">Middle name</label>
+              <label className="text-[10px] text-slate-500 block mb-0.5">Tên đệm</label>
               <Input
                 value={middleName}
                 onChange={(e) => setMiddleName(e.target.value)}
-                placeholder="Middle name"
+                placeholder="Tên đệm"
                 className="text-xs rounded-lg border-slate-300 focus:border-[#0065eb] h-9"
               />
             </div>
 
             <div>
-              <label className="text-[10px] text-slate-500 block mb-0.5">Last name *</label>
+              <label className="text-[10px] text-slate-500 block mb-0.5">Họ *</label>
               <Input
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last name"
+                placeholder="Họ"
                 required
                 className="text-xs rounded-lg border-slate-300 focus:border-[#0065eb] h-9"
               />
@@ -214,18 +214,18 @@ export const ProfileEdit: React.FC = () => {
 
           {/* About You / Bio */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-slate-800">About you</span>
+            <span className="text-xs font-semibold text-slate-800">Giới thiệu về bạn</span>
             <Textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              placeholder="Help future hosts get to know you better. You can share your travel style, hobbies, interests, and more."
+              placeholder="Chia sẻ phong cách du lịch, sở thích, mối quan tâm của bạn và nhiều hơn nữa."
               className="text-xs rounded-lg border-slate-300 focus:border-[#0065eb] min-h-20 p-2.5 leading-normal"
             />
           </div>
 
           {/* Phone Number */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-slate-800">Phone number</span>
+            <span className="text-xs font-semibold text-slate-800">Số điện thoại</span>
             <Input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -240,7 +240,7 @@ export const ProfileEdit: React.FC = () => {
             <div className="grid grid-cols-3 gap-2.5">
               <Select value={dobDay} onValueChange={setDobDay}>
                 <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
-                  <SelectValue placeholder="Day" />
+                  <SelectValue placeholder="Ngày" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
                   {DAY_OPTIONS.map((d) => (
@@ -250,7 +250,7 @@ export const ProfileEdit: React.FC = () => {
               </Select>
               <Select value={dobMonth} onValueChange={setDobMonth}>
                 <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
-                  <SelectValue placeholder="Month" />
+                  <SelectValue placeholder="Tháng" />
                 </SelectTrigger>
                 <SelectContent>
                   {MONTH_OPTIONS.map((m) => (
@@ -260,7 +260,7 @@ export const ProfileEdit: React.FC = () => {
               </Select>
               <Select value={dobYear} onValueChange={setDobYear}>
                 <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
-                  <SelectValue placeholder="Year" />
+                  <SelectValue placeholder="Năm" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
                   {YEAR_OPTIONS.map((y) => (
@@ -289,10 +289,10 @@ export const ProfileEdit: React.FC = () => {
 
           {/* Nationality */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-slate-800">Nationality</span>
+            <span className="text-xs font-semibold text-slate-800">Quốc tịch</span>
             <Select value={nationality} onValueChange={setNationality}>
               <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
-                <SelectValue placeholder="Choose your nationality" />
+                <SelectValue placeholder="Chọn quốc tịch của bạn" />
               </SelectTrigger>
               <SelectContent className="max-h-60">
                 {NATIONALITY_OPTIONS.map((n) => (
@@ -304,19 +304,24 @@ export const ProfileEdit: React.FC = () => {
 
           {/* Gender */}
           <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold text-slate-800">Gender</span>
+            <span className="text-xs font-semibold text-slate-800">Giới tính</span>
             <div className="flex flex-col gap-2 text-xs text-slate-700">
-              {['Female', 'Male', 'Unspecified (X)', 'Undisclosed (U)'].map((opt) => (
-                <label key={opt} className="flex items-center gap-2 cursor-pointer">
+              {[
+                { value: 'Female', label: 'Nữ' },
+                { value: 'Male', label: 'Nam' },
+                { value: 'Unspecified (X)', label: 'Không xác định (X)' },
+                { value: 'Undisclosed (U)', label: 'Không tiết lộ (U)' },
+              ].map((opt) => (
+                <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
                     name="gender"
-                    value={opt}
-                    checked={gender === opt}
+                    value={opt.value}
+                    checked={gender === opt.value}
                     onChange={(e) => setGender(e.target.value)}
                     className="w-3.5 h-3.5 text-[#0065eb] focus:ring-[#0065eb] border-slate-300"
                   />
-                  <span className="text-xs">{opt}</span>
+                  <span className="text-xs">{opt.label}</span>
                 </label>
               ))}
             </div>
@@ -324,19 +329,19 @@ export const ProfileEdit: React.FC = () => {
 
           {/* Accessibility Needs */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-semibold text-slate-800">Accessibility needs</span>
+            <span className="text-xs font-semibold text-slate-800">Nhu cầu hỗ trợ đặc biệt</span>
             <p className="text-[10px] text-slate-500 leading-normal mb-0.5">
-              Help us build features that make travel accessible for all by sharing this information.
+              Giúp chúng tôi xây dựng các tính năng hỗ trợ du lịch cho mọi người bằng cách chia sẻ thông tin này.
             </p>
             <Select value={accessibility} onValueChange={setAccessibility}>
               <SelectTrigger className="text-xs rounded-lg border-slate-300 h-9">
-                <SelectValue placeholder="Choose an option" />
+                <SelectValue placeholder="Chọn một tùy chọn" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Not provided">Not provided</SelectItem>
-                <SelectItem value="Wheelchair access">Wheelchair access required</SelectItem>
-                <SelectItem value="Visual assistance">Visual assistance</SelectItem>
-                <SelectItem value="Hearing assistance">Hearing assistance</SelectItem>
+                <SelectItem value="Not provided">Không cung cấp</SelectItem>
+                <SelectItem value="Wheelchair access">Cần hỗ trợ xe lăn</SelectItem>
+                <SelectItem value="Visual assistance">Hỗ trợ khiếm thị</SelectItem>
+                <SelectItem value="Hearing assistance">Hỗ trợ khiếm thính</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -348,7 +353,7 @@ export const ProfileEdit: React.FC = () => {
               disabled={saving}
               className="bg-[#0065eb] hover:bg-blue-700 text-white rounded-full px-8 py-1.5 font-semibold text-xs h-9 cursor-pointer transition-colors shadow-none"
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Đang lưu...' : 'Lưu'}
             </Button>
           </div>
 

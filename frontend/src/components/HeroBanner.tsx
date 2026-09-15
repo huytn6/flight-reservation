@@ -11,7 +11,7 @@ export const HeroBanner = () => {
       {/* Hero Title */}
       <div className="relative z-10 max-w-[1240px] mx-auto px-4 h-full flex flex-col items-center pt-8 sm:pt-12 text-center">
         <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-serif tracking-wide font-normal drop-shadow-md">
-          The one place you go to go places
+          Nơi duy nhất bạn cần để chinh phục mọi điểm đến
         </h1>
       </div>
     </div>

@@ -29,7 +29,7 @@ export interface SelectProps {
 
 export const Select: React.FC<SelectProps> = ({
   label,
-  placeholder = 'Select an option...',
+  placeholder = 'Chọn một tùy chọn...',
   value,
   options = [],
   onChange,
@@ -41,7 +41,7 @@ export const Select: React.FC<SelectProps> = ({
   helperText,
   fullWidth = false,
   className = '',
-  searchPlaceholder = 'Search options...',
+  searchPlaceholder = 'Tìm tùy chọn...',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -275,7 +275,7 @@ export const Select: React.FC<SelectProps> = ({
                 /* Empty State */
                 <div className="py-8 px-4 text-center text-xs text-slate-400 flex flex-col items-center justify-center gap-2">
                   <Search className="w-5 h-5 text-slate-300 stroke-[1.5]" />
-                  <span>No options found</span>
+                  <span>Không tìm thấy tùy chọn nào</span>
                 </div>
               )}
             </div>

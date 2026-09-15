@@ -76,16 +76,16 @@ export const CompactTopSearchBar: React.FC = () => {
       setLeavingFrom({
         code: originCode,
         city: originCity || originCode,
-        name: `${originCity || originCode} Airport`,
-        sublabel: `${originCode}, Vietnam`,
+        name: `Sân bay ${originCity || originCode}`,
+        sublabel: `${originCode}, Việt Nam`,
       });
     }
     if (destCode) {
       setGoingTo({
         code: destCode,
         city: destCity || destCode,
-        name: `${destCity || destCode} Airport`,
-        sublabel: `${destCode}, Vietnam`,
+        name: `Sân bay ${destCity || destCode}`,
+        sublabel: `${destCode}, Việt Nam`,
       });
     }
     if (startD && endD) {
@@ -104,9 +104,9 @@ export const CompactTopSearchBar: React.FC = () => {
     const queryParams = new URLSearchParams({
       trip: flightType,
       leavingFrom: leavingFrom?.code || 'SGN',
-      leavingFromCity: leavingFrom?.city || 'Ho Chi Minh City',
+      leavingFromCity: leavingFrom?.city || 'Thành phố Hồ Chí Minh',
       goingTo: goingTo?.code || 'HAN',
-      goingToCity: goingTo?.city || 'Hanoi',
+      goingToCity: goingTo?.city || 'Hà Nội',
       startDate: dateRange.startDate.toString(),
       adults: passengers.adults.toString(),
       children: passengers.children.toString(),
@@ -159,15 +159,15 @@ export const CompactTopSearchBar: React.FC = () => {
           {/* Origin & Destination pair */}
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full lg:flex-[2] relative">
             
-            {/* Leaving from Popover */}
+            {/* Điểm khởi hành */}
             <Popover open={leavingOpen} onOpenChange={setLeavingOpen}>
               <PopoverTrigger asChild className="w-full flex-1">
                 <div className="w-full border border-slate-300 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-slate-500 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
-                    <span className="text-[10px] font-medium text-slate-500 leading-tight">Leaving from</span>
+                    <span className="text-[10px] font-medium text-slate-500 leading-tight">Điểm khởi hành</span>
                     <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
-                      {leavingFrom ? `${leavingFrom.city} (${leavingFrom.code})` : 'Ho Chi Minh City (SGN)'}
+                      {leavingFrom ? `${leavingFrom.city} (${leavingFrom.code})` : 'Thành phố Hồ Chí Minh (SGN)'}
                     </span>
                   </div>
                 </div>
@@ -175,7 +175,7 @@ export const CompactTopSearchBar: React.FC = () => {
               <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-lg border border-slate-200 p-0 overflow-hidden" align="start">
                 <div className="p-2 border-b border-slate-100 bg-slate-50/50">
                   <Input 
-                    placeholder="Search airport..."
+                    placeholder="Tìm sân bay..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full text-xs"
@@ -212,15 +212,15 @@ export const CompactTopSearchBar: React.FC = () => {
               <ArrowLeftRight className="w-3.5 h-3.5 text-slate-700" />
             </Button>
 
-            {/* Going to Popover */}
+            {/* Điểm đến */}
             <Popover open={goingOpen} onOpenChange={setGoingOpen}>
               <PopoverTrigger asChild className="w-full flex-1">
                 <div className="w-full border border-slate-300 rounded-xl px-3 py-1.5 flex items-center gap-2 bg-white hover:border-slate-500 cursor-pointer h-[48px]">
                   <MapPin className="w-4 h-4 text-slate-700 shrink-0" />
                   <div className="flex flex-col text-left overflow-hidden">
-                    <span className="text-[10px] font-medium text-slate-500 leading-tight">Going to</span>
+                    <span className="text-[10px] font-medium text-slate-500 leading-tight">Điểm đến</span>
                     <span className="text-xs font-semibold text-slate-900 truncate whitespace-nowrap">
-                      {goingTo ? `${goingTo.city} (${goingTo.code})` : 'Hanoi (HAN)'}
+                      {goingTo ? `${goingTo.city} (${goingTo.code})` : 'Hà Nội (HAN)'}
                     </span>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ export const CompactTopSearchBar: React.FC = () => {
               <PopoverContent className="w-full sm:w-[360px] bg-white rounded-xl shadow-lg border border-slate-200 p-0 overflow-hidden" align="start">
                 <div className="p-2 border-b border-slate-100 bg-slate-50/50">
                   <Input 
-                    placeholder="Search airport..."
+                    placeholder="Tìm sân bay..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full text-xs"
@@ -288,7 +288,7 @@ export const CompactTopSearchBar: React.FC = () => {
               onClick={handleSearchSubmit}
               className="w-full lg:w-auto bg-[#0065eb] hover:bg-blue-700 text-white font-bold rounded-full px-7 h-[48px] text-xs sm:text-sm shadow-xs transition-colors cursor-pointer"
             >
-              Search
+              Tìm chuyến bay
             </Button>
           </div>
 

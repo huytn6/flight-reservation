@@ -230,7 +230,7 @@ export const FlightDetailPage: React.FC = () => {
               </div>
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <span className="text-slate-500">Hãng hàng không</span>
-                <span className="font-medium text-slate-900">{flight.airline_name || 'N/A'}</span>
+                <span className="font-medium text-slate-900">{flight.airline_name || '—'}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Trạng thái dữ liệu</span>

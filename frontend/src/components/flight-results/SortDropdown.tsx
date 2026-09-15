@@ -2,15 +2,15 @@ import React from 'react';
 import { Select, type SelectOption } from '@/components/common/Select';
 
 export const SORT_OPTIONS: SelectOption[] = [
-  { value: 'Recommended', label: 'Recommended' },
-  { value: 'price_asc', label: 'Price: low to high' },
-  { value: 'price_desc', label: 'Price: high to low' },
-  { value: 'duration_asc', label: 'Shortest duration' },
-  { value: 'duration_desc', label: 'Longest duration' },
-  { value: 'departure_asc', label: 'Earliest departure' },
-  { value: 'departure_desc', label: 'Latest departure' },
-  { value: 'arrival_asc', label: 'Earliest arrival' },
-  { value: 'arrival_desc', label: 'Latest arrival' },
+  { value: 'Recommended', label: 'Đề xuất' },
+  { value: 'price_asc', label: 'Giá: thấp đến cao' },
+  { value: 'price_desc', label: 'Giá: cao đến thấp' },
+  { value: 'duration_asc', label: 'Thời gian bay: ngắn nhất' },
+  { value: 'duration_desc', label: 'Thời gian bay: dài nhất' },
+  { value: 'departure_asc', label: 'Giờ khởi hành: sớm nhất' },
+  { value: 'departure_desc', label: 'Giờ khởi hành: muộn nhất' },
+  { value: 'arrival_asc', label: 'Giờ đến: sớm nhất' },
+  { value: 'arrival_desc', label: 'Giờ đến: muộn nhất' },
 ];
 
 interface SortDropdownProps {
@@ -25,7 +25,7 @@ export const SortDropdown: React.FC<SortDropdownProps> = ({
   return (
     <div className="w-[180px]">
       <Select
-        label="Sort by"
+        label="Sắp xếp theo"
         value={selectedKey}
         options={SORT_OPTIONS}
         onChange={(val) => {
@@ -34,7 +34,7 @@ export const SortDropdown: React.FC<SortDropdownProps> = ({
           }
         }}
         searchable={true}
-        searchPlaceholder="Search sort options..."
+        searchPlaceholder="Tìm kiểu sắp xếp..."
       />
     </div>
   );

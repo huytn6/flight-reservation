@@ -6,15 +6,15 @@ export interface CancellationPolicyCardProps {
 }
 
 export const CancellationPolicyCard: React.FC<CancellationPolicyCardProps> = ({
-  title = 'Free cancellation',
-  description = "There's no fee to cancel within 24 hours of booking.",
+  title = 'Miễn phí hủy vé',
+  description = "Không mất phí khi hủy trong vòng 24 giờ sau khi đặt.",
 }) => {
   return (
     <div className="bg-transparent rounded-2xl border border-slate-200 p-5 font-sans flex items-center gap-3.5">
       {/* UITAir calendar shield visual */}
-      <img 
-        src="https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__calendar_shield.svg" 
-        alt="Free cancellation" 
+      <img
+        src="https://a.travel-assets.com/travel-assets-manager/pictogram-bex/light__calendar_shield.svg"
+        alt="Miễn phí hủy vé"
         className="w-10 h-10 shrink-0 object-contain" 
       />
 

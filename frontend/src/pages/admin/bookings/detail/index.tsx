@@ -279,15 +279,15 @@ export const BookingDetailPage: React.FC = () => {
             <CardContent className="p-4 space-y-3 text-xs">
               <div className="flex items-center gap-2">
                 <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="font-medium text-slate-900">{booking.contact_name || 'N/A'}</span>
+                <span className="font-medium text-slate-900">{booking.contact_name || 'Chưa có'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="font-mono text-slate-700 truncate">{booking.contact_email || 'N/A'}</span>
+                <span className="font-mono text-slate-700 truncate">{booking.contact_email || 'Chưa có'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="font-mono text-slate-700">{booking.contact_phone || 'N/A'}</span>
+                <span className="font-mono text-slate-700">{booking.contact_phone || 'Chưa có'}</span>
               </div>
             </CardContent>
           </Card>

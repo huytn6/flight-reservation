@@ -14,7 +14,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowe
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 font-medium text-sm">
-        Authenticating...
+        Đang xác thực...
       </div>
     );
   }
@@ -40,7 +40,7 @@ export const GuestGuard: React.FC<GuestGuardProps> = ({ children }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 font-medium text-sm">
-        Loading...
+        Đang tải...
       </div>
     );
   }

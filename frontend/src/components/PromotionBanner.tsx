@@ -14,10 +14,10 @@ export const PromotionBanner = () => {
 
           <div className="flex flex-col gap-0.5">
             <h2 className="text-lg sm:text-xl font-bold font-serif tracking-tight text-white">
-              Summer flight deals: Up to 25% off
+              Ưu đãi vé bay mùa hè: Giảm đến 25%
             </h2>
             <p className="text-xs sm:text-sm text-gray-300 font-normal">
-              Plan a quick getaway—find deals on last-minute flight tickets.
+              Lên kế hoạch cho chuyến đi ngắn — tìm ưu đãi vé bay giờ chót.
             </p>
           </div>
         </div>
@@ -26,7 +26,7 @@ export const PromotionBanner = () => {
         <Button 
           className="bg-white hover:bg-gray-100 text-[#12182b] font-bold text-xs sm:text-sm rounded-full px-6 py-2.5 h-auto transition-colors shrink-0 self-start sm:self-center"
         >
-          Book now
+          Đặt ngay
         </Button>
 
       </div>

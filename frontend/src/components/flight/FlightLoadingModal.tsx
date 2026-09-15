@@ -7,9 +7,9 @@ export interface FlightLoadingProps {
 }
 
 export const FlightLoadingModal: React.FC<FlightLoadingProps> = ({
-  originCity = 'Hanoi',
-  destinationCity = 'Ho Chi Minh City',
-  subtitle = 'Searching for flights from 400+ airlines...',
+  originCity = 'Hà Nội',
+  destinationCity = 'Thành phố Hồ Chí Minh',
+  subtitle = 'Đang tìm chuyến bay từ hơn 400 hãng hàng không...',
 }) => {
   return (
     <div className="flex flex-col items-center justify-center p-8 font-sans select-none min-h-[340px]">
@@ -113,7 +113,7 @@ export const FlightLoadingModal: React.FC<FlightLoadingProps> = ({
 
       {/* Typography Route & Subtitle */}
       <h2 className="text-xl sm:text-2xl font-bold text-[#141d38] tracking-tight mt-5 text-center">
-        {originCity} to {destinationCity}
+        {originCity} đến {destinationCity}
       </h2>
       <p className="text-sm text-[#526077] font-normal mt-1.5 text-center">
         {subtitle}

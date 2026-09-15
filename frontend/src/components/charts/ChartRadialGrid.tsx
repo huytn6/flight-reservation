@@ -45,7 +45,7 @@ const defaultData: RadialGridDataItem[] = [
 
 const defaultConfig: ChartConfig = {
   value: {
-    label: "Visitors",
+    label: "Số lượt truy cập",
   },
   chrome: {
     label: "Chrome",
@@ -64,20 +64,20 @@ const defaultConfig: ChartConfig = {
     color: "#93c5fd",
   },
   other: {
-    label: "Other",
+    label: "Khác",
     color: "#cbd5e1",
   },
 }
 
 export const ChartRadialGrid: React.FC<ChartRadialGridProps> = ({
-  title = "Radial Chart - Grid",
-  description = "January - June 2024",
+  title = "Biểu Đồ Tròn - Lưới",
+  description = "Tháng 1 - Tháng 6 năm 2024",
   data = defaultData,
   config = defaultConfig,
   dataKey = "value",
   nameKey = "name",
-  footerTrendText = "Trending up by 5.2% this month",
-  footerSubText = "Showing total visitors for the last 6 months",
+  footerTrendText = "Tăng 5.2% trong tháng này",
+  footerSubText = "Hiển thị tổng lượt truy cập trong 6 tháng gần nhất",
   className = "",
 }) => {
   return (

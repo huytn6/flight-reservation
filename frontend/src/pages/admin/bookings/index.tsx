@@ -72,7 +72,7 @@ export const BookingsListPage: React.FC = () => {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Ngày Đặt" />,
       cell: ({ row }) => (
         <span className="font-mono text-[11px] text-slate-500">
-          {row.original.created_at ? new Date(row.original.created_at).toLocaleString('vi-VN') : 'N/A'}
+          {row.original.created_at ? new Date(row.original.created_at).toLocaleString('vi-VN') : '—'}
         </span>
       ),
     },

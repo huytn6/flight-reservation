@@ -42,7 +42,7 @@ export const ETicketPrintable: React.FC<ETicketPrintableProps> = ({ detail, etic
         <div>
           <p className="text-slate-500 uppercase text-[10px] font-bold tracking-wider mb-0.5">Người liên hệ đặt vé</p>
           <p className="font-bold text-slate-900 text-xs sm:text-sm">{booking.contact_name}</p>
-          <p className="text-slate-600 text-[11px]">{booking.contact_email} • {booking.contact_phone || 'N/A'}</p>
+          <p className="text-slate-600 text-[11px]">{booking.contact_email} • {booking.contact_phone || 'Chưa có'}</p>
         </div>
         <div>
           <p className="text-slate-500 uppercase text-[10px] font-bold tracking-wider mb-0.5">Thông tin xuất vé</p>

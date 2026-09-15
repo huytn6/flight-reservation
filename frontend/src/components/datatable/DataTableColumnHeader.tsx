@@ -49,15 +49,15 @@ export function DataTableColumnHeader<TData, TValue>({
         <DropdownMenuContent align="start" className="bg-white rounded-md border border-slate-200 shadow-sm p-1 text-xs">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)} className="cursor-pointer text-xs">
             <ArrowUp className="mr-2 h-3.5 w-3.5 text-slate-500" />
-            Ascending
+            Tăng dần
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)} className="cursor-pointer text-xs">
             <ArrowDown className="mr-2 h-3.5 w-3.5 text-slate-500" />
-            Descending
+            Giảm dần
           </DropdownMenuItem>
           {column.getIsSorted() && (
             <DropdownMenuItem onClick={() => column.clearSorting()} className="cursor-pointer text-xs text-slate-500">
-              Clear Sorting
+              Bỏ sắp xếp
             </DropdownMenuItem>
           )}
           {column.getCanHide() && (
@@ -65,7 +65,7 @@ export function DataTableColumnHeader<TData, TValue>({
               <DropdownMenuSeparator className="bg-slate-100" />
               <DropdownMenuItem onClick={() => column.toggleVisibility(false)} className="cursor-pointer text-xs text-slate-500">
                 <EyeOff className="mr-2 h-3.5 w-3.5 text-slate-400" />
-                Hide Column
+                Ẩn cột
               </DropdownMenuItem>
             </>
           )}

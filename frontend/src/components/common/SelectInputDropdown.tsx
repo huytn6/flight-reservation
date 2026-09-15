@@ -17,7 +17,7 @@ export interface SelectInputDropdownProps {
 }
 
 export const SelectInputDropdown: React.FC<SelectInputDropdownProps> = ({
-  label = 'Select',
+  label = 'Chọn',
   value,
   options,
   onChange,

@@ -237,7 +237,7 @@ export const FlightResults: React.FC = () => {
       arrivalAirportCode: f.arrival_airport?.iata_code || currentLegDestination,
       departureCity: f.departure_airport?.city || currentLegOrigin,
       arrivalCity: f.arrival_airport?.city || currentLegDestination,
-      duration: `${durationHours}h ${durationMins}m`,
+      duration: `${durationHours} giờ ${durationMins} phút`,
       stops: f.stops === 0 ? 'Bay thẳng' : `${f.stops} điểm dừng`,
       price: f.cheapest_total || 1500000,
       seatsLeftText: f.fares?.[0]?.available_seats ? `Còn ${f.fares[0].available_seats} ghế` : 'Còn ghế',

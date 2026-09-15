@@ -22,19 +22,19 @@ export interface PriceSummaryCardProps {
 }
 
 const DEFAULT_BREAKDOWNS: PriceBreakdownItem[] = [
-  { label: 'Flight', amountText: '$103.00', isIndent: true },
-  { label: 'Taxes, fees, and charges', amountText: '$17.20', isIndent: true, hasInfoIcon: true },
+  { label: 'Chuyến bay', amountText: '2.400.000₫', isIndent: true },
+  { label: 'Thuế, phí và lệ phí', amountText: '400.000₫', isIndent: true, hasInfoIcon: true },
 ];
 
 export const PriceSummaryCard: React.FC<PriceSummaryCardProps> = ({
-  title = 'Price details',
-  travelerLabel = 'Traveler 1: Adult',
-  travelerTotalText = '$120.20',
+  title = 'Chi tiết giá',
+  travelerLabel = 'Hành khách 1: Người lớn',
+  travelerTotalText = '2.800.000₫',
   breakdowns = DEFAULT_BREAKDOWNS,
-  seatsLeftBadgeText = '4 left at',
-  totalAmountText = '$120.20',
-  currencySubtext = 'Rates are shown in US dollars',
-  checkoutButtonLabel = 'Next: Checkout',
+  seatsLeftBadgeText = 'Còn 4 chỗ với giá',
+  totalAmountText = '2.800.000₫',
+  currencySubtext = 'Giá hiển thị bằng đồng Việt Nam',
+  checkoutButtonLabel = 'Tiếp theo: Thanh toán',
   onCheckout,
 }) => {
   return (
@@ -74,7 +74,7 @@ export const PriceSummaryCard: React.FC<PriceSummaryCardProps> = ({
       {/* Trip Total */}
       <div className="flex items-center justify-between gap-2">
         <span className="text-base sm:text-lg font-bold text-slate-900">
-          Trip total
+          Tổng chuyến đi
         </span>
         <span className="text-xl sm:text-2xl font-bold text-slate-900">
           {totalAmountText}

@@ -4,13 +4,13 @@ import { ChevronRight } from 'lucide-react';
 
 export const ReviewTripBreadcrumb: React.FC = () => {
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs sm:text-sm font-sans mb-1">
+    <nav aria-label="Đường dẫn điều hướng" className="flex items-center gap-2 text-xs sm:text-sm font-sans mb-1">
       <Link to="/Flights-Search" className="font-bold text-slate-900 hover:text-[#0065eb] transition-colors">
-        Your flights
+        Chuyến bay của bạn
       </Link>
       <ChevronRight className="w-3.5 h-3.5 text-slate-500 stroke-[2.5]" />
       <span className="text-slate-500 font-normal">
-        Checkout
+        Thanh toán
       </span>
     </nav>
   );

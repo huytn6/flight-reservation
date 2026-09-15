@@ -62,7 +62,7 @@ export const FlightDetailDrawer: React.FC<FlightDetailDrawerProps> = ({
             </button>
 
             <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">
-              Review fare to {flight.arrivalCity}
+              Xem giá vé đến {flight.arrivalCity}
             </h2>
           </div>
 
@@ -110,7 +110,7 @@ export const FlightDetailDrawer: React.FC<FlightDetailDrawerProps> = ({
                 onClick={() => setIsModalOpen(true)}
                 className="text-xs text-[#0065eb] hover:underline font-medium cursor-pointer"
               >
-                Flight details
+                Chi tiết chuyến bay
               </button>
             </div>
 
@@ -138,7 +138,7 @@ export const FlightDetailDrawer: React.FC<FlightDetailDrawerProps> = ({
             </div>
 
             <span className="text-xs text-slate-500 font-normal leading-tight mt-1">
-              All flights will be updated to match the fare you select.
+              Tất cả chuyến bay sẽ được cập nhật theo hạng vé bạn chọn.
             </span>
           </div>
 

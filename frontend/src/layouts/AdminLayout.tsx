@@ -164,10 +164,10 @@ export const AdminLayout: React.FC = () => {
                     </Avatar>
                     <div className="flex flex-col text-left truncate group-data-[collapsible=icon]:hidden">
                       <span className="text-xs font-semibold text-slate-900 truncate leading-tight">
-                        {user?.full_name || 'User'}
+                        {user?.full_name || 'Người dùng'}
                       </span>
                       <span className="text-[9px] text-[#0065eb] font-mono font-bold uppercase mt-0.5">
-                        {userRole === 'ADMIN' ? 'SYS_ADMIN' : 'STAFF_OPERATOR'}
+                        {userRole === 'ADMIN' ? 'QUAN_TRI_VIEN' : 'NHAN_VIEN'}
                       </span>
                     </div>
                   </div>
@@ -177,10 +177,10 @@ export const AdminLayout: React.FC = () => {
               <DropdownMenuContent side="right" align="end" className="w-56 bg-white rounded-xl border-0 shadow-none p-1.5 font-sans z-50">
                 <DropdownMenuLabel className="px-2 py-2">
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-xs font-bold text-slate-900 truncate">{user?.full_name || 'User'}</span>
+                    <span className="text-xs font-bold text-slate-900 truncate">{user?.full_name || 'Người dùng'}</span>
                     <span className="text-[11px] text-slate-500 font-normal truncate">{user?.email}</span>
                     <span className="inline-block mt-1 text-[9px] font-bold text-[#0065eb] bg-blue-50 px-2 py-0.5 rounded-md w-max uppercase font-mono">
-                      {userRole === 'ADMIN' ? 'Administrator' : 'Staff Operator'}
+                      {userRole === 'ADMIN' ? 'Quản trị viên' : 'Nhân viên vận hành'}
                     </span>
                   </div>
                 </DropdownMenuLabel>

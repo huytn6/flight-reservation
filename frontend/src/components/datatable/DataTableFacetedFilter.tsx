@@ -54,7 +54,7 @@ export function DataTableFacetedFilter<TData, TValue>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-[180px] bg-white border-slate-200 rounded-md shadow-sm p-1 text-xs">
         <DropdownMenuLabel className="text-xs font-semibold text-slate-700 px-2 py-1">
-          Filter by {title}
+          Lọc theo {title}
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-slate-100" />
         {options.map((option) => {
@@ -89,7 +89,7 @@ export function DataTableFacetedFilter<TData, TValue>({
               onClick={() => column.setFilterValue(undefined)}
               className="justify-center text-center text-xs text-slate-500 cursor-pointer"
             >
-              Clear filters
+              Xóa bộ lọc
             </DropdownMenuItem>
           </>
         )}

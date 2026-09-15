@@ -120,7 +120,7 @@ export function DataTable<TData, TValue>({
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
+          aria-label="Chọn tất cả"
           className="translate-y-[2px]"
         />
       ),
@@ -128,7 +128,7 @@ export function DataTable<TData, TValue>({
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
+          aria-label="Chọn dòng"
           className="translate-y-[2px]"
         />
       ),
@@ -215,7 +215,7 @@ export function DataTable<TData, TValue>({
       <div className="flex flex-col items-center justify-center p-8 bg-white rounded-lg border border-red-200 text-center gap-3">
         <AlertCircle className="h-8 w-8 text-red-500" />
         <div>
-          <h3 className="text-sm font-semibold text-slate-900">Failed to load table data</h3>
+          <h3 className="text-sm font-semibold text-slate-900">Không thể tải dữ liệu bảng</h3>
           <p className="text-xs text-slate-500 mt-1">{error}</p>
         </div>
         {onRetry && (
@@ -226,7 +226,7 @@ export function DataTable<TData, TValue>({
             className="h-8 text-xs font-normal border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer rounded-md"
           >
             <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-            Retry
+            Thử lại
           </Button>
         )}
       </div>
@@ -385,7 +385,7 @@ export function DataTable<TData, TValue>({
                           }}
                           className="h-7 text-xs font-normal mt-2 border-slate-200 text-slate-600 rounded-md cursor-pointer"
                         >
-                          Clear all filters
+                          Xóa tất cả bộ lọc
                         </Button>
                       )}
                     </div>

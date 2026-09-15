@@ -46,7 +46,7 @@ const defaultData: PieDonutTextDataItem[] = [
 
 const defaultConfig: ChartConfig = {
   value: {
-    label: "Total Metrics",
+    label: "Tổng Chỉ Số",
   },
   chrome: {
     label: "Chrome",
@@ -65,21 +65,21 @@ const defaultConfig: ChartConfig = {
     color: "#93c5fd",
   },
   other: {
-    label: "Other",
+    label: "Khác",
     color: "#cbd5e1",
   },
 }
 
 export const ChartPieDonutText: React.FC<ChartPieDonutTextProps> = ({
-  title = "Pie Chart - Donut with Text",
-  description = "January - June 2024",
+  title = "Biểu Đồ Tròn - Donut Có Chữ",
+  description = "Tháng 1 - Tháng 6 năm 2024",
   data = defaultData,
   config = defaultConfig,
   dataKey = "value",
   nameKey = "name",
-  centerLabel = "Visitors",
-  footerTrendText = "Trending up by 5.2% this month",
-  footerSubText = "Showing total metrics distribution",
+  centerLabel = "Số lượt truy cập",
+  footerTrendText = "Tăng 5.2% trong tháng này",
+  footerSubText = "Hiển thị phân bố tổng chỉ số",
   className = "",
 }) => {
   const totalValue = useMemo(() => {

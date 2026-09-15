@@ -8,7 +8,7 @@ interface FlightDealsSectionProps {
 }
 
 export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
-  title = 'Flight deals from Ho Chi Minh City',
+  title = 'Ưu đãi chuyến bay từ Thành phố Hồ Chí Minh',
   onExploreClick,
 }) => {
   return (
@@ -23,7 +23,7 @@ export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
         
         {/* Real Interactive Google Map */}
         <iframe
-          title="Flight Deals Real Map"
+          title="Bản đồ ưu đãi chuyến bay"
           src="https://maps.google.com/maps?q=Vietnam&t=m&z=3&ie=UTF-8&iwloc=&output=embed"
           className="absolute inset-0 w-full h-full border-0 saturate-[1.1] brightness-[1.02] opacity-90 pointer-events-auto"
           loading="lazy"
@@ -49,7 +49,7 @@ export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
             onClick={onExploreClick}
             className="pointer-events-auto bg-[#29425a] hover:bg-[#1c3044] text-white text-xs sm:text-sm font-semibold rounded-full px-6 py-3 shadow-xl transition-all border border-slate-600/30 cursor-pointer"
           >
-            Explore all flight deals
+            Xem tất cả ưu đãi chuyến bay
           </Button>
         </div>
 
@@ -65,7 +65,7 @@ export const FlightDealsSection: React.FC<FlightDealsSectionProps> = ({
 
         {/* Map Data Copyright Bottom Right */}
         <div className="absolute bottom-3 right-4 z-20 text-[11px] font-medium text-gray-700 bg-white/80 backdrop-blur-xs px-2.5 py-0.5 rounded-md shadow-xs pointer-events-none">
-          Map data ©2026
+          Dữ liệu bản đồ ©2026
         </div>
 
       </div>

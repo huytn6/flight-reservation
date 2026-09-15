@@ -22,7 +22,7 @@ export function DataTableBulkActions<TData>({
       <div className="flex items-center gap-2 text-slate-900 font-medium">
         <CheckSquare className="h-4 w-4 text-[#0065eb]" />
         <span>
-          <strong className="font-bold text-[#0065eb]">{selectedRows.length}</strong> item(s) selected
+          Đã chọn <strong className="font-bold text-[#0065eb]">{selectedRows.length}</strong> mục
         </span>
       </div>
 

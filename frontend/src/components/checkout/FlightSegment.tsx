@@ -28,7 +28,7 @@ export const FlightSegment: React.FC<FlightSegmentProps> = ({
     <div className="flex flex-col gap-1 font-sans py-2">
       {/* City Route Title */}
       <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-        {segment.originCity} to {segment.destinationCity}
+        {segment.originCity} đến {segment.destinationCity}
       </h3>
 
       {/* Times & Duration */}
@@ -52,14 +52,14 @@ export const FlightSegment: React.FC<FlightSegmentProps> = ({
           onClick={() => onFlightDetailsClick && onFlightDetailsClick(segment.id)}
           className="text-[#0065eb] hover:underline font-normal cursor-pointer"
         >
-          Flight details
+          Chi tiết chuyến bay
         </button>
 
         <button
           onClick={() => onChangeFlightClick && onChangeFlightClick(segment.id)}
           className="text-[#0065eb] hover:underline font-normal cursor-pointer"
         >
-          Change flight
+          Đổi chuyến bay
         </button>
       </div>
     </div>

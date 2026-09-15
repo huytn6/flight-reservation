@@ -34,20 +34,20 @@ export interface ChartRadialShapeProps {
 
 const defaultConfig: ChartConfig = {
   value: {
-    label: "Target Progress",
+    label: "Tiến Độ Mục Tiêu",
     color: "#0065eb",
   },
 }
 
 export const ChartRadialShape: React.FC<ChartRadialShapeProps> = ({
-  title = "Radial Chart - Shape",
-  description = "January - June 2024",
+  title = "Biểu Đồ Tròn - Hình Khối",
+  description = "Tháng 1 - Tháng 6 năm 2024",
   value = 1260,
-  label = "Target",
+  label = "Mục tiêu",
   color = "#0065eb",
   endAngle = 100,
-  footerTrendText = "Trending up by 5.2% this month",
-  footerSubText = "Showing total operational capacity achieved",
+  footerTrendText = "Tăng 5.2% trong tháng này",
+  footerSubText = "Hiển thị tổng công suất vận hành đã đạt được",
   className = "",
 }) => {
   const chartData = [{ name: label.toLowerCase(), value, fill: color }]

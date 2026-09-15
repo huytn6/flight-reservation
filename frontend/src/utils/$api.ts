@@ -58,7 +58,7 @@ $api.interceptors.response.use(
     const body = response.data;
     if (body && typeof body === 'object' && 'success' in body) {
       if (body.success === false) {
-        const errorMsg = body.error?.message || 'Request failed';
+        const errorMsg = body.error?.message || 'Yêu cầu thất bại';
         const err = new Error(errorMsg) as any;
         err.code = body.error?.code;
         err.details = body.error?.details;
@@ -113,7 +113,7 @@ $api.interceptors.response.use(
           }
           return $api(originalRequest);
         } else {
-          throw new Error('No token returned');
+          throw new Error('Không nhận được token');
         }
       } catch (refreshError) {
         processQueue(refreshError, null);
@@ -126,7 +126,7 @@ $api.interceptors.response.use(
 
     const backendError = error.response?.data?.error;
     if (backendError) {
-      const customErr = new Error(backendError.message || 'An error occurred') as any;
+      const customErr = new Error(backendError.message || 'Đã xảy ra lỗi') as any;
       customErr.code = backendError.code;
       customErr.details = backendError.details;
       customErr.status = error.response?.status;

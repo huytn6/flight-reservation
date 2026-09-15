@@ -17,18 +17,18 @@ export interface FlightDetailModalProps {
 }
 
 const AIRPORT_NAMES: Record<string, string> = {
-  SGN: 'Tan Son Nhat Intl. (SGN)',
-  HAN: 'Noi Bai Intl. (HAN)',
-  DAD: 'Da Nang Intl. (DAD)',
-  PQC: 'Phu Quoc Intl. (PQC)',
-  CXR: 'Cam Ranh Intl. (CXR)',
+  SGN: 'Sân bay Quốc tế Tân Sơn Nhất (SGN)',
+  HAN: 'Sân bay Quốc tế Nội Bài (HAN)',
+  DAD: 'Sân bay Quốc tế Đà Nẵng (DAD)',
+  PQC: 'Sân bay Quốc tế Phú Quốc (PQC)',
+  CXR: 'Sân bay Quốc tế Cam Ranh (CXR)',
 };
 
 const CITY_NAMES: Record<string, string> = {
-  SGN: 'Ho Chi Minh City',
-  HAN: 'Hanoi',
-  DAD: 'Da Nang',
-  PQC: 'Phu Quoc',
+  SGN: 'Thành phố Hồ Chí Minh',
+  HAN: 'Hà Nội',
+  DAD: 'Đà Nẵng',
+  PQC: 'Phú Quốc',
   CXR: 'Nha Trang',
 };
 
@@ -45,31 +45,31 @@ export const FlightDetailModal: React.FC<FlightDetailModalProps> = ({
   const depCode = flight?.departureAirportCode || 'SGN';
   const arrCode = flight?.arrivalAirportCode || 'HAN';
 
-  const departureCity = flight?.departureCity && !flight.departureCity.includes('...') 
-    ? flight.departureCity 
-    : (CITY_NAMES[depCode] || segment?.originCity || 'Ho Chi Minh City');
+  const departureCity = flight?.departureCity && !flight.departureCity.includes('...')
+    ? flight.departureCity
+    : (CITY_NAMES[depCode] || segment?.originCity || 'Thành phố Hồ Chí Minh');
 
-  const arrivalCity = flight?.arrivalCity && !flight.arrivalCity.includes('...') 
-    ? flight.arrivalCity 
-    : (CITY_NAMES[arrCode] || segment?.destinationCity || 'Hanoi');
+  const arrivalCity = flight?.arrivalCity && !flight.arrivalCity.includes('...')
+    ? flight.arrivalCity
+    : (CITY_NAMES[arrCode] || segment?.destinationCity || 'Hà Nội');
 
   const departureAirportName = AIRPORT_NAMES[depCode] || `${departureCity} (${depCode})`;
   const arrivalAirportName = AIRPORT_NAMES[arrCode] || `${arrivalCity} (${arrCode})`;
 
-  const departureTerminal = 'Terminal 1';
-  const arrivalTerminal = 'Terminal 1';
+  const departureTerminal = 'Nhà ga 1';
+  const arrivalTerminal = 'Nhà ga 1';
 
   const departureTime = flight?.departureTime || segment?.departureTime || '08:30';
   const arrivalTime = flight?.arrivalTime || segment?.arrivalTime || '10:45';
 
-  const duration = flight?.duration || segment?.duration || '2h 15m';
+  const duration = flight?.duration || segment?.duration || '2 giờ 15 phút';
 
   const dateText = segment?.dateText || 'Hôm nay';
   const timezone = 'ICT';
 
   const aircraft = 'Airbus A321';
-  const cabin = 'Economy';
-  const distance = '721 mi';
+  const cabin = 'Phổ thông';
+  const distance = '1160 km';
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -167,13 +167,13 @@ export const FlightDetailModal: React.FC<FlightDetailModalProps> = ({
 
         {/* Bottom Details Grid (Aircraft, Cabin, Distance) */}
         <div className="grid grid-cols-2 gap-y-3 px-1 text-xs sm:text-sm border-t border-slate-100 pt-3">
-          <div className="text-slate-600 font-medium">Tàu bay (Aircraft)</div>
+          <div className="text-slate-600 font-medium">Tàu bay</div>
           <div className="text-slate-900 font-semibold text-right sm:text-left">{aircraft}</div>
 
-          <div className="text-slate-600 font-medium">Hạng chỗ (Cabin)</div>
+          <div className="text-slate-600 font-medium">Hạng chỗ</div>
           <div className="text-slate-900 font-semibold text-right sm:text-left">{cabin}</div>
 
-          <div className="text-slate-600 font-medium">Khoảng cách (Distance)</div>
+          <div className="text-slate-600 font-medium">Khoảng cách</div>
           <div className="text-slate-900 font-semibold text-right sm:text-left">{distance}</div>
         </div>
       </DialogContent>

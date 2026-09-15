@@ -16,7 +16,7 @@ export const OneKeyCashBanner: React.FC = () => {
         </div>
 
         <span className="font-bold text-xs sm:text-sm text-white tracking-tight">
-          Earn OneKeyCash on top of air miles when you sign in and book a flight
+          Nhận thêm OneKeyCash cùng dặm bay khi bạn đăng nhập và đặt vé
         </span>
       </div>
 
@@ -24,7 +24,7 @@ export const OneKeyCashBanner: React.FC = () => {
         onClick={() => navigate('/signin')}
         className="bg-[#0065eb] hover:bg-blue-700 text-white font-bold text-xs rounded-full px-5 py-2.5 shrink-0 self-start sm:self-center"
       >
-        Sign in
+        Đăng nhập
       </Button>
     </div>
   );

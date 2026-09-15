@@ -12,20 +12,20 @@ export interface FareInformationCardProps {
 }
 
 const DEFAULT_FEATURES: FareFeatureItem[] = [
-  { text: 'Carry-on bag included (15 lbs)', included: true },
-  { text: '1st checked bag included (44 lbs)', included: true },
-  { text: 'Non-refundable', included: false },
-  { text: 'Changes not allowed', included: false },
+  { text: 'Bao gồm hành lý xách tay (7kg)', included: true },
+  { text: 'Bao gồm 1 hành lý ký gửi (20kg)', included: true },
+  { text: 'Không hoàn tiền', included: false },
+  { text: 'Không được đổi vé', included: false },
 ];
 
 export const FareInformationCard: React.FC<FareInformationCardProps> = ({
-  cabinClassTitle = 'Economy',
+  cabinClassTitle = 'Phổ thông',
   features = DEFAULT_FEATURES,
 }) => {
   return (
     <div className="bg-transparent rounded-2xl border border-slate-200 p-5 sm:p-6 font-sans flex flex-col gap-4">
       <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-        Your fare: {cabinClassTitle}
+        Hạng vé của bạn: {cabinClassTitle}
       </h3>
 
       <div className="flex flex-col gap-3.5">
