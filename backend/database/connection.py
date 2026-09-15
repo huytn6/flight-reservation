@@ -133,7 +133,10 @@ def init_schema():
 
     Docker/Flyway remains the primary migration runner. This keeps direct
     Python startup and tests aligned by applying every checked-in migration,
-    not only the first schema file.
+    not only the first schema file. Versions already recorded successfully by
+    Flyway are not executed again. Data-heavy ``__seed_`` migrations are also
+    skipped for databases whose names end in ``_test``; unit tests create the
+    small fixtures they need and should not load the full demo catalogue.
     """
     import os
     _ensure_database()
@@ -141,8 +144,25 @@ def init_schema():
 
     migration_dir = os.path.join(os.path.dirname(__file__), 'migrations')
     db = get_db()
+    applied_versions = set()
+    history_exists = db.execute(
+        "SELECT COUNT(*) AS count FROM information_schema.tables "
+        "WHERE table_schema=? AND table_name='flyway_schema_history'",
+        (config.DB_NAME,)
+    ).fetchone()
+    if history_exists and history_exists['count']:
+        rows = db.execute(
+            "SELECT version FROM flyway_schema_history WHERE success=1 AND version IS NOT NULL"
+        ).fetchall()
+        applied_versions = {str(row['version']) for row in rows}
+
     for filename in sorted(os.listdir(migration_dir)):
         if not filename.endswith('.sql'):
+            continue
+        if config.DB_NAME.lower().endswith('_test') and '__seed_' in filename.lower():
+            continue
+        version = filename.split('__', 1)[0].lstrip('Vv')
+        if version in applied_versions:
             continue
         path = os.path.join(migration_dir, filename)
         with open(path, encoding='utf-8') as f:

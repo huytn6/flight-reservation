@@ -30,16 +30,28 @@ def _now_iso() -> str:
 DAILY_FLIGHT_TEMPLATE = [
     ('VN100', 'VN', '321', 'SGN', 'HAN', 6, 0, 130),
     ('VN101', 'VN', '321', 'HAN', 'SGN', 9, 0, 130),
+    ('QH100', 'QH', '738', 'SGN', 'HAN', 10, 0, 130),
+    ('QH101', 'QH', '738', 'HAN', 'SGN', 13, 0, 130),
     ('VN200', 'VN', '789', 'SGN', 'HAN', 14, 0, 130),
     ('VN201', 'VN', '789', 'HAN', 'SGN', 17, 30, 130),
+    ('VJ100', 'VJ', '321', 'SGN', 'HAN', 19, 0, 130),
+    ('VJ101', 'VJ', '321', 'HAN', 'SGN', 21, 0, 130),
     ('VJ300', 'VJ', '321', 'SGN', 'DAD', 7, 0, 75),
     ('VJ301', 'VJ', '321', 'DAD', 'SGN', 10, 30, 75),
+    ('VJ302', 'VJ', '32N', 'SGN', 'DAD', 13, 0, 75),
+    ('VJ303', 'VJ', '32N', 'DAD', 'SGN', 16, 0, 75),
     ('VJ400', 'VJ', '32N', 'HAN', 'DAD', 8, 0, 75),
     ('VJ401', 'VJ', '32N', 'DAD', 'HAN', 11, 30, 75),
+    ('VN120', 'VN', '738', 'HAN', 'DAD', 14, 0, 85),
+    ('VN121', 'VN', '738', 'DAD', 'HAN', 17, 0, 85),
     ('QH500', 'QH', '738', 'SGN', 'PQC', 9, 0, 60),
     ('QH501', 'QH', '738', 'PQC', 'SGN', 11, 30, 60),
+    ('QH540', 'QH', '321', 'SGN', 'PQC', 15, 0, 60),
+    ('QH541', 'QH', '321', 'PQC', 'SGN', 17, 0, 60),
     ('VN600', 'VN', '789', 'SGN', 'BKK', 7, 30, 90),
     ('VN601', 'VN', '789', 'BKK', 'SGN', 10, 30, 90),
+    ('TG910', 'TG', '77W', 'SGN', 'BKK', 13, 0, 90),
+    ('TG911', 'TG', '77W', 'BKK', 'SGN', 16, 0, 90),
     ('SQ700', 'SQ', '789', 'SGN', 'SIN', 10, 0, 115),
     ('SQ701', 'SQ', '789', 'SIN', 'SGN', 14, 0, 115),
     ('NH800', 'NH', '77W', 'SGN', 'NRT', 0, 30, 360),
@@ -57,6 +69,122 @@ DAILY_FLIGHT_TEMPLATE = [
     ('VN610', 'VN', '789', 'HAN', 'SIN', 8, 0, 220),
     ('VN611', 'VN', '789', 'SIN', 'HAN', 12, 30, 220),
 ]
+
+# Higher-frequency domestic profiles used by the V6 realistic Vietnam demo
+# schedule. Each row is:
+# (airline, aircraft, origin, destination, flight-number base, frequency,
+#  first departure minute, spacing minutes, duration minutes)
+#
+# Times and flight numbers are synthetic. Routes, carriers and relative
+# frequencies are modelled after Vietnam's hub-and-tourism travel patterns.
+ADDITIONAL_DAILY_FLIGHT_PROFILES = [
+    ('VN', '321', 'SGN', 'HAN', 1200, 4, 300, 240, 130),
+    ('VN', '321', 'HAN', 'SGN', 1210, 4, 360, 240, 130),
+    ('VJ', '32N', 'SGN', 'HAN', 1500, 4, 390, 240, 130),
+    ('VJ', '32N', 'HAN', 'SGN', 1510, 4, 450, 240, 130),
+    ('BL', '320', 'SGN', 'HAN', 600, 2, 480, 480, 130),
+    ('BL', '320', 'HAN', 'SGN', 610, 2, 540, 480, 130),
+    ('VU', '321', 'SGN', 'HAN', 300, 1, 750, 0, 130),
+    ('VU', '321', 'HAN', 'SGN', 310, 1, 825, 0, 130),
+
+    ('VN', '321', 'SGN', 'DAD', 1300, 3, 360, 300, 75),
+    ('VN', '321', 'DAD', 'SGN', 1310, 3, 480, 300, 75),
+    ('VJ', '32N', 'SGN', 'DAD', 1600, 3, 450, 300, 75),
+    ('VJ', '32N', 'DAD', 'SGN', 1610, 3, 570, 300, 75),
+    ('BL', '320', 'SGN', 'DAD', 700, 1, 840, 0, 75),
+    ('BL', '320', 'DAD', 'SGN', 710, 1, 960, 0, 75),
+    ('VU', '321', 'SGN', 'DAD', 400, 1, 1110, 0, 75),
+    ('VU', '321', 'DAD', 'SGN', 410, 1, 1230, 0, 75),
+
+    ('VN', '321', 'HAN', 'DAD', 1400, 2, 420, 480, 85),
+    ('VN', '321', 'DAD', 'HAN', 1410, 2, 540, 480, 85),
+    ('VJ', '32N', 'HAN', 'DAD', 1700, 2, 600, 480, 85),
+    ('VJ', '32N', 'DAD', 'HAN', 1710, 2, 720, 480, 85),
+    ('BL', '320', 'HAN', 'DAD', 800, 1, 780, 0, 85),
+    ('BL', '320', 'DAD', 'HAN', 810, 1, 900, 0, 85),
+
+    ('VN', '321', 'SGN', 'CXR', 1500, 2, 390, 480, 65),
+    ('VN', '321', 'CXR', 'SGN', 1510, 2, 510, 480, 65),
+    ('VJ', '32N', 'SGN', 'CXR', 1800, 2, 570, 480, 65),
+    ('VJ', '32N', 'CXR', 'SGN', 1810, 2, 690, 480, 65),
+    ('BL', '320', 'SGN', 'CXR', 900, 1, 750, 0, 65),
+    ('BL', '320', 'CXR', 'SGN', 910, 1, 870, 0, 65),
+    ('VN', '321', 'HAN', 'CXR', 1600, 2, 420, 480, 115),
+    ('VN', '321', 'CXR', 'HAN', 1610, 2, 570, 480, 115),
+    ('VJ', '32N', 'HAN', 'CXR', 1900, 1, 660, 0, 115),
+    ('VJ', '32N', 'CXR', 'HAN', 1910, 1, 840, 0, 115),
+
+    ('VN', '321', 'SGN', 'DLI', 1700, 1, 480, 0, 50),
+    ('VN', '321', 'DLI', 'SGN', 1710, 1, 570, 0, 50),
+    ('VJ', '32N', 'SGN', 'DLI', 2000, 2, 720, 420, 50),
+    ('VJ', '32N', 'DLI', 'SGN', 2010, 2, 810, 420, 50),
+    ('VN', '321', 'HAN', 'DLI', 1800, 1, 420, 0, 110),
+    ('VN', '321', 'DLI', 'HAN', 1810, 1, 570, 0, 110),
+    ('VJ', '32N', 'HAN', 'DLI', 2100, 1, 900, 0, 110),
+    ('VJ', '32N', 'DLI', 'HAN', 2110, 1, 1050, 0, 110),
+
+    ('VN', '321', 'SGN', 'VCA', 1900, 2, 450, 360, 45),
+    ('VN', '321', 'VCA', 'SGN', 1910, 2, 540, 360, 45),
+    ('VJ', '32N', 'SGN', 'VCA', 2200, 1, 1020, 0, 45),
+    ('VJ', '32N', 'VCA', 'SGN', 2210, 1, 1110, 0, 45),
+    ('VN', '321', 'HAN', 'VCA', 2300, 1, 420, 0, 125),
+    ('VN', '321', 'VCA', 'HAN', 2310, 1, 600, 0, 125),
+    ('VJ', '32N', 'HAN', 'VCA', 2700, 1, 840, 0, 125),
+    ('VJ', '32N', 'VCA', 'HAN', 2710, 1, 1020, 0, 125),
+
+    ('VN', '321', 'HAN', 'PQC', 2000, 2, 360, 540, 130),
+    ('VN', '321', 'PQC', 'HAN', 2010, 2, 540, 540, 130),
+    ('VJ', '32N', 'HAN', 'PQC', 2300, 1, 660, 0, 130),
+    ('VJ', '32N', 'PQC', 'HAN', 2310, 1, 840, 0, 130),
+    ('9G', '321', 'HAN', 'PQC', 100, 1, 780, 0, 130),
+    ('9G', '321', 'PQC', 'HAN', 110, 1, 960, 0, 130),
+    ('VJ', '32N', 'DAD', 'PQC', 2400, 1, 540, 0, 90),
+    ('VJ', '32N', 'PQC', 'DAD', 2410, 1, 660, 0, 90),
+    ('9G', '321', 'DAD', 'PQC', 200, 1, 780, 0, 90),
+    ('9G', '321', 'PQC', 'DAD', 210, 1, 900, 0, 90),
+    ('9G', '321', 'HPH', 'PQC', 300, 1, 600, 0, 125),
+    ('9G', '321', 'PQC', 'HPH', 310, 1, 775, 0, 125),
+
+    ('VN', '321', 'SGN', 'HPH', 2100, 1, 390, 0, 120),
+    ('VN', '321', 'HPH', 'SGN', 2110, 1, 930, 0, 120),
+    ('VJ', '32N', 'SGN', 'HPH', 2500, 1, 720, 0, 120),
+    ('VJ', '32N', 'HPH', 'SGN', 2510, 1, 840, 0, 120),
+    ('9G', '321', 'SGN', 'HPH', 400, 1, 425, 0, 125),
+    ('9G', '321', 'HPH', 'SGN', 410, 1, 950, 0, 130),
+
+    ('VN', '321', 'SGN', 'HUI', 2200, 1, 420, 0, 85),
+    ('VN', '321', 'HUI', 'SGN', 2210, 1, 540, 0, 85),
+    ('VJ', '32N', 'SGN', 'HUI', 2600, 1, 900, 0, 85),
+    ('VJ', '32N', 'HUI', 'SGN', 2610, 1, 1020, 0, 85),
+    ('VN', '321', 'SGN', 'UIH', 2400, 1, 480, 0, 70),
+    ('VN', '321', 'UIH', 'SGN', 2410, 1, 600, 0, 70),
+    ('VJ', '32N', 'SGN', 'UIH', 2800, 1, 900, 0, 70),
+    ('VJ', '32N', 'UIH', 'SGN', 2810, 1, 1020, 0, 70),
+    ('VN', '321', 'SGN', 'BMV', 2500, 1, 420, 0, 60),
+    ('VN', '321', 'BMV', 'SGN', 2510, 1, 540, 0, 60),
+    ('VJ', '32N', 'SGN', 'BMV', 2900, 1, 840, 0, 60),
+    ('VJ', '32N', 'BMV', 'SGN', 2910, 1, 960, 0, 60),
+    ('VN', '321', 'SGN', 'VII', 2600, 1, 360, 0, 110),
+    ('VN', '321', 'VII', 'SGN', 2610, 1, 510, 0, 110),
+    ('VJ', '32N', 'SGN', 'VII', 3000, 1, 780, 0, 110),
+    ('VJ', '32N', 'VII', 'SGN', 3010, 1, 930, 0, 110),
+]
+
+
+def _expand_additional_profiles():
+    flights = []
+    for airline, aircraft, origin, destination, number_base, frequency, first_minute, spacing, duration in ADDITIONAL_DAILY_FLIGHT_PROFILES:
+        for slot in range(frequency):
+            departure_minute = first_minute + slot * spacing
+            hour, minute = divmod(departure_minute, 60)
+            flights.append(
+                (f'{airline}{number_base + slot}', airline, aircraft, origin,
+                 destination, hour, minute, duration)
+            )
+    return flights
+
+
+DAILY_FLIGHT_TEMPLATE.extend(_expand_additional_profiles())
 
 # (fare_code, fare_name, base_price, baggage_kg, refundable, changeable, change_fee, cancel_fee)
 FARE_TEMPLATE = [
@@ -97,6 +225,7 @@ def _create_fares_and_seats(db, flight_id: str, cabin_ids: dict) -> None:
             (_uid(), fare_id, total, available, n)
         )
 
+    seat_values = []
     for row_num in SEAT_ROWS:
         if row_num <= 4:
             columns, cabin = ['A', 'C', 'D', 'F'], 'BUSINESS'
@@ -105,12 +234,20 @@ def _create_fares_and_seats(db, flight_id: str, cabin_ids: dict) -> None:
         for col in columns:
             seat_type = 'EXIT' if row_num in (15, 16) else ('WINDOW' if col in ('A', 'F') else ('AISLE' if col in ('C', 'D') else 'STANDARD'))
             extra_fee = 100000 if seat_type in ('EXIT', 'WINDOW') else 0
-            db.execute(
-                "INSERT INTO seats(id,flight_id,seat_number,cabin_class_id,seat_row,column_label,"
-                "seat_type,status,extra_fee,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            seat_values.append(
                 (_uid(), flight_id, f"{row_num}{col}", cabin_ids[cabin], row_num, col,
                  seat_type, 'AVAILABLE', extra_fee, n, n)
             )
+
+    # A flight has 172 seats. Sending them as one multi-row statement keeps the
+    # full two-month demo seed fast enough for local development.
+    seat_placeholders = ','.join(['(?,?,?,?,?,?,?,?,?,?,?)'] * len(seat_values))
+    seat_params = tuple(value for row in seat_values for value in row)
+    db.execute(
+        "INSERT INTO seats(id,flight_id,seat_number,cabin_class_id,seat_row,column_label,"
+        f"seat_type,status,extra_fee,created_at,updated_at) VALUES{seat_placeholders}",
+        seat_params
+    )
 
     layout = {'business': {'rows': [1, 4], 'columns': ['A', 'C', 'D', 'F']},
               'economy': {'rows': [5, 30], 'columns': ['A', 'B', 'C', 'D', 'E', 'F']}}
@@ -143,15 +280,20 @@ def ensure_schedule_range(db, start_date: datetime.date, end_date: datetime.date
             arr_dt = dep_dt + datetime.timedelta(minutes=duration)
             flight_id = _uid()
             n = _now_iso()
-            db.execute(
-                "INSERT INTO flights(id,flight_number,airline_id,aircraft_type_id,departure_airport_id,"
-                "arrival_airport_id,departure_time,arrival_time,duration_minutes,status,created_at,updated_at) "
-                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-                (flight_id, flight_no, airline_ids[airline_iata], aircraft_ids.get(aircraft_code),
-                 airport_ids[dep_iata], airport_ids[arr_iata], dep_dt.isoformat(), arr_dt.isoformat(),
-                 duration, 'SCHEDULED', n, n)
-            )
-            _create_fares_and_seats(db, flight_id, cabin_ids)
+            db.begin()
+            try:
+                db.execute(
+                    "INSERT INTO flights(id,flight_number,airline_id,aircraft_type_id,departure_airport_id,"
+                    "arrival_airport_id,departure_time,arrival_time,duration_minutes,status,created_at,updated_at) "
+                    "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (flight_id, flight_no, airline_ids[airline_iata], aircraft_ids.get(aircraft_code),
+                     airport_ids[dep_iata], airport_ids[arr_iata], dep_dt.isoformat(), arr_dt.isoformat(),
+                     duration, 'SCHEDULED', n, n)
+                )
+                _create_fares_and_seats(db, flight_id, cabin_ids)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
             created += 1
-        db.commit()
     return created

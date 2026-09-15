@@ -148,10 +148,10 @@ def main():
     print('Cabin classes seeded.')
 
     # ---- Flights, fares & seats ----
-    # Every route in the schedule flies daily, so seeding is just "make sure the
-    # next 7 days are covered" (see services/flight_schedule_service.py). The same
-    # function is used by the background job that keeps topping up the schedule in
-    # production so it never runs out of future flights (FIX.ipynb #15/#16).
+    # The fixed August/September 2026 demo schedule is installed by Flyway V5.
+    # Keep a rolling seven-day window here so seed.py also remains useful after
+    # that fixed demo period. ensure_schedule_range is idempotent, so dates that
+    # are already populated by the migration are left untouched.
     from services.flight_schedule_service import ensure_schedule_range
     start_date = datetime.date.today() + datetime.timedelta(days=1)
     end_date = start_date + datetime.timedelta(days=6)

@@ -274,6 +274,7 @@ export const FlightResults: React.FC = () => {
     return {
       id: f.id,
       airline: f.airline?.name || 'Hãng hàng không',
+      airlineCode: f.airline?.iata_code,
       flightNumber: f.flight_number,
       departureTime: depTimeStr,
       arrivalTime: arrTimeStr,

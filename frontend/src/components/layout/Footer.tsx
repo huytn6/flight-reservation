@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
           {/* Column 1: Công ty */}
           <div className="flex flex-col gap-1.5">
             <h4 className="font-bold text-slate-900 text-xs sm:text-sm mb-1">Về Chúng Tôi</h4>
-            <Link to="/pages/about" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Giới thiệu Expedia</Link>
+            <Link to="/pages/about" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Giới thiệu UITAir</Link>
             <Link to="/pages/careers" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Cơ hội nghề nghiệp</Link>
             <Link to="/pages/news" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Truyền thông & Tin tức</Link>
             <Link to="/pages/partners" className="text-[#0065eb] hover:underline transition-all leading-relaxed">Đối tác đối soát hãng bay</Link>

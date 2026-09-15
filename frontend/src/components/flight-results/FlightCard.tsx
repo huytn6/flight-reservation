@@ -3,6 +3,7 @@ import React from 'react';
 export interface FlightResultItem {
   id: string;
   airline: string;
+  airlineCode?: string;
   airlineLogoBg?: string;
   flightNumber: string;
   departureTime: string;
@@ -26,7 +27,18 @@ interface FlightCardProps {
 }
 
 export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = false, onSelect }) => {
-  const isVietnamAirlines = flight.airline.toLowerCase().includes('vietnam airlines');
+  const airlineCode = flight.airlineCode || flight.airline.slice(0, 2).toUpperCase();
+  const airlineBadge = {
+    VN: { background: '#0b7891', color: '#f8c84e' },
+    VJ: { background: '#d71920', color: '#ffe100' },
+    QH: { background: '#157347', color: '#ffffff' },
+    BL: { background: '#f58220', color: '#ffffff' },
+    VU: { background: '#6f2da8', color: '#ffffff' },
+    '9G': { background: '#13294b', color: '#f2c75c' },
+    SQ: { background: '#1f2f5c', color: '#f5c542' },
+    TG: { background: '#512b81', color: '#ffffff' },
+    NH: { background: '#1261a6', color: '#ffffff' },
+  }[airlineCode] || { background: '#475569', color: '#ffffff' };
 
   return (
     <div 
@@ -40,21 +52,14 @@ export const FlightCard: React.FC<FlightCardProps> = ({ flight, isSelected = fal
       {/* Left Column: Airline Logo & Flight Details */}
       <div className="flex items-start gap-2 flex-1 min-w-0">
         
-        {/* Dynamic Airline Logo */}
-        {isVietnamAirlines ? (
-          /* Vietnam Airlines Golden Lotus Logo Image */
-          <img 
-            src="https://images.trvl-media.com/media/content/expus/graphics/static_content/fusion/v0.1b/images/airlines/vector/s/VN_sq.svg" 
-            alt="Vietnam Airlines" 
-            className="w-6 h-6 shrink-0 object-contain mt-0.5 rounded-none" 
-          />
-        ) : (
-          /* VietJet Red Square Logo */
-          <div className="w-6 h-6 bg-[#e30613] text-white font-extrabold text-[7px] italic tracking-tight rounded-none flex flex-col items-center justify-center shrink-0 mt-0.5 select-none p-0.5 leading-none">
-            <span>vietjet</span>
-            <span className="text-[4px] not-italic font-normal">Air.com</span>
-          </div>
-        )}
+        {/* Compact carrier badge; avoids showing every non-VN flight as Vietjet. */}
+        <div
+          aria-label={`${flight.airline} (${airlineCode})`}
+          className="w-7 h-7 font-extrabold text-[9px] tracking-tight rounded-md flex items-center justify-center shrink-0 mt-0.5 select-none shadow-sm"
+          style={airlineBadge}
+        >
+          {airlineCode}
+        </div>
 
         <div className="flex flex-col min-w-0">
           {/* Departure & Arrival Times with Green Line */}
