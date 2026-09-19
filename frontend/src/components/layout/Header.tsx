@@ -6,6 +6,7 @@ import {
   Plane,
   PlaneTakeoff,
   Luggage,
+  Search,
   User,
   LogOut,
   ShieldCheck,
@@ -55,6 +56,11 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Header Navigation Links */}
         <div className="hidden md:flex items-center gap-6 text-xs font-medium text-slate-700">
+          <Link to="/flights/search?origin=HAN&destination=SGN&departure_date=2026-09-21&passengers=1" className="hover:text-[#0065eb] transition-colors flex items-center gap-1.5 py-1">
+            <Search className="w-4 h-4 text-slate-400 hover:text-[#0065eb] transition-colors" />
+            <span>Tìm Chuyến Bay</span>
+          </Link>
+
           <Link to="/flight-status" className="hover:text-[#0065eb] transition-colors flex items-center gap-1.5 py-1">
             <PlaneTakeoff className="w-4 h-4 text-slate-400 hover:text-[#0065eb] transition-colors" />
             <span>Trạng Thái Chuyến Bay</span>

@@ -16,7 +16,8 @@ import {
   XCircle,
   FileText,
   ArrowLeft,
-  QrCode
+  QrCode,
+  Plane
 } from 'lucide-react';
 
 export const BookingDetail: React.FC = () => {
@@ -136,6 +137,14 @@ export const BookingDetail: React.FC = () => {
           </Button>
 
           <div className="flex items-center gap-2">
+            <Button
+              onClick={() => navigate('/flights/search?origin=HAN&destination=SGN&departure_date=2026-09-21&passengers=1')}
+              size="sm"
+              className="bg-[#0065eb] hover:bg-blue-700 text-white font-medium text-xs h-8 px-3.5 rounded-lg cursor-pointer shadow-none flex items-center gap-1.5 transition-colors"
+            >
+              <Plane className="w-3.5 h-3.5" />
+              Đặt Chuyến Bay Mới
+            </Button>
             <Button
               onClick={() => window.print()}
               size="sm"
