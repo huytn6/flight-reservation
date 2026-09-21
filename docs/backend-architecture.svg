@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2080" height="950" viewBox="0 120 2080 950">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#334e68"/></marker>
+    <marker id="arrowLight" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#7c93a8"/></marker>
+  </defs>
+
+  <rect width="2080" height="1100" fill="#f5f7fa"/>
+
+  <!-- Source organization -->
+  <text x="52" y="164" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#5b6b7a">01 / SOURCE ORGANIZATION</text>
+  <g font-family="Arial, sans-serif">
+    <!-- source card: core -->
+    <rect x="52" y="182" width="500" height="140" rx="10" fill="#ffffff" stroke="#b8c7d5" stroke-width="1.5"/>
+    <rect x="72" y="205" width="19" height="14" rx="2" fill="#dfbd75"/><text x="104" y="219" font-family="Consolas, monospace" font-size="20" font-weight="700" fill="#243447">core/</text><text x="525" y="218" text-anchor="end" font-size="11" font-weight="700" letter-spacing=".8" fill="#47677f">SHARED</text>
+    <g font-family="Consolas, monospace" font-size="13"><text x="77" y="251" fill="#7c93a8">|--</text><text x="112" y="251" fill="#243447">router.py</text><text x="285" y="251" fill="#5b6b7a">route dispatch</text><text x="77" y="274" fill="#7c93a8">|--</text><text x="112" y="274" fill="#243447">authentication.py</text><text x="285" y="274" fill="#5b6b7a">session + RBAC</text><text x="77" y="297" fill="#7c93a8">|--</text><text x="112" y="297" fill="#243447">scheduler.py</text><text x="285" y="297" fill="#5b6b7a">periodic jobs</text><text x="77" y="312" fill="#a0acb7">...</text></g>
+
+    <!-- source card: controllers -->
+    <rect x="52" y="338" width="500" height="140" rx="10" fill="#ffffff" stroke="#b8c7d5" stroke-width="1.5"/>
+    <rect x="72" y="361" width="19" height="14" rx="2" fill="#dfbd75"/><text x="104" y="375" font-family="Consolas, monospace" font-size="20" font-weight="700" fill="#243447">controllers/</text><text x="525" y="374" text-anchor="end" font-size="11" font-weight="700" letter-spacing=".8" fill="#47677f">14 FILES</text>
+    <g font-family="Consolas, monospace" font-size="13"><text x="77" y="407" fill="#7c93a8">|--</text><text x="112" y="407" fill="#243447">draft_controller.py</text><text x="300" y="407" fill="#5b6b7a">booking + checkout</text><text x="77" y="430" fill="#7c93a8">|--</text><text x="112" y="430" fill="#243447">flight_controller.py</text><text x="300" y="430" fill="#5b6b7a">public catalog</text><text x="77" y="453" fill="#7c93a8">|--</text><text x="112" y="453" fill="#243447">payment_controller.py</text><text x="300" y="453" fill="#5b6b7a">payment simulation</text><text x="77" y="468" fill="#a0acb7">...</text></g>
+
+    <!-- source card: services -->
+    <rect x="52" y="494" width="500" height="140" rx="10" fill="#ffffff" stroke="#b8c7d5" stroke-width="1.5"/>
+    <rect x="72" y="517" width="19" height="14" rx="2" fill="#dfbd75"/><text x="104" y="531" font-family="Consolas, monospace" font-size="20" font-weight="700" fill="#243447">services/</text><text x="525" y="530" text-anchor="end" font-size="11" font-weight="700" letter-spacing=".8" fill="#47677f">USE CASES</text>
+    <g font-family="Consolas, monospace" font-size="13"><text x="77" y="563" fill="#7c93a8">|--</text><text x="112" y="563" fill="#243447">draft_service.py</text><text x="300" y="563" fill="#5b6b7a">seat hold + TTL</text><text x="77" y="586" fill="#7c93a8">|--</text><text x="112" y="586" fill="#243447">booking_service.py</text><text x="300" y="586" fill="#5b6b7a">booking state</text><text x="77" y="609" fill="#7c93a8">|--</text><text x="112" y="609" fill="#243447">flight_schedule_service.py</text><text x="350" y="609" fill="#5b6b7a">schedule</text><text x="77" y="624" fill="#a0acb7">...</text></g>
+
+    <!-- source card: repositories -->
+    <rect x="52" y="650" width="500" height="140" rx="10" fill="#ffffff" stroke="#b8c7d5" stroke-width="1.5"/>
+    <rect x="72" y="673" width="19" height="14" rx="2" fill="#dfbd75"/><text x="104" y="687" font-family="Consolas, monospace" font-size="20" font-weight="700" fill="#243447">repositories/</text><text x="525" y="686" text-anchor="end" font-size="11" font-weight="700" letter-spacing=".8" fill="#47677f">12 REPOSITORIES</text>
+    <g font-family="Consolas, monospace" font-size="13"><text x="77" y="719" fill="#7c93a8">|--</text><text x="112" y="719" fill="#243447">booking_repo.py</text><text x="285" y="719" fill="#5b6b7a">booking queries</text><text x="77" y="742" fill="#7c93a8">|--</text><text x="112" y="742" fill="#243447">flight_repo.py</text><text x="285" y="742" fill="#5b6b7a">flight + seat data</text><text x="77" y="765" fill="#a0acb7">...</text></g>
+
+    <!-- source card: database -->
+    <rect x="52" y="806" width="500" height="140" rx="10" fill="#ffffff" stroke="#b8c7d5" stroke-width="1.5"/>
+    <rect x="72" y="829" width="19" height="14" rx="2" fill="#dfbd75"/><text x="104" y="843" font-family="Consolas, monospace" font-size="20" font-weight="700" fill="#243447">database/</text><text x="525" y="842" text-anchor="end" font-size="11" font-weight="700" letter-spacing=".8" fill="#47677f">DATA + MIGRATIONS</text>
+    <g font-family="Consolas, monospace" font-size="13"><text x="77" y="875" fill="#7c93a8">|--</text><text x="112" y="875" fill="#243447">connection.py</text><text x="285" y="875" fill="#5b6b7a">thread-local MySQL</text><text x="77" y="898" fill="#7c93a8">|--</text><text x="112" y="898" fill="#243447">migrations/</text><text x="285" y="898" fill="#5b6b7a">Flyway V1...V10</text><text x="77" y="921" fill="#a0acb7">...</text></g>
+  </g>
+
+  <!-- Backend runtime -->
+  <text x="620" y="164" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#5b6b7a">02 / BACKEND REQUEST FLOW</text>
+  <rect x="620" y="182" width="1408" height="600" rx="14" fill="#ffffff" stroke="#b8c7d5" stroke-width="1.5"/>
+
+  <!-- system boundary -->
+  <rect x="780" y="275" width="1020" height="450" rx="14" fill="#f8fbff" stroke="#8aa9c2" stroke-width="2"/>
+  <rect x="802" y="259" width="205" height="30" rx="15" fill="#334e68"/><text x="904" y="279" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#ffffff">FLIGHT RESERVATION SYSTEM</text>
+
+  <!-- external nodes -->
+  <rect x="645" y="450" width="110" height="100" rx="8" fill="#edf2f6" stroke="#9aafbf" stroke-width="1.5"/><text x="700" y="482" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334e68">Web / Admin</text><text x="700" y="507" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#475569">browser client</text><text x="700" y="528" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#5b6b7a">API request</text>
+  <rect x="1825" y="450" width="110" height="100" rx="8" fill="#edf2f6" stroke="#9aafbf" stroke-width="1.5"/><text x="1880" y="482" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334e68">MySQL 8</text><text x="1880" y="507" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#475569">persistent data</text><text x="1880" y="528" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#5b6b7a">transactions</text>
+
+  <!-- Label backing clears the process boundary at the HTTP entry. -->
+  <rect x="760" y="465" width="35" height="20" fill="#ffffff"/>
+  <!-- Labels centered over connector gaps. -->
+  <g font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#5b6b7a">
+    <text x="782.5" y="480" text-anchor="middle">HTTP</text><text x="1030" y="480" text-anchor="middle">dispatch</text><text x="1290" y="480" text-anchor="middle">use case</text><text x="1550" y="480" text-anchor="middle">query</text><text x="1797.5" y="480" text-anchor="middle">SQL</text>
+  </g>
+  <!-- runtime cards -->
+  <g font-family="Arial, sans-serif">
+    <rect x="810" y="400" width="180" height="200" rx="8" fill="#f5f9fc" stroke="#8aa9c2" stroke-width="1.5"/><text x="830" y="432" font-size="10" font-weight="700" fill="#47677f">01 / SERVER</text><text x="830" y="468" font-size="18" font-weight="700" fill="#243447">HTTP server</text><text x="830" y="500" font-size="12" fill="#475569">ThreadingHTTPServer</text><text x="830" y="528" font-size="11" fill="#5b6b7a">request lifecycle</text><text x="830" y="558" font-size="10" fill="#47677f">main.py</text>
+    <rect x="1070" y="400" width="180" height="200" rx="8" fill="#f5f9fc" stroke="#8aa9c2" stroke-width="1.5"/><text x="1090" y="432" font-size="10" font-weight="700" fill="#47677f">02 / REQUEST HANDLING</text><text x="1090" y="468" font-size="18" font-weight="700" fill="#243447">API handling</text><text x="1090" y="500" font-size="12" fill="#475569">router + middleware</text><text x="1090" y="528" font-size="11" fill="#5b6b7a">auth + controllers</text><text x="1090" y="558" font-size="10" fill="#47677f">core/ + controllers/</text>
+    <rect x="1330" y="400" width="180" height="200" rx="8" fill="#f5f9fc" stroke="#8aa9c2" stroke-width="1.5"/><text x="1350" y="432" font-size="10" font-weight="700" fill="#47677f">03 / BUSINESS LOGIC</text><text x="1350" y="468" font-size="18" font-weight="700" fill="#243447">Services</text><text x="1350" y="500" font-size="11" fill="#475569">booking • draft • flight</text><text x="1350" y="528" font-size="11" fill="#5b6b7a">payment • user • support</text><text x="1350" y="556" font-size="11" fill="#5b6b7a">alerts • reviews • jobs</text>
+    <rect x="1590" y="400" width="180" height="200" rx="8" fill="#f5f9fc" stroke="#8aa9c2" stroke-width="1.5"/><text x="1610" y="432" font-size="10" font-weight="700" fill="#47677f">04 / DATABASE ACCESS</text><text x="1610" y="468" font-size="18" font-weight="700" fill="#243447">Repositories</text><text x="1610" y="500" font-size="11" fill="#475569">SQL query helpers</text><text x="1610" y="528" font-size="11" fill="#5b6b7a">MySQL connection</text><text x="1610" y="558" font-size="10" fill="#47677f">repositories/ + database/</text>
+  </g>
+
+  <!-- request arrows are rendered after cards so arrowheads stay visible -->
+  <g fill="none" stroke="#334e68" stroke-width="2.5">
+    <path d="M755 500H810" marker-end="url(#arrow)"/>
+    <path d="M990 500H1070" marker-end="url(#arrow)"/>
+    <path d="M1250 500H1330" marker-end="url(#arrow)"/>
+    <path d="M1510 500H1590" marker-end="url(#arrow)"/>
+    <path d="M1770 500H1825" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- Deployment view -->
+  <text x="620" y="820" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#5b6b7a">03 / DEPLOYMENT VIEW</text>
+  <rect x="620" y="840" width="1408" height="190" rx="14" fill="#ffffff" stroke="#b8c7d5" stroke-width="1.5"/>
+  <g font-family="Arial, sans-serif" transform="translate(80 40)">
+    <!-- deployment cards centered vertically in panel -->
+    <rect x="660" y="848" width="250" height="92" rx="8" fill="#f5f9fc" stroke="#8aa9c2" stroke-width="1.5"/><text x="684" y="876" font-size="13" font-weight="700" fill="#334e68">PROXY</text><text x="684" y="901" font-size="12.5" fill="#475569">Frontend Nginx</text><text x="684" y="923" font-size="10.5" fill="#5b6b7a">static files + /api/v1 proxy</text>
+    <rect x="1000" y="848" width="250" height="92" rx="8" fill="#f5f9fc" stroke="#8aa9c2" stroke-width="1.5"/><text x="1024" y="876" font-size="13" font-weight="700" fill="#334e68">APP</text><text x="1024" y="901" font-size="12.5" fill="#475569">Backend container :8000</text><text x="1024" y="923" font-size="10.5" fill="#5b6b7a">python main.py</text>
+    <rect x="1340" y="848" width="250" height="92" rx="8" fill="#f5f9fc" stroke="#8aa9c2" stroke-width="1.5"/><text x="1364" y="876" font-size="13" font-weight="700" fill="#334e68">DATABASE</text><text x="1364" y="901" font-size="12.5" fill="#475569">MySQL 8 container</text><text x="1364" y="923" font-size="10.5" fill="#5b6b7a">persistent volume</text>
+    <rect x="1680" y="848" width="150" height="92" rx="8" fill="#fbfaf5" stroke="#9aafbf" stroke-width="1.5" stroke-dasharray="6 4"/><text x="1702" y="876" font-size="13" font-weight="700" fill="#334e68">SCHEMA</text><text x="1702" y="901" font-size="12.5" fill="#475569">Flyway V1...V10</text><text x="1702" y="923" font-size="10.5" fill="#5b6b7a">migration runner</text>
+    <g fill="none" stroke="#334e68" stroke-width="2.5"><path d="M910 894H1000" marker-end="url(#arrow)"/><path d="M1250 894H1340" marker-end="url(#arrow)"/><path d="M1680 894H1590" stroke="#7c93a8" stroke-dasharray="6 4" marker-end="url(#arrowLight)"/></g>
+    <g font-size="10" font-weight="700" fill="#5b6b7a"><text x="955" y="878" text-anchor="middle">proxy</text><text x="1295" y="878" text-anchor="middle">SQL</text><text x="1635" y="878" text-anchor="middle">migrate</text></g>
+  </g>
+</svg>
