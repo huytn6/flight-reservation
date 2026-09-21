@@ -70,7 +70,9 @@ services:
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
       APP_BASE_URL: /api/v1
+      APP_CONFIG_FILE: config.prod.ini
       RUN_SCHEMA_INIT: "false"
+      RUN_SCHEDULER: "false"
       DB_HOST: mysql
       DB_PORT: 3306
       DB_USER: ${DB_USER:-flight_app}
