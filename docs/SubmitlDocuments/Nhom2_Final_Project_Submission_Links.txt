@@ -1,0 +1,21 @@
+BÁO CÁO ĐỒ ÁN CUỐI KỲ - NHÓM 2
+Đề tài: Hệ thống đặt vé máy bay trực tuyến (Online Flight Booking System)
+Môn học: Kỹ thuật lập trình Python (IE221.F32.LT.CNTT)
+Lớp: LT.K2025.2-CNTT
+Giảng viên hướng dẫn: ThS. Nghi Hoàng Khoa
+
+DANH SÁCH NHÓM
+1. Trần Ngọc Huy - 25410232
+2. Đặng Văn Hậu - 25410203
+3. Nguyễn Thị Hồng Minh - 25410256
+4. Nguyễn Thanh Duy - 25410194
+
+LIÊN KẾT NỘP BÀI
+Thư mục tổng hợp: https://drive.google.com/drive/u/0/folders/1ZXo3CewwgU43lFsTArnm1gW7sXrsYDbh
+- Report: https://drive.google.com/drive/folders/1KVaM33hQbIOxmyBn01pkBh6gi6-BWJAo
+- Slide: https://drive.google.com/drive/folders/1mpfi5DnUAiNxjLKGMBHW3gZxBsqqYEqM
+- Video demo: https://drive.google.com/drive/folders/1Hsl7oFOHaiOWcn7eNgEkayh33Bc4IKZ0
+
+MÃ NGUỒN VÀ SẢN PHẨM
+- Mã nguồn dự án: https://github.com/huytn6/flight-reservation
+- Sản phẩm đã triển khai: https://uitair.donotaccess.com
