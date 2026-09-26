@@ -6,6 +6,8 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.authentication import hash_password, verify_password, generate_token, hash_token
+from core.validation import normalize_password
+from core.exceptions import ValidationError
 from database.connection import IntegrityError
 
 
@@ -29,6 +31,20 @@ class TestPasswordHashing(unittest.TestCase):
         h1 = hash_password(pw)
         h2 = hash_password(pw)
         self.assertNotEqual(h1, h2)
+
+
+class TestPasswordNormalization(unittest.TestCase):
+    def test_strips_surrounding_whitespace(self):
+        stored = hash_password('Huy@1234')
+        self.assertTrue(verify_password(normalize_password(' Huy@1234 '), stored))
+        self.assertTrue(verify_password(normalize_password('Huy@1234\n'), stored))
+
+    def test_keeps_inner_spaces(self):
+        self.assertEqual(normalize_password('  Pass word@1  '), 'Pass word@1')
+
+    def test_rejects_non_string(self):
+        with self.assertRaises(ValidationError):
+            normalize_password(12345678)
 
 
 class TestTokenGeneration(unittest.TestCase):

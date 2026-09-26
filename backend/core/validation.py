@@ -15,6 +15,17 @@ def validate_email(email: str) -> str:
     return email
 
 
+def normalize_password(password) -> str:
+    """Bỏ khoảng trắng thừa ở đầu và cuối mật khẩu.
+
+    Người dùng thường sao chép mật khẩu từ tài liệu hoặc email và dính theo một
+    khoảng trắng ở cuối; khoảng trắng đó khiến mật khẩu đúng vẫn bị từ chối.
+    """
+    if not isinstance(password, str):
+        raise ValidationError('Mật khẩu phải là chuỗi ký tự')
+    return password.strip()
+
+
 def validate_password(password: str):
     if len(password) < 8:
         raise ValidationError('Mật khẩu phải có ít nhất 8 ký tự')

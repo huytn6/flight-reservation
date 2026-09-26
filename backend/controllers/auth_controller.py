@@ -12,12 +12,13 @@ def register(handler):
     data = req.parse_json_body(handler)
     val.require_fields(data, 'email', 'password', 'full_name')
     email = val.validate_email(data['email'])
-    val.validate_password(data['password'])
+    password = val.normalize_password(data['password'])
+    val.validate_password(password)
     full_name = val.sanitize_str(data['full_name'], 100, 'full_name')
     if not full_name:
         from core.exceptions import ValidationError
         raise ValidationError('full_name cannot be empty')
-    user = auth_service.register(email, data['password'], full_name, handler.client_address[0])
+    user = auth_service.register(email, password, full_name, handler.client_address[0])
     response.created(handler, user, 'Registration successful')
 
 
@@ -28,7 +29,8 @@ def login(handler):
     data = req.parse_json_body(handler)
     val.require_fields(data, 'email', 'password')
     email = data['email'].strip().lower()
-    result = auth_service.login(email, data['password'], ip, handler.headers.get('User-Agent', ''))
+    password = val.normalize_password(data['password'])
+    result = auth_service.login(email, password, ip, handler.headers.get('User-Agent', ''))
     response.success(handler, result, 'Login successful')
 
 
@@ -71,8 +73,9 @@ def forgot_password(handler):
 def reset_password(handler):
     data = req.parse_json_body(handler)
     val.require_fields(data, 'token', 'new_password')
-    val.validate_password(data['new_password'])
-    auth_service.reset_password(data['token'], data['new_password'])
+    new_password = val.normalize_password(data['new_password'])
+    val.validate_password(new_password)
+    auth_service.reset_password(data['token'], new_password)
     response.success(handler, None, 'Password reset successfully')
 
 
@@ -82,7 +85,9 @@ def change_password(handler):
     user = auth.require_auth(handler, db)
     data = req.parse_json_body(handler)
     val.require_fields(data, 'old_password', 'new_password')
-    val.validate_password(data['new_password'])
-    auth_service.change_password(user['user_id'], data['old_password'], data['new_password'],
+    old_password = val.normalize_password(data['old_password'])
+    new_password = val.normalize_password(data['new_password'])
+    val.validate_password(new_password)
+    auth_service.change_password(user['user_id'], old_password, new_password,
                                  handler.client_address[0])
     response.success(handler, None, 'Password changed. Please login again.')
